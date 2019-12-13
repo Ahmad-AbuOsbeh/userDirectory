@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- build:bundleControlBFMinJS  -->
+    <script src="../../../../scripts/buildfire.js"></script>
+    <!-- endbuild -->
+
+    <script src="../../../../scripts/buildfire/components/images/thumbnail.js"></script>
+
+    <!-- build:bundleSharedJSFiles  -->
+    <script src="../../widget/js/shared/infoCard.class.js"></script>
+    <script src="../../widget/js/shared/settings.class.js"></script>
+    <!-- endbuild -->
+
+    <link rel="stylesheet" type="text/css" href="../../../../styles/helper.css">
+</head>
+<body>
+    <div id="bgImage"></div>
+    <script>
+
+
+		let settings,thumbnail;
+		Settings.get().then(s=>{
+			settings=s;
+			thumbnail = new buildfire.components.images.thumbnail("#bgImage",{imageUrl:s.bgImageUrl});
+
+			thumbnail.onChange =url=>{
+				settings.bgImageUrl =url;
+				settings.save();
+				buildfire.messaging.sendMessageToWidget({cmd:"refresh"});
+			};
+
+			thumbnail.onDelete=()=>{
+				settings.bgImageUrl ="";
+				settings.save();
+				buildfire.messaging.sendMessageToWidget({cmd:"refresh"});
+            };
+
+		});
+
+    </script>
+</body>
+</html>

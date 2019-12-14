@@ -13,6 +13,7 @@ class ListView{
 		this.container.innerHTML="";
 	}
 	loadListViewItems(items){
+
 		if(this.container.innerHTML==""){
 			if(this.options.enableAddButton){
 				let addButton = ui.create("button",this.container,"<span></span>",["listViewAddButton", "btn", "btn--add", "btn--fab", "btn-primary"]);

@@ -99,10 +99,9 @@
 			if(index==0)lv.clear();
 			if (e)
 				console.error(e);
-			else if (results.length > 0)
-				lv.loadListViewItems(results);
-			else if (currentPageIndex==0)
-				listViewContainer.innerHTML="No results";
+			else
+			    lv.loadListViewItems(results);
+
 			inProgress=false;
 
 			if(results.length==0) {

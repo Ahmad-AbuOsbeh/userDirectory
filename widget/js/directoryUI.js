@@ -74,9 +74,9 @@ let directoryUI = {
             , message: "Would you like to join our user directory?"
             , buttons: [{ text: 'No', key: 'no', type: 'default' }, { text: 'Yes', key: 'yes', type: 'success' }]
         }, function (e, data) {
-            if (e) console.error(e);
-            if (data.selectedButton.key == "yes") {
-                //
+            if (e) return console.error(e);
+            if (data && data.selectedButton && data.selectedButton.key == "yes") {
+
                 login((err, user) => {
                     if (user) {
                         // save to database

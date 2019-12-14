@@ -1,17 +1,17 @@
 {
   "author":"Daniel Hindi"
-,"pluginName":"<enter your plugin name here>"
-,"pluginDescription":"<enter your plugin description here>"
+,"pluginName":"User Directory"
+,"pluginDescription":"Easy way to search and chat with users"
 ,"supportEmail":"<enter your support email here>"
 ,"control":{
   "content":{
     "enabled":true
   }
 , "design":{
-    "enabled":true
+    "enabled":false
   }
 , "settings":{
-    "enabled":true
+    "enabled":false
   }
 , "customTabs": [
     { "title": "Language", "url": "/strings/index.html" }

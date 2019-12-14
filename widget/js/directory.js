@@ -35,6 +35,17 @@ let directory = {
 
     },
 
+    /// BE CAREFULL !!!!
+    clear(){
+        directory.search("",0,100,(e,r)=>{
+            if(r){
+
+                r.forEach(r=>{
+                    buildfire.appData.delete(r.id,"userDirectory");
+                });
+            }
+        })
+    },
 
 
     searchNew(criteria, index, size, callback) {

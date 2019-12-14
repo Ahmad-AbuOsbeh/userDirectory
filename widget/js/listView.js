@@ -27,7 +27,7 @@ class ListView{
 		if(!(item instanceof ListViewItem) )
 			item = new ListViewItem(item);
 		let i = item.render(this.container);
-		i.onclick=()=>{ t.onItemClicked(item); };
+		i.onclick=(e)=>{ t.onItemClicked(item,e); };
 		i.onToolbarClicked=(key,item,e)=>{ t.onItemToolbarClicked(key,item,e); };
 	}
 
@@ -90,6 +90,7 @@ class ListViewItem{
 				img.src= this.imageUrl;
 
 			ui.create('i', imgContainer, null, ['listViewItemIcon']);
+
 		}
 
 		let listViewItemCopy= ui.create('div',card,null,['listViewItemCopy', 'ellipsis', 'padded', 'padded--m']);

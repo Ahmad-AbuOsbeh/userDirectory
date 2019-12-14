@@ -4,7 +4,7 @@ class directoryUser {
         this.firstName = user.firstName;
         this.lastName = user.lastName;
         this.email = user.email;
-        this.userId = user._id;
+        this.userId = user._id || user.userId;
     }
 
     toJson(){
@@ -16,7 +16,7 @@ class directoryUser {
             userId: this.userId,
             _buildfire :{ 
                 index: {
-                 text: `${this.firstName} ${this.lastName} ${this.displayName} ${this.email}`
+                 text: `${this.firstName} ${this.lastName}`
                }
            }
         }

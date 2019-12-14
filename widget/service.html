@@ -7,61 +7,19 @@
 
     <script src="js/directory.js"></script>
     <script src="js/directoryUser.js"></script>
+    <script src="js/directoryUI.js"></script>
 
     <script>
 
-        if (localStorage.getItem("$$userDirectoryPrompt") != "true") {
-            promptUser();
-        }
 
 
 
-        function promptUser() {
-
-            buildfire.notifications.showDialog({
-                title: "User Directory"
-                , message: "Would you like to join our user directory?"
-                , buttons: [{ text: 'No', key: 'no', type: 'default' }, { text: 'Yes', key: 'yes', type: 'success' }]
-            }, function (e, data) {
-                if (e) console.error(e);
-                if (data.selectedButton.key == "yes") {
-                    // 
-                    login((err, user) => {
-                        if (user) {
-                            // save to database
-                            let dUser = new directoryUser(user);
-                            directory.addUser(dUser, (e) => {
-                                if (e) console.error(e);
-                            });
-                        }
-                    });
-                };
-                localStorage.setItem("$$userDirectoryPrompt", "true")
-            });
-        }
-
-        function login(callback) {
-            buildfire.auth.getCurrentUser((err, user) => {
-                if (!user) {
-                    buildfire.auth.login({ allowCancel: true }, (err, user) => {
-                        if (!user)
-                            callback();
-                        else
-                            callback(null, user);
-                    });
-                }
-                else
-                    callback(null, user);
-            });
-
-        };
-
-
-
+		directoryUI.promptUser(true);
 
 
 
     </script>
+
 
 
 </head>

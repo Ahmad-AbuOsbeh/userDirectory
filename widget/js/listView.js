@@ -29,7 +29,7 @@ class ListView{
 			item = new ListViewItem(item);
 		let i = item.render(this.container);
 		i.onclick=(e)=>{ t.onItemClicked(item,e); };
-		i.onToolbarClicked=(key,item,e)=>{ t.onItemToolbarClicked(key,item,e); };
+		i.onBadgeClicked=(key,item,e)=>{ t.onItemBadgeClicked(key,item,e); };
 	}
 
 	onAddButtonClicked(){
@@ -40,8 +40,8 @@ class ListView{
 		console.log("Item Clicked",item);
 	}
 
-	onItemToolbarClicked(key,item,e){
-		console.log("Item Toolbar Clicked",item);
+	onItemBadgeClicked(key,item,e){
+		console.log("Item Badge Clicked",item);
 	}
 
 
@@ -53,7 +53,7 @@ class ListViewItem{
 		this.title = obj.title;
 		this.imageUrl = obj.imageUrl;
 		this.description = obj.description;
-		this.toolbar = obj.toolbar || [];
+		this.badges = obj.badges || [];
 		this.data = obj.data;
 
 	}
@@ -65,7 +65,7 @@ class ListViewItem{
 			title: this.title,
 			imageUrl:this.imageUrl ,
 			description:this.description,
-			toolbar:this.toolbar,
+			badges:this.badges,
 			data:this.data
 		};
 	}
@@ -103,12 +103,13 @@ class ListViewItem{
 
 
 		let t = this;
-		if(this.toolbar && this.toolbar.length ){
-			let listViewItemToolbar = ui.create('div', card, null, ['listViewItemToolbar']);
-			this.toolbar.forEach(obj=>{
-				let i = ui.create('span', listViewItemToolbar, obj.text, ['listViewItemToolbarItem',obj.class]);
+		if(this.badges && this.badges.length ){
+			let listViewItemBadge = ui.create('div', card, null, ['listViewItemBadge']);
+			this.badges.forEach(obj=>{
+				debugger;
+				let i = ui.create('div', listViewItemBadge, obj.text, ['listViewItemBadgeItem','badge']);
 				i.onclick = e=>{
-					t.onToolbarClicked(obj.key,t,e);
+					t.onBadgeClicked(obj.key,t,e);
 					e.preventDefault();
 					e.stopPropagation();
 					return false;
@@ -120,7 +121,7 @@ class ListViewItem{
 		return card;
 	}
 
-	onToolbarClicked(key, item){
+	onBadgeClicked(key, item){
 
 	}
 

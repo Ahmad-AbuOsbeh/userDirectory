@@ -16,7 +16,7 @@ let directoryUI = {
 
 
                 let imageUrl = buildfire.auth.getUserPictureUrl({ email:dUser.email});
-                imageUrl = buildfire.imageLib.cropImage(imageUrl,{width:64,height:64})
+                imageUrl = buildfire.imageLib.cropImage(imageUrl,{width:64,height:64});
 
 
 
@@ -24,15 +24,11 @@ let directoryUI = {
                     title: dUser.displayName + ( (index* size) + i)
                     , imageUrl:  imageUrl
                     , description: dUser.email
-                    /*, toolbar: [{
+                    , badges: [{
                         key: "btnBadge"
                         , class: "toolbarBadge"
-                        , text: "9"
-                    }, {
-                        key: "btnShare"
-                        , class: "toolbarShare"
-                        , text: "share"
-                    }]*/
+                        , text: "<b>9</b>4"
+                    }]
                     , data: dUser
                 });
             });

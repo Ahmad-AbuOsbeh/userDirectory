@@ -27,8 +27,16 @@ let directory = {
             "pageSize": size
         };
 
-        if(criteria)
-            searchOptions.filter={$text: { $search: criteria  }} ;
+        if(criteria || true)
+            searchOptions.filter={$or:[
+                //{$text: { $search: criteria  }},
+                {"_buildfire.index.string1":  {
+                        "$regex": criteria,
+                        $options: 'i'
+                    } }
+                ]} ;
+
+
 
         buildfire.appData.search(searchOptions, 'userDirectory', callback);
 

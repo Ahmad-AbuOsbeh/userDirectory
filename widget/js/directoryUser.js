@@ -17,6 +17,7 @@ class directoryUser {
             _buildfire :{ 
                 index: {
                  text: `${this.firstName} ${this.lastName}`
+                , string1: `${this.firstName} ${this.lastName}`
                }
            }
         }

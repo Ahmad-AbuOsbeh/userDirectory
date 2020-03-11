@@ -1,91 +1,130 @@
-let directoryUI = {
-    search(criteria, index, size, callback) {
+class DirectoryUI {
+	constructor(user, strings, settings, isService) {
+		
+		this.user = user;
+		this.directory = new Directory(user);
+		this.strings = strings || new buildfire.services.Strings('en-us', stringsConfig);
+		this.settings = settings;
+	}
 
-        directory.search(criteria, index, size, (err, res) => {
-            if(err) return callback(err);
+	search(searchText, pageIndex, pageSize, callback) {
+		this.directory.search(searchText, pageIndex, pageSize, (error, results) => {
+			if (error) return callback(error, []);
 
-            let results = [];
+			callback(null, this.handleResults(results));
+		});
+	}
 
-            res.forEach((row,i) => {
+	handleResults(data) {
+		let results = [];
 
-                //buildfire.appData.delete(row.id,"userDirectory",e=>{});
-                //return;
+		data.forEach((row, i) => {
+			// buildfire.services.searchEngine.delete({ id: row.id, tag: "userDirectory"},e=>{});
+			// buildfire.appData.delete(row.id,"userDirectory",e=>{});
+			// return;
 
-                let dUser=row.data;
+			const { data } = row;
+			const { email, userId, badges } = data;
 
+			let imageUrl = buildfire.auth.getUserPictureUrl({ email });
+			imageUrl = buildfire.imageLib.cropImage(imageUrl, { width: 64, height: 64 });
 
+			results.push({
+				id: row.id,
+				title: data.displayName,
+				description: email,
+				imageUrl,
+				data,
+				userId,
+				badges
+			});
+		});
 
-                let imageUrl = buildfire.auth.getUserPictureUrl({ email:dUser.email});
-                imageUrl = buildfire.imageLib.cropImage(imageUrl,{width:64,height:64});
+		return results;
+	}
 
+	promptUser(callback) {
+		if (!this.user) return buildfire.auth.login();
 
+		this.directory.checkUser((error, userObj) => {
+			if (error) return console.error(error);
+			if (userObj) return this.directory.updateUser();
 
-                results.push({
-                    title: dUser.displayName + ( (index* size) + i)
-                    , imageUrl:  imageUrl
-                    , description: dUser.email
-                    , badges: [{
-                        key: "btnBadge"
-                        , class: "toolbarBadge"
-                        , text: "<b>9</b>4"
-                    }]
-                    , data: dUser
-                });
-            });
+			this._showDialog('join', value => {
+				if (value) {
+					this.directory.addUser(e => {
+						if (e) return console.error(e);
+						callback();
+					});
+				}
+			});
+		});
+	}
 
-            if(callback) callback(null,results);
+	// static prompt() {
+	// 	buildfire.auth.getCurrentUser((error, user) => {
+	// 		if (!error && user) {
+	// 			new Directory(user).
+	// 		}
+	// 	});
+	// }
 
-        });
+	leaveDirectory(callback) {
+		this._showDialog('leave', value => {
+			if (value) {
+				this.directory.removeUser(e => {
+					if (e) return console.error(e);
+					callback();
+				});
+			}
+		});
+	}
 
+	_showDialog(type = 'join', callback) {
+		let title = 'User Directory';
+		let message = 'Would you like to join our user directory?';
+		let cancelButtonText = 'No';
+		let confirmButtonText = 'Yes';
 
-    },
+		if (typeof this.strings !== 'undefined') {
+			title = this.strings.get(`${type}Dialog.title`);
+			message = this.strings.get(`${type}Dialog.message`);
+			cancelButtonText = this.strings.get(`${type}Dialog.cancelButton`);
+			confirmButtonText = this.strings.get(`${type}Dialog.confirmButton`);
+		}
 
-    promptUser:(withCheck)=> {
+		const dialogOptions = {
+			title,
+			message,
+			buttons: [
+				{ text: cancelButtonText, key: 'no', type: 'default' },
+				{ text: confirmButtonText, key: 'yes', type: 'success' }
+			]
+		};
+		const handleResponse = (e, data) => {
+			if (e) return console.error(e);
+			callback(data && data.selectedButton && data.selectedButton.key == 'yes');
+			localStorage.setItem('$$userDirectoryPrompt', 'true');
+		};
 
-        if(withCheck) {
-            if (localStorage.getItem("$$userDirectoryPrompt") == "true") {
-                return;
-            }
-        }
+		buildfire.notifications.showDialog(dialogOptions, handleResponse);
+	}
 
-        function login(callback) {
-            buildfire.auth.getCurrentUser((err, user) => {
-                if (!user) {
-                    buildfire.auth.login({ allowCancel: true }, (err, user) => {
-                        if (!user)
-                            callback();
-                        else
-                            callback(null, user);
-                    });
-                }
-                else
-                    callback(null, user);
-            });
+	// static prompt(user, callback) {
+	// 	const directory = new Directory(user)
 
-        };
+	// 	directory.checkUser((error, userObj) => {
+	// 		if (error) return console.error(error);
+	// 		if (userObj) return directory.updateUser(userObj);
 
-
-        buildfire.notifications.showDialog({
-            title: "User Directory"
-            , message: "Would you like to join our user directory?"
-            , buttons: [{ text: 'No', key: 'no', type: 'default' }, { text: 'Yes', key: 'yes', type: 'success' }]
-        }, function (e, data) {
-            if (e) return console.error(e);
-            if (data && data.selectedButton && data.selectedButton.key == "yes") {
-
-                login((err, user) => {
-                    if (user) {
-                        // save to database
-                        let dUser = new directoryUser(user);
-                        directory.addUser(dUser, (e) => {
-                            if (e) console.error(e);
-                        });
-                    }
-                });
-            };
-            localStorage.setItem("$$userDirectoryPrompt", "true")
-        });
-    }
-
-
-};
+	// 		DirectoryUI._showDialog('join', value => {
+	// 			if (value) {
+	// 				directory.addUser(user, e => {
+	// 					if (e) return console.error(e);
+	// 					onAddUser();
+	// 				});
+	// 			}
+	// 		});
+	// 	});
+	// }
+}

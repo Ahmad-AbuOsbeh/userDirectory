@@ -1,127 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Title</title>
 
-    <!-- build:bundleWidgetBFMinJS  -->
-    <script src="../../../scripts/buildfire.js"></script>
-    <!-- endbuild -->
-    <script src="../../../scripts/buildfire/services/searchEngine/searchEngine.js"></script>
+		<!-- build:bundleWidgetBFMinJS  -->
+		<script src="../../../scripts/buildfire.js"></script>
+		<!-- endbuild -->
+		<script src="../../../scripts/buildfire/services/searchEngine/searchEngine.js"></script>
 
+		<script src="js/shared/strings.js"></script>
+		<script src="js/shared/stringsConfig.js"></script>
+		<script src="js/shared/settings.class.js"></script>
 
-    <link rel="stylesheet" href="css/a.css">
-    <link rel="stylesheet" href="css/listView.css">
+		<script src="../data/user.js"></script>
+		<script src="../dataAccess/users.js"></script>
+		<script src="../dataAccess/lookup.js"></script>
+		<script src="../dataAccess/favorites.js"></script>
 
-    <script src="js/shared/ui.js"></script>
-    <script src="js/listView.js"></script>
-    <script src="js/directoryUI.js"></script>
-    <script src="js/directory.js"></script>
-    <script src="js/directoryUser.js"></script>
+		<script src="js/shared/ui.js"></script>
+		<script src="js/directoryUser.js"></script>
+		<script src="js/directory.js"></script>
+		<script src="js/directoryUI.js"></script>
+		<script src="js/listView.js"></script>
+		<script src="js/searchBar.js"></script>
 
-</head>
-<body >
+		<script src="widget.js"></script>
 
+		<link rel="stylesheet" href="../../../styles/siteIcons.css" />
+		<link rel="stylesheet" href="css/a.css" />
+		<link rel="stylesheet" href="css/listView.css" />
+	</head>
+	<body>
+		<header id="searchBar"></header>
+		<div id="listViewContainer"></div>
 
-
-    <input type="search" style="margin:1em;" id="txtCriteria" onkeyup="debounce()" class="form-control" placeholder="Search for...">
-
-
-
-<div id="listViewContainer" >
-
-</div>
-
-<script>
-
-	let lv = new ListView("listViewContainer", {enableAddButton: true, Title: ""});
-	lv.onAddButtonClicked = () => {
-
-		directoryUI.promptUser(false);
-		return;
-
-		let item = new ListViewItem({
-			title: "Title 1"
-			,
-			description: "Here is my really long description. Here is my really long description. Here is my really long description. "
-			,
-			imageUrl: "https://img.icons8.com/officel/2x/worldwide-location.png"
-
-		});
-
-		lv.addItem(item);
-	};
-
-	lv.onItemClicked = (item, e) => {
-		if (!item.data.userId)
-			console.error("no user id");
-		else if (e.srcElement.className == "listViewItemImg")
-			buildfire.auth.openProfile(item.data.userId);
-		else
-			navToSocialWall(item.data.userId);
-	};
-
-	function navToSocialWall(targetUserID){
-		let wid;
-		buildfire.auth.getCurrentUser((e,user)=>{
-			if(user){
-				if(user._id > targetUserID)
-					wid=user._id + targetUserID;
-				else
-					wid=targetUserID + user._id;
-
-				buildfire.navigation.navigateToSocialWall({title:item.data.displayName,queryString:"wid=" + wid });
-            }
-			else
-				builfire.auth.login();
-        })
-    }
-
-	let currentPageIndex=0;
-	let inProgress=false;
-	function search(index=0) {
-
-		if(index==0) {
-			listViewContainer.onscroll = (e) => {
-				//console.log(listViewContainer.scrollTop + listViewContainer.clientHeight > listViewContainer.scrollHeight * 0.8);
-				if (!inProgress && listViewContainer.scrollTop + listViewContainer.clientHeight > listViewContainer.scrollHeight * 0.8) {
-					currentPageIndex++;
-					search(currentPageIndex);
-				}
-			};
-		}
-
-		inProgress=true;
-		currentPageIndex=index;
-        buildfire.spinner.show();
-		directoryUI.search(txtCriteria.value, currentPageIndex, 15, (e, results) => {
-			buildfire.spinner.hide();
-			if(index==0)lv.clear();
-			if (e)
-				return console.error(e);
-			else
-			    lv.loadListViewItems(results);
-
-			inProgress=false;
-
-			if(results.length==0) {
-				listViewContainer.onscroll = null;
-			}
-
-		});
-	};
-
-	search();
-
-	let tmr;
-	function debounce(){
-		if(tmr)clearTimeout(tmr);
-		tmr=setTimeout(search,500);
-    }
-
-
-
-
-</script>
-</body>
+		<script>
+			const widget = new Widget();
+		</script>
+	</body>
 </html>

@@ -1,6 +1,6 @@
 {
   "author":"Daniel Hindi"
-,"pluginName":"User Directory"
+,"pluginName":"User Directory Beta"
 ,"pluginDescription":"Easy way to search and chat with users"
 ,"supportEmail":"<enter your support email here>"
 ,"control":{
@@ -14,7 +14,8 @@
     "enabled":false
   }
 , "customTabs": [
-    { "title": "Language", "url": "/strings/index.html" }
+    { "title": "Language", "url": "/strings/index.html" },
+    { "title": "tests", "url": "/tests/index.html"}
   ]
 }
 ,"widget":{

@@ -64,7 +64,7 @@
 
 		function loadLanguage(lang){
 			stringsContainer.classList.add("hidden");
-			strings = new buildfire.services.Strings(lang,stringsConfig);
+            strings = new buildfire.services.Strings(lang,stringsConfig);
 			strings.init().then(()=>{
 				showNewLanguageState( strings.id );
 				strings.inject();

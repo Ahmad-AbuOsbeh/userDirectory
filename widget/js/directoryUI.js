@@ -1,6 +1,5 @@
 class DirectoryUI {
 	constructor(user, strings, settings, isService) {
-		
 		this.user = user;
 		this.directory = new Directory(user);
 		this.strings = strings || new buildfire.services.Strings('en-us', stringsConfig);
@@ -46,9 +45,30 @@ class DirectoryUI {
 	promptUser(callback) {
 		if (!this.user) return buildfire.auth.login();
 
+		const { appId } = buildfire.getContext();
+		const { autoEnlistTags, autoEnlistAll } = this.settings;
+
+		const userTags = this.user.tags && this.user.tags[appId] ? this.user.tags[appId].map(tag => tag.tagName) : [];
+
 		this.directory.checkUser((error, userObj) => {
 			if (error) return console.error(error);
 			if (userObj) return this.directory.updateUser();
+
+			if (autoEnlistAll) {
+				return this.directory.addUser(e => {
+					if (e) return console.error(e);
+					callback();
+				});
+			}
+
+			if (autoEnlistTags && userTags) {
+				if (autoEnlistTags.some(tag => userTags.indexOf(tag) > -1)) {
+					return this.directory.addUser(e => {
+						if (e) return console.error(e);
+						callback();
+					});
+				}
+			}
 
 			this._showDialog('join', value => {
 				if (value) {
@@ -61,13 +81,26 @@ class DirectoryUI {
 		});
 	}
 
-	// static prompt() {
-	// 	buildfire.auth.getCurrentUser((error, user) => {
-	// 		if (!error && user) {
-	// 			new Directory(user).
-	// 		}
-	// 	});
-	// }
+	handleAction(user) {
+		const { actionItem } = this.settings;
+
+		if (actionItem) {
+			return buildfire.actionItems.execute(actionItem, console.error);
+		}
+
+		this.openPrivateMessage(user);
+	}
+
+	openPrivateMessage(targetUser) {
+		if (!this.user) return buildfire.auth.login();
+
+		const userIds = [this.user._id, targetUser.userId];
+		userIds.sort();
+
+		const queryString = `wid=${userIds[0]}|${userIds[1]}&wTitle=${encodeURIComponent(`${this.user.displayName} | ${targetUser.displayName}`)}`;
+
+		buildfire.navigation.navigateToSocialWall({ queryString });
+	}
 
 	leaveDirectory(callback) {
 		this._showDialog('leave', value => {

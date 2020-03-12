@@ -5,31 +5,38 @@
 		<title>Title</title>
 
 		<!-- build:bundleWidgetBFMinJS  -->
-		<script src="../../../scripts/buildfire.js"></script>
 		<!-- endbuild -->
+		<script src="../../../scripts/buildfire.js"></script>
 		<script src="../../../scripts/buildfire/services/searchEngine/searchEngine.js"></script>
 
+		<!-- build:bundleSharedJSFiles -->
+		<script src="js/shared/ui.js"></script>
 		<script src="js/shared/strings.js"></script>
 		<script src="js/shared/stringsConfig.js"></script>
 		<script src="js/shared/settings.class.js"></script>
+		<!-- endbuild -->
 
+		<!-- build:bundleDataJSFiles -->
 		<script src="../data/user.js"></script>
 		<script src="../dataAccess/users.js"></script>
 		<script src="../dataAccess/lookup.js"></script>
 		<script src="../dataAccess/favorites.js"></script>
+		<!-- endbuild -->
 
-		<script src="js/shared/ui.js"></script>
+		<!-- build:bundleJSFiles -->
 		<script src="js/directoryUser.js"></script>
 		<script src="js/directory.js"></script>
 		<script src="js/directoryUI.js"></script>
 		<script src="js/listView.js"></script>
 		<script src="js/searchBar.js"></script>
+		<script src="js/widget.js"></script>
+		<!-- endbuild -->
 
-		<script src="widget.js"></script>
-
+		<!-- build:bundleCSSFiles -->
 		<link rel="stylesheet" href="../../../styles/siteIcons.css" />
 		<link rel="stylesheet" href="css/a.css" />
 		<link rel="stylesheet" href="css/listView.css" />
+		<!-- endbuild -->
 	</head>
 	<body>
 		<header id="searchBar"></header>

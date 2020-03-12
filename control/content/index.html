@@ -3,61 +3,41 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<link rel="stylesheet" href="../assets/base.css" />
 		<link href="../../../../styles/helper.css" rel="stylesheet" />
 		<link href="../../../../styles/siteIcons.css" rel="stylesheet" />
+		<!-- build:bundleCSSFiles -->
+		<link rel="stylesheet" href="../assets/base.css" />
+		<link rel="stylesheet" href="css/content.css" />
 		<link rel="stylesheet" href="../assets/linearicons/cpIcons.css" />
 		<link rel="stylesheet" href="sortableList.css" />
+		<!-- endbuild -->
 
 		<!-- build:bundleControlBFMinJS  -->
+		<!-- endbuild -->
 		<script src="../../../../scripts/buildfire.js"></script>
 		<script src="../../../../scripts/sortable.min.js"></script>
 		<script src="../../../../scripts/buildfire/components/actionItems/sortableList.js"></script>
-		<!-- endbuild -->
+
 		<script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
 		<script src="../../../../scripts/angular/angular.min.js"></script>
 		<script src="../../../../scripts/angular/angular-route.min.js"></script>
 		<script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
 
+		<!-- build:bundleDataJSFiles  -->
 		<script src="../../data/user.js"></script>
 		<script src="../../dataAccess/users.js"></script>
 		<script src="../../dataAccess/badges.js"></script>
-
-		<script src="app.js"></script>
-		<script src="sortableList.js"></script>
-		<script src="sortableListUI.js"></script>
+		<!-- endbuild -->
+		
+		<!-- build:bundleSharedJSFiles  -->
 		<script src="../../widget/js/shared/settings.class.js"></script>
-		<!-- build:bundleDataJSFiles  -->
-		<!-- <script src="../content/samples/sortableList/sortableList.js"></script>
-		<script src="../content/samples/sortableList/sortableList.css"></script>
-		<script src="../content/samples/sortableList/sortableListUI.js"></script> -->
-
-		<!-- End of Scripts -->
-		<style>
-			.custom--image--holder {
-				width: 90px !important;
-				height: 90px;
-				padding: 10px;
-				border-radius: 4px;
-				background-color: #ffffff;
-				border: solid 1px #dddddd;
-			}
-			.custom--image--holder span {
-				position: relative;
-				float: left;
-				width: 100%;
-				height: 100%;
-				text-align: center;
-				line-height: 65px;
-				border-radius: 8px;
-				background-color: #f2f2f2;
-				-webkit-background-size: cover;
-				-moz-background-size: cover;
-				-o-background-size: cover;
-				background-size: cover;
-				background-repeat: no-repeat;
-			}
-		</style>
+		<!-- endbuild -->
+		
+		<!-- build:bundleJSFiles  -->
+		<script src="js/app.js"></script>
+		<script src="js/sortableList.js"></script>
+		<script src="js/sortableListUI.js"></script>
+		<!-- endbuild -->
 	</head>
 	<body ng-app="directoryContent">
 		<div class="container-fluid" ng-controller="directoryContentCtrl">
@@ -79,7 +59,7 @@
 				<div class="tags">
 					<ul class="tag-list">
 						<li class="tag-item" ng-repeat="tag in data.autoEnlistTags">
-							<span>{{ tag.name }}</span>
+							<span>{{ tag }}</span>
 							<a class="remove-button" ng-click="removeTag(tag)">×</a>
 						</li>
 					</ul>
@@ -93,10 +73,17 @@
 			<div class="row">
 				<p class="pull-left">Action Item</p>
 
-				<div id="action-image" ng-click="editAction()" class="custom--image--holder margin--bottom">
-					<a class="main-icon">
-						<span data-action="" class="add-icon">+</span>
-					</a>
+				<button class="btn btn-default" ng-click="editAction()">Edit Action</button>
+				<button class="btn btn-danger" ng-click="editAction(true)" ng-disabled="!data.actionItem">Reset</button>
+
+				<div ng-if="data.actionItem">
+					<div>Title: {{ data.actionItem.title }}</div>
+					<div>Type: {{ data.actionItem.action }}</div>
+				</div>
+
+				<div ng-if="!data.actionItem">
+					<div>Title: Message User</div>
+					<div>Type: messageUser</div>
 				</div>
 			</div>
 
@@ -127,132 +114,6 @@
 			</div>
 			<div id="badges"></div>
 		</div>
-		<!-- <div class="container-fluid" ng-controller="directoryContentCtrl">
-			<div class="row">
-				<p class="pull-left">Auto enlist all users</p>
-				<div class="button-switch pull-right">
-					<input type="checkbox" />
-					<label class="label-success"></label>
-				</div>
-			</div>
-
-			<div class="row">
-				<p class="alert alert-info">BuildFire is not liable for any compliance issues</p>
-			</div>
-
-			<div class="row">
-				<p class="pull-left">Auto enlist all users with the following tags</p>
-
-				<div class="tags">
-					<ul class="tag-list">
-						<li class="tag-item">
-							<span>tag</span>
-							<a class="remove-button">×</a>
-						</li>
-					</ul>
-					<input class="input" type="text" placeholder="Add a tag" />
-					<span class="input" style="visibility: hidden; width: auto; white-space: pre; display: none;">Add a tag</span>
-				</div>
-			</div>
-        </div> -->
-		<script></script>
+	
 	</body>
-	<style>
-		.title {
-			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-			-webkit-font-smoothing: antialiased !important;
-			-webkit-text-stroke: 0.35px;
-			text-rendering: optimizeLegibility;
-			outline: none;
-			padding: 0;
-			box-sizing: border-box;
-			margin: 0.67em 0;
-			font-family: inherit;
-			line-height: 1.1;
-			font-size: 1.125rem;
-			color: #000;
-			font-weight: 700;
-			margin-bottom: 0.875rem;
-			padding-top: 0.875rem;
-			margin-top: 20px;
-		}
-		.title::before {
-			display: block;
-			content: '';
-			height: 0.25rem;
-			width: 3.5rem;
-			background-color: #000;
-			margin-bottom: 0.875rem;
-		}
-		.tags {
-			-moz-appearance: textfield;
-			-webkit-appearance: textfield;
-			padding: 1px;
-			overflow: hidden;
-			word-wrap: break-word;
-			cursor: text;
-			background-color: #fff;
-			height: 100%;
-			box-shadow: none;
-			border: 1px solid #66afe9;
-		}
-
-		.tags input {
-			width: 70px !important;
-			outline: 0 !important;
-			border: 0 !important;
-		}
-
-		.tags .input {
-			-webkit-tap-highlight-color: transparent;
-			color: #5f5f5f;
-			cursor: text;
-			box-sizing: border-box;
-			margin: 2px;
-			float: left;
-			height: 26px;
-			font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
-			font-family: 'Muli', Helvetica, Arial;
-			padding: 0 0 0 8px;
-			font-size: 13px;
-			font-weight: 100;
-		}
-
-		.tags .tag-list {
-			margin: 0;
-			padding: 0;
-			list-style-type: none;
-		}
-
-		.tags .tag-item {
-			font-family: 'Muli', Helvetica, Arial;
-			font-size: 13px;
-			line-height: 23px;
-			font-weight: 100;
-			background: #09a3ee;
-			border: 1px solid #09a3ee;
-			padding: 0 5px;
-			display: inline-block;
-			border-radius: 3px;
-			margin: 2px;
-			float: left;
-			height: 26px;
-			font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
-			color: #fff;
-		}
-
-		.tags .tag-item .remove-button {
-			color: #fff;
-			font-size: 18px;
-			position: relative;
-			font-weight: 500;
-			top: -1px;
-		}
-	</style>
 </html>
-
-<!-- <ul>
-    <li onclick="location='samples/sortableList/sortableList.html'" >Draggable List</li>
-    <li onclick="location='samples/subPage/index.html'" >Sub Screen</li>
-    <li onclick="location='samples/searchTable/searchTable.html'" >Search Table</li>
-</ul> -->

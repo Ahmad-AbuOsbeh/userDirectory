@@ -3,9 +3,7 @@ const badgeListUI = {
 	container: null,
 	data: null,
 	id: null,
-	get badges() {
-		return badgeListUI.badgeList.badges;
-	},
+	badges: [],
 	/*
 		This method will call the appData to pull a single object
 		it needs to have an array property called `items` each item need {title, imgUrl}

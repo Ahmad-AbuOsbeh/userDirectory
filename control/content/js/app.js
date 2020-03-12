@@ -43,22 +43,25 @@
 		};
 
 		$scope.applyTag = () => {
-			$scope.data.autoEnlistTags.push({
-				name: $scope.tagName,
-				id: Date.now() + Math.floor(Math.random() * 10)
-			});
+			$scope.data.autoEnlistTags.push($scope.tagName);
 			$scope.tagName = '';
 
 			if (!$scope.$$phase) $scope.$apply();
 		};
 
 		$scope.removeTag = tag => {
-			$scope.data.autoEnlistTags.filter(({ id }) => id !== tag.id);
+			$scope.data.autoEnlistTags = $scope.data.autoEnlistTags.filter(tagName => tagName !== tag);
 
 			if (!$scope.$$phase) $scope.$apply();
 		};
 
-		$scope.editAction = () => {
+		$scope.editAction = reset => {
+			if (reset) {
+				$scope.data.actionItem = null;
+				if (!$scope.$$phase) $scope.$apply();
+
+				return;
+			}
 			buildfire.actionItems.showDialog($scope.data.actionItem, { showIcon: false }, (error, actionItem) => {
 				if (error) return console.error(error);
 

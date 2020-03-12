@@ -5,18 +5,25 @@
 		<script src="../../../scripts/buildfire.js"></script>
 		<script src="../../../scripts/buildfire/services/searchEngine/searchEngine.js"></script>
 
+		<!-- build:bundleDataJSFiles -->
 		<script src="../data/user.js"></script>
 		<script src="../dataAccess/badges.js"></script>
 		<script src="../dataAccess/users.js"></script>
 		<script src="../dataAccess/lookup.js"></script>
+		<!-- endbuild -->
 
+		<!-- build:bundleSharedJSFiles -->
 		<script src="js/shared/settings.class.js"></script>
 		<script src="js/shared/strings.js"></script>
 		<script src="js/shared/stringsConfig.js"></script>
+		<!-- endbuild -->
+
+		<!-- build:bundleJSFiles -->
 		<script src="js/directoryUser.js"></script>
 		<script src="js/directory.js"></script>
 		<script src="js/directoryUI.js"></script>
-		<script src="service.js"></script>
+		<script src="js/service.js"></script>
+		<!-- endbuild -->
 
 		<script>
 			new Service();

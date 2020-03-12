@@ -4,7 +4,7 @@
   "description": "template for a buildfire plugin using gulp",
   "main": "index.js",
   "scripts": {
-    "build": "gulp build && cd ../ && rm -rf gulpStarterKitPluginTemplate.zip && zip -r gulpStarterKitPluginTemplate.zip gulpStarterKitPluginTemplate_release && rm -rf gulpStarterKitPluginTemplate_release"
+    "build": "gulp build && cd ../ && rm -rf userDirectoryPlugin.zip && zip -r userDirectoryPlugin.zip userDirectoryPlugin_release -x *node_modules* *.git*"
   },
   "author": "Daniel Hindi",
   "license": "ISC",

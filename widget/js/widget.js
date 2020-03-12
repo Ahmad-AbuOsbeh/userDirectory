@@ -28,7 +28,7 @@ class Widget {
 			switch (cmd) {
 				case 'userAdded': {
 					this.search();
-					searchBar.shouldShowAddButton(false);
+					this.searchBar.shouldShowAddButton(false);
 					break;
 				}
 				case 'refresh': {
@@ -124,15 +124,7 @@ class Widget {
 			}
 
 			if (e.srcElement.className == 'icon icon-ellipsis') {
-				if (state._currentUser) {
-
-					directory.addFavorite(state._currentUser, item.data, console.error);
-				}
-				// if (state.settings.actionItem) {
-				// 	navToSocialWall(item.data.userId);
-				// } else {
-				// 	buildfire.actionItems.execute(state.settings.actionItem, console.log);
-				// }
+				this.directoryUI.handleAction(item.data);
 			}
 		};
 	}

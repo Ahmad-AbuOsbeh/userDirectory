@@ -3,6 +3,7 @@ class Widget {
 		this.listView = new ListView('listViewContainer', { enableAddButton: false, Title: '' });
 		this.searchBar = new SearchBar('searchBar', {});
 		this.strings = new buildfire.services.Strings('en-us', stringsConfig);
+		this.drawer = new Drawer('drawer');
 
 		this.directoryUI = null;
 
@@ -10,11 +11,13 @@ class Widget {
 		this.currentPageIndex = 0;
 		this.inProgress = false;
 		this.isInitialized = false;
+
 		this.timer = null;
 		this.settings = {
 			autoEnlistAll: false,
 			autoEnlistTags: [],
-			actionItem: null
+			actionItem: null,
+			badgePushNotifications: false
 		};
 
 		this.init();
@@ -82,9 +85,9 @@ class Widget {
 		};
 
 		this.searchBar.onFavoritesButtonClicked = value => {
-			this.favoritesFilter = value;
-
-			search();
+			// this.favoritesFilter = value;
+			this.directoryUI.directory.filterFavorites = value;
+			this.search();
 		};
 
 		this.searchBar.applyListeners();
@@ -97,10 +100,6 @@ class Widget {
 			const { className } = e.srcElement;
 
 			switch (className) {
-				case 'listViewItemImg': {
-					buildfire.auth.openProfile(item.data.userId);
-					break;
-				}
 				case 'icon icon-star-empty': {
 					this.directoryUI.directory.addFavorite(item.data, (error, status) => {
 						if (!error) {
@@ -115,17 +114,61 @@ class Widget {
 						if (!error) {
 							item.isFavorite = false;
 							item.update();
+
+							if (this.directoryUI.directory.filterFavorites) {
+								this.search();
+							}
 						}
 					});
 					break;
 				}
-				default:
-					break;
-			}
+				default: {
+					// open drawer
+					// const richContent = `
 
-			if (e.srcElement.className == 'icon icon-ellipsis') {
-				this.directoryUI.handleAction(item.data);
+					// `;
+
+					const options = {
+						header: `
+						<div class="media">
+							<div class="media-left">
+								<div onclick="widget.directoryUI.directory.addFavorite('${item.data.userId}')">
+									<img class="media-object" style="min-width: 100px; height: 100px;" src="https://via.placeholder.com/200" alt="..." />
+								</div>
+							</div>
+							<div class="media-body">
+								<h4 class="media-heading">Media heading</h4>
+								Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+							</div>
+						</div>
+						`,
+						tabs: [
+							{
+								tab: `<span class="icon icon-star"></span>`,
+								content: `<ul>
+								<li>1</li>
+								<li>2</li>
+								<li>2</li>
+							</ul>`
+							},
+							{
+								tab: `<span class="icon icon-star"></span>`,
+								content: `<ul>
+								<li>1</li>
+								<li>2</li>
+								<li>2</li>
+							</ul>`
+							}
+						]
+					};
+
+					this.drawer.open(options);
+					break;
+				}
 			}
+			// if (e.srcElement.className == 'icon icon-ellipsis') {
+			// 	this.directoryUI.handleAction(item.data);
+			// }
 		};
 	}
 
@@ -160,6 +203,8 @@ class Widget {
 		});
 	}
 
+	openDrawer(user) {}
+
 	markFavorites(favorites) {
 		this.listView.items.forEach(item => {
 			if (typeof item.isFavorite !== 'undefined') return;
@@ -174,7 +219,7 @@ class Widget {
 			this.listView.container.onscroll = e => {
 				const { scrollTop, clientHeight, scrollHeight } = this.listView.container;
 
-				if (this.inProgress && scrollTop + clientHeight > scrollHeight * 0.8) {
+				if (!this.inProgress && scrollTop + clientHeight > scrollHeight * 0.8) {
 					this.currentPageIndex++;
 					this.search(this.currentPageIndex);
 				}
@@ -193,8 +238,6 @@ class Widget {
 			this.listView.loadListViewItems(results);
 
 			this.markFavorites(this.directoryUI.directory.favorites);
-
-
 
 			this.inProgress = false;
 

@@ -62,7 +62,6 @@ class SearchBar {
 	applyListeners() {
 		this.options.onclick = this.onOptionsButtonClicked;
 		this.add.onclick = this.onAddButtonClicked;
-		this.favorites.onclick = this.onFavoritesButtonClicked;
 		this.input.onkeyup = this.onChange;
 	}
 }

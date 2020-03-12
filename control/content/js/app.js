@@ -7,7 +7,8 @@
 		$scope.data = {
 			autoEnlistAll: false,
 			autoEnlistTags: [],
-			actionItem: null
+			actionItem: null,
+			badgePushNotifications: false
 		};
 
 		$scope.badgeListUI = badgeListUI;

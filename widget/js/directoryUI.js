@@ -114,50 +114,35 @@ class DirectoryUI {
 	}
 
 	_showDialog(type = 'join', callback) {
-		let title = 'User Directory';
-		let message = 'Would you like to join our user directory?';
-		let cancelButtonText = 'No';
-		let confirmButtonText = 'Yes';
+		if (typeof this.strings == 'undefined') return;
 
-		if (typeof this.strings !== 'undefined') {
-			title = this.strings.get(`${type}Dialog.title`);
-			message = this.strings.get(`${type}Dialog.message`);
-			cancelButtonText = this.strings.get(`${type}Dialog.cancelButton`);
-			confirmButtonText = this.strings.get(`${type}Dialog.confirmButton`);
-		}
+		const title = this.strings.get(`${type}Dialog.title`);
+		const subtitle = this.strings.get(`${type}Dialog.message`);
+		const cancelButtonText = this.strings.get(`${type}Dialog.cancelButton`);
+		const confirmButtonText = this.strings.get(`${type}Dialog.confirmButton`);
 
 		const dialogOptions = {
 			title,
-			message,
-			buttons: [
-				{ text: cancelButtonText, key: 'no', type: 'default' },
-				{ text: confirmButtonText, key: 'yes', type: 'success' }
-			]
-		};
-		const handleResponse = (e, data) => {
-			if (e) return console.error(e);
-			callback(data && data.selectedButton && data.selectedButton.key == 'yes');
-			localStorage.setItem('$$userDirectoryPrompt', 'true');
+			subtitle,
+			showDismissButton: true,
+			action: {
+				handler: JSON.stringify(() => {}),
+				title: confirmButtonText
+			},
+			richContent: `
+				<img src="undefined" style="display:none" onerror="document.getElementsByClassName('dismiss-button')[0].innerHTML = '${cancelButtonText}'"></button>
+			`
 		};
 
-		buildfire.notifications.showDialog(dialogOptions, handleResponse);
+		const handleResponse = (error, result) => {
+			if (error) return console.error(error);
+
+			if (result && result.buttonType) {
+				callback(result.buttonType === 'action');
+				localStorage.setItem('$$userDirectoryPrompt', 'true');
+			}
+		};
+
+		buildfire.components.popup.display(dialogOptions, handleResponse);
 	}
-
-	// static prompt(user, callback) {
-	// 	const directory = new Directory(user)
-
-	// 	directory.checkUser((error, userObj) => {
-	// 		if (error) return console.error(error);
-	// 		if (userObj) return directory.updateUser(userObj);
-
-	// 		DirectoryUI._showDialog('join', value => {
-	// 			if (value) {
-	// 				directory.addUser(user, e => {
-	// 					if (e) return console.error(e);
-	// 					onAddUser();
-	// 				});
-	// 			}
-	// 		});
-	// 	});
-	// }
 }

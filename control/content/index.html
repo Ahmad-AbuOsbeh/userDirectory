@@ -24,15 +24,15 @@
 		<script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
 
 		<!-- build:bundleDataJSFiles  -->
-		<script src="../../data/user.js"></script>
-		<script src="../../dataAccess/users.js"></script>
-		<script src="../../dataAccess/badges.js"></script>
+		<script src="../../widget/data/user.js"></script>
+		<script src="../../widget/dataAccess/users.js"></script>
+		<script src="../../widget/dataAccess/badges.js"></script>
 		<!-- endbuild -->
-		
+
 		<!-- build:bundleSharedJSFiles  -->
 		<script src="../../widget/js/shared/settings.class.js"></script>
 		<!-- endbuild -->
-		
+
 		<!-- build:bundleJSFiles  -->
 		<script src="js/app.js"></script>
 		<script src="js/sortableList.js"></script>
@@ -113,7 +113,17 @@
 				</div>
 			</div>
 			<div id="badges"></div>
+
+
+			<div class="row">
+				<h1 class="title">New Badge Dialog</h1>
+
+				<p class="pull-left">Send push notification if a new Badge is earned</p>
+				<div class="button-switch pull-right">
+					<input type="checkbox" ng-model="data.badgePushNotifications" />
+					<label class="label-success"></label>
+				</div>
+			</div>
 		</div>
-	
 	</body>
 </html>

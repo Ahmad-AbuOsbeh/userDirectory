@@ -111,7 +111,7 @@ const jsTasks = [
 	{ name: 'controlSettingsJS', src: 'control/settings/js/*.js', dest: '/control/settings' },
 	{ name: 'controlStringsJS', src: 'control/strings/js/*.js', dest: '/control/strings' },
 	//data, data access, tests and analytics
-	{ name: 'dataJS', src: ['data/*.js', 'dataAccess/*.js'], dest: '/data' },
+	{ name: 'dataJS', src: ['widget/data/*.js', 'widget/dataAccess/*.js'], dest: '/widget/data' },
 	{ name: 'testsJS', src: ['tests/*.js', 'tests/basic/*.js', 'test/screens/*.js'], dest: '/tests' }
 ];
 
@@ -158,7 +158,7 @@ gulp.task('controlHTML', function() {
 				bundleControlBFMinJS: '../../../../scripts/buildfire.min.js',
 				bundleWidgetBFMinJS: '../../../scripts/buildfire.min.js',
 				//data, data access, tests and analytics
-				bundleDataJSFiles: '../../data/scripts-min.js?v=' + version,
+				bundleDataJSFiles: '../../widget/data/scripts-min.js?v=' + version,
 				bundleTestsJSFiles: '../../tests/scripts-min.js?v=' + version
 			})
 		)
@@ -175,13 +175,14 @@ gulp.task('widgetHTML', function() {
 				bundleJSFiles: 'scripts-min.js?v=' + version,
 				bundleCSSFiles: 'styles.min.css?v=' + version,
 				//data, data access and tests
-				bundleDataJSFiles: '../data/scripts-min.js?v=' + version,
+				bundleDataJSFiles: 'data/scripts-min.js?v=' + version,
 				bundleTestsJSFiles: '../tests/scripts-min.js?v=' + version
 			})
 		)
 		.pipe(minHTML({ removeComments: true, collapseWhitespace: true }))
 		.pipe(gulp.dest(destinationFolder));
 });
+
 
 gulp.task('resources', function() {
 	return gulp.src(['resources/*', 'plugin.json'], { base: '.' }).pipe(gulp.dest(destinationFolder));

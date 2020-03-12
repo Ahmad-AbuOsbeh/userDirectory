@@ -37,6 +37,10 @@ class Directory {
 
 	addFavorite(userData, callback) {
 		if (!this.user) return buildfire.auth.login({});
+		if (typeof userData === 'string') {
+			const userId = userData;
+			userData = { userId };
+		}
 
 		this.Favorites.add(userData, (error, result) => {
 			if (error) return callback(error);
@@ -74,8 +78,18 @@ class Directory {
 			return Lookup.search({ searchText, pageIndex, pageSize }, (error, ids) => {
 				userIds = ids;
 
+				if (this.filterFavorites) {
+					userIds = userIds.filter(id => this.favoritesList.indexOf(id) > -1);
+				}
+
 				_search();
 			});
+		}
+
+		if (this.filterFavorites) {
+			userIds = this.favoritesList;
+
+			return _search();
 		}
 
 		_search();
@@ -105,11 +119,32 @@ class Directory {
 
 			Badges.computeUserBadges(user, (err, badges) => {
 				if (err) return console.error(err);
-				// let hasUpdate = false;
+				let hasUpdate = false;
+				let newBadges = null;
+				const newBadgeIds = badges.map(badge => badge.id).sort();
+				const userBadgeIds = this.user.badges.map(badge => badge.id).sort();
+
+				if (this.user.badges.length < badges.length) {
+					newBadges = badges.filter(badge => userBadgeIds.indexOf(badge.id) < -1);
+
+					this.user.badges = badges;
+
+					hasUpdate = true;
+				} else if (this.user.badges.length > badges.length) {
+					this.user.badges = badges;
+
+					hasUpdate = true;
+				} else {
+					userBadgeIds.forEach((badgeId, index) => {});
+				}
+
+				// debugger
+
+				// const newBadges = badges.filter(badge => )
 
 				// if (this.user.badges.length !== badges.length) {
-					// hasUpdate = true;
-					this.user.badges = badges;
+				// hasUpdate = true;
+				// this.user.badges = badges;
 				// }
 
 				const updateQueue = ['displayName', 'email', 'firstName', 'lastName'];
@@ -117,11 +152,11 @@ class Directory {
 				updateQueue.forEach(key => {
 					if (this.user[key] !== user[key]) {
 						this.user[key] = user[key];
-						// hasUpdate = true;
+						hasUpdate = true;
 					}
 				});
 
-				// if (!hasUpdate) return;
+				if (!hasUpdate) return;
 
 				Users.update(this.user.toJson(), console.error);
 				Lookup.update(this.user.toJson(), console.error);
@@ -138,5 +173,13 @@ class Directory {
 	_clear() {
 		Lookup._clear();
 		Users._clear();
+	}
+
+	_insertDummyData() {
+		const users = dummyData.getRandomNames(users => {
+			users.forEach(user => {
+				Users.add(new DirectoryUser(user).toJson(), console.error);
+			});
+		});
 	}
 }

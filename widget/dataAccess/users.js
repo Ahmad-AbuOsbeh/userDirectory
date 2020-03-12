@@ -8,11 +8,11 @@ class Users {
 	 * @param {Function} callback callback for handling response
 	 */
 	static search(options, callback) {
-		const { userIds, page, pageSize } = options;
+		const { userIds, pageIndex, pageSize } = options;
 
 		var searchOptions = {
 			sort: { firstName: 1, lastName: 1 },
-			page,
+			page: pageIndex,
 			pageSize
 		};
 
@@ -90,7 +90,6 @@ class Users {
 	 * @param {Function} callback callback for handling response
 	 */
 	static delete(userId, callback) {
-		debugger
 		this.getByUserId(userId, (error, obj) => {
 			buildfire.appData.delete(obj.id, this.tag, callback);
 		});

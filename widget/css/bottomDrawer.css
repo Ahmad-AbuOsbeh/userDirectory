@@ -1,0 +1,43 @@
+html{
+  font-size: 16px !important;
+}
+
+.bottom-drawer{
+  box-shadow: 0 0.125rem 0.5rem rgba(50,50,50,.2);
+  border-radius: .5rem .5rem 0 0;
+  /* height: 100%; */
+  padding: 1rem;
+  background-color: #fff;
+  position: fixed;
+  bottom: 0;
+  max-height: calc(100vh - 4rem - env(safe-area-inset-top));
+  overflow: auto;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  animation: drawer-slide-up .3s ease-in-out forwards;
+}
+.bottom-drawer-backdrop{
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(50,50,50,.2);
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  animation: bottom-drawer-fade-in .3s ease-in-out forwards;
+}
+@keyframes bottom-drawer-fade-in{
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+@keyframes drawer-slide-up{
+  0%{
+    transform: translateY(100%);
+  }
+  100%{
+    transform: translateY(0);
+  }
+}

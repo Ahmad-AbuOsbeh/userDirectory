@@ -30,7 +30,7 @@ const badgeListUI = {
 		this.badgeList.onDeleteItem = (item, index, callback) => {
 			buildfire.notifications.confirm(
 				{
-					message: 'Are you sure you want to delete ' + item.title + '?',
+					message: 'Are you sure you want to delete ' + item.name + '?',
 					confirmButton: { text: 'Delete', key: 'y', type: 'danger' },
 					cancelButton: { text: 'Cancel', key: 'n', type: 'default' }
 				},

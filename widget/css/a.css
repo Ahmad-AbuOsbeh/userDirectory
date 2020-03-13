@@ -349,6 +349,12 @@ input[type="password"] {
   outline: 0;
 }
 
-.search-bar__icon {
-
+.user-container {
+  display: flex;
 }
+
+.user-container .avatar img {
+  border-radius: 50%;
+}
+
+

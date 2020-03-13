@@ -1,9 +1,9 @@
 class Widget {
 	constructor() {
-		this.listView = new ListView('listViewContainer', { enableAddButton: false, Title: '' });
+		this.listView = new buildfire.components.listView('listViewContainer', { enableAddButton: false, Title: '' });
 		this.searchBar = new SearchBar('searchBar', {});
 		this.strings = new buildfire.services.Strings('en-us', stringsConfig);
-		this.drawer = new Drawer('drawer');
+		this.drawer = new buildfire.components.drawer('drawer');
 
 		this.directoryUI = null;
 
@@ -97,79 +97,89 @@ class Widget {
 		this.listView.onItemClicked = (item, e) => {
 			if (!item.data.userId) return;
 
-			const { className } = e.srcElement;
-
-			switch (className) {
-				case 'icon icon-star-empty': {
-					this.directoryUI.directory.addFavorite(item.data, (error, status) => {
-						if (!error) {
-							item.isFavorite = true;
-							item.update();
-						}
-					});
-					break;
-				}
-				case 'icon icon-star': {
-					this.directoryUI.directory.removeFavorite(item.data, (error, status) => {
-						if (!error) {
-							item.isFavorite = false;
-							item.update();
-
-							if (this.directoryUI.directory.filterFavorites) {
-								this.search();
-							}
-						}
-					});
-					break;
-				}
-				default: {
-					// open drawer
-					// const richContent = `
-
-					// `;
-
-					const options = {
-						header: `
-						<div class="media">
-							<div class="media-left">
-								<div onclick="widget.directoryUI.directory.addFavorite('${item.data.userId}')">
-									<img class="media-object" style="min-width: 100px; height: 100px;" src="https://via.placeholder.com/200" alt="..." />
-								</div>
-							</div>
-							<div class="media-body">
-								<h4 class="media-heading">Media heading</h4>
-								Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-							</div>
-						</div>
-						`,
-						tabs: [
-							{
-								tab: `<span class="icon icon-star"></span>`,
-								content: `<ul>
-								<li>1</li>
-								<li>2</li>
-								<li>2</li>
-							</ul>`
-							},
-							{
-								tab: `<span class="icon icon-star"></span>`,
-								content: `<ul>
-								<li>1</li>
-								<li>2</li>
-								<li>2</li>
-							</ul>`
-							}
-						]
-					};
-
-					this.drawer.open(options);
-					break;
-				}
-			}
-			// if (e.srcElement.className == 'icon icon-ellipsis') {
-			// 	this.directoryUI.handleAction(item.data);
-			// }
+			this.renderUserModal(item.data);
 		};
+
+		this.listView.onItemActionClicked = (item, e) => {
+			if (!item.data.userId) return;
+			if (item.isFavorite) {
+				return this.directoryUI.directory.removeFavorite(item.data, (error, result) => {
+					if (!error) {
+						item.isFavorite = false;
+						item.action.icon = 'icon icon-star-empty';
+						item.update();
+					}
+				});
+			}
+			if (!item.isFavorite) {
+				return this.directoryUI.directory.addFavorite(item.data, (error, result) => {
+					if (!error) {
+						item.isFavorite = true;
+						item.action.icon = 'icon icon-star';
+						item.update();
+					}
+				});
+			}
+		};
+	}
+
+	renderUserModal(user) {
+		const { displayName, email } = user;
+		const options = {
+			header: `
+				<div class="user-container">
+					<div class="avatar">
+						<img src="https://via.placeholder.com/100" />
+					</div>
+
+					<div class="user-info-holder">
+						<h2 class="user-title">${displayName}</h2>
+						<h4 class="user-subtitle">${email}</h4>
+					</div>
+				</div>
+			`,
+			tabs: [
+				{
+					header: `<span class="icon icon-star"></span>`,
+					content: [
+						{
+							id: 'action',
+							icon: 'icon icon-star',
+							text: 'Message User',
+							callback: () => this.directoryUI.handleAction(user)
+						},
+						{
+							id: 'favorites',
+							icon: 'icon icon-star-empty',
+							text: 'Add To Favorites',
+							callback: e => {
+								this.directoryUI.directory.addFavorite(user, (error, result) => {
+									if (!error) {
+										e.target.querySelectorAll('.icon')[0].classList.replace('icon-star-empty', 'icon-star');
+									}
+								});
+							}
+						},
+						{
+							id: 'report',
+							icon: 'icon icon-star-empty',
+							text: 'Report User',
+							callback: () => console.error('!!TODO: report user')
+						}
+					]
+				},
+				{
+					header: `<span class="icon icon-star"></span>`,
+					content: `
+						<div class="well-lg">
+							<h1>tab 2</h1>
+						</div>
+					`
+				}
+			]
+		};
+
+		this.drawer.open(options);
 	}
 
 	getUser() {
@@ -202,6 +212,8 @@ class Widget {
 				.catch(() => resolve(null));
 		});
 	}
+
+	getFavorites() {}
 
 	openDrawer(user) {}
 

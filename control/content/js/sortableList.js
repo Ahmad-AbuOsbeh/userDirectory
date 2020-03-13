@@ -75,6 +75,8 @@
 		deleteButton.className = 'btn btn--icon icon icon-cross2';
 		title.innerHTML = item.name;
 
+		edit.className = 'icon icon-star';
+
 		tag.innerHTML = item.tag;
 		tagCount.innerHTML = item.tagCount;
 

@@ -13,6 +13,12 @@ class DirectoryUI {
 			callback(null, this.handleResults(results));
 		});
 	}
+	
+
+	toggleFavorite(user, callback) {
+		if (!this.user) return buildfire.auth.login({});
+
+	}
 
 	handleResults(data) {
 		let results = [];
@@ -23,19 +29,32 @@ class DirectoryUI {
 			// return;
 
 			const { data } = row;
-			const { email, userId, badges } = data;
+			const { displayName, email, userId, badges, isFavorite, action } = data;
 
 			let imageUrl = buildfire.auth.getUserPictureUrl({ email });
 			imageUrl = buildfire.imageLib.cropImage(imageUrl, { width: 64, height: 64 });
 
+			let badgesHTML = '';
+			
+			badges.forEach(badge => {
+				badgesHTML += `
+					<div class="badge">
+						<img src="${buildfire.imageLib.cropImage(badge.imageUrl, { size: 'xxs', aspect: '1:1' })}" />
+					</div>
+				`;
+			});
+
 			results.push({
 				id: row.id,
-				title: data.displayName,
-				description: email,
+				title: displayName,
+				subtitle: email,
+				description: badgesHTML,
 				imageUrl,
 				data,
 				userId,
-				badges
+				badges,
+				isFavorite,
+				action
 			});
 		});
 

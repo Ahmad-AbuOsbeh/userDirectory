@@ -31,10 +31,6 @@ class Directory {
 		}
 	}
 
-	get favorites() {
-		return this.favoritesList;
-	}
-
 	addFavorite(userData, callback) {
 		if (!this.user) return buildfire.auth.login({});
 		if (typeof userData === 'string') {
@@ -67,11 +63,65 @@ class Directory {
 		});
 	}
 
+	getFavorites(callback) {
+		if (!this.user) {
+			callback(null, []);
+		}
+		if (this.favoritesList && this.favoritesList.length) {
+			callback(null, this.favoritesList);
+		}
+		if (this.user && !this.isService && typeof Favorites !== 'undefined') {
+			this.Favorites = new Favorites(this.user);
+			this.Favorites.get((error, favorites) => {
+				if (error) return callback(error, null);
+
+				this.favoritesList = favorites;
+				callback(null, this.favoritesList);
+			});
+		}
+	}
+
 	search(searchText, pageIndex, pageSize, callback) {
 		let userIds = null;
 
 		const _search = () => {
-			Users.search({ userIds, pageIndex, pageSize }, callback);
+			this.getFavorites(() => {
+				Users.search({ userIds, pageIndex, pageSize }, (error, results) => {
+					if (error) return callback(error, null);
+
+					results = results.map(result => {
+						if (this.user) {
+							result.data.isFavorite = this.favoritesList.indexOf(result.data.userId) > -1;
+						}
+						result.data.action = {
+							icon: result.data.isFavorite ? 'icon icon-star' : 'icon icon-star-empty',
+							// handler: item => {
+								// if (item.isFavorite) {
+								// 	return this.removeFavorite(item.data, (error, result) => {
+								// 		if (!error) {
+								// 			item.isFavorite = false;
+								// 			item.action.icon = 'icon icon-star-empty';
+								// 			item.update();
+								// 		}
+								// 	});
+								// }
+								// if (!item.isFavorite) {
+								// 	return this.addFavorite(item.data, (error, result) => {
+								// 		if (!error) {
+								// 			item.isFavorite = true;
+								// 			item.action.icon = 'icon icon-star';
+								// 			item.update();
+								// 		}
+								// 	});
+								// }
+							// }
+						};
+						return result;
+					});
+
+					callback(null, results);
+				});
+			});
 		};
 
 		if (searchText) {

@@ -21,6 +21,9 @@ menu,nav,section {
 body {
   line-height: 1;
 }
+body::-webkit-scrollbar{
+  display: none;
+}
 ol,ul {
   list-style: none;
 }
@@ -125,8 +128,12 @@ h1,h2,h3,h4,h5,h6 {
     padding: 1rem;
     overflow-y: auto;
     max-height: 100vh;
-    padding-bottom: 6rem;
+    padding-top: 4.5rem;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
     
+}
+.listViewContainer::-webkit-scrollbar{
+  display: none;
 }
 .listViewItem{
     display: flex;

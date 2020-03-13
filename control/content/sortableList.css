@@ -22,7 +22,7 @@
     box-shadow: 0 .25rem .25rem -.25rem rgba(0, 0, 0, .2);
 }
 .draggable-list-view .d-item span.icon{
-    top: 0;
+    top: 0 !important;
     margin-right: 0;
 }
 .draggable-list-view .d-item .media-holder{

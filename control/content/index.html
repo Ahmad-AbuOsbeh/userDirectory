@@ -41,19 +41,19 @@
 	</head>
 	<body ng-app="directoryContent">
 		<div class="container-fluid" ng-controller="directoryContentCtrl">
-			<div class="row">
+			<div class="row margin-bottom-ten">
 				<p class="pull-left">Auto enlist all users</p>
 				<div class="button-switch pull-right">
-					<input type="checkbox" ng-model="data.autoEnlistAll" />
-					<label class="label-success"></label>
+					<input id="enlistUsers" type="checkbox" ng-model="data.autoEnlistAll" />
+					<label for="enlistUsers"></label>
 				</div>
 			</div>
 
-			<div class="row">
-				<p class="alert alert-info">BuildFire is not liable for any compliance issues</p>
+			<div class="row margin-bottom-thirty">
+				<p class="info">BuildFire is not liable for any compliance issues</p>
 			</div>
 
-			<div class="row">
+			<div class="row margin-bottom-thirty">
 				<p class="pull-left">Auto enlist all users with the following tags</p>
 
 				<div class="tags">
@@ -119,8 +119,8 @@
 
 				<p class="pull-left">Send push notification if a new Badge is earned</p>
 				<div class="button-switch pull-right">
-					<input type="checkbox" ng-model="data.badgePushNotifications" />
-					<label class="label-success"></label>
+					<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
+					<label for="pushNotifications" ></label>
 				</div>
 			</div>
 		</div>

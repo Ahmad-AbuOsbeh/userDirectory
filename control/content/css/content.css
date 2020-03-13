@@ -88,3 +88,64 @@
 	font-weight: 500;
 	top: -1px;
 }
+
+.button-switch{
+	position: relative;
+	width: 44px;
+	height: 24px;
+}
+.button-switch input{
+	position: absolute;
+	opacity: 0;
+}
+.button-switch input + label{
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+}
+.button-switch input + label::before{
+	content: '';
+	display: block;
+	width: 100%;
+	height: 100%;
+	background-color: #909090;
+	opacity: .3;
+	pointer-events: none;
+	transition: background-color .2s ease-in-out;
+	border-radius: 16px;
+}
+.button-switch input:checked + label::before{
+	background-color: #14cb5d;
+}
+.button-switch input + label::after{
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	width: 24px;
+	height: 24px;
+	background-color: #fff;
+	pointer-events: none;
+	transition: background-color .2s ease-in-out, left .2s ease-in-out;
+	border-radius: 50%;
+	box-shadow: 0 4px 8px rgba(50, 50, 50, .5);
+}
+.button-switch input:checked + label::after{
+	background-color: #14cb5d;
+	left: calc(100% - 24px);
+}
+p.info{
+	background-color: #f9f9f9;
+	line-height: 1.33;
+	text-align: left;
+	border-radius: 4px;
+	color: #9e9e9e;
+	padding: 8px 15px;
+	float: left;
+	width: 100%;
+	margin-bottom: 0;
+}
+p.info::before{
+	display: none !important;
+}

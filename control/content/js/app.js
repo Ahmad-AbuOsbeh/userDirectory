@@ -24,7 +24,7 @@
 		};
 
 		$scope.pickImage = () => {
-			buildfire.imageLib.showDialog({}, (error, result) => {
+			buildfire.imageLib.showDialog({showIcons: false, multiSelection: false}, (error, result) => {
 				if (result && result.selectedFiles && result.selectedFiles.length) {
 					$scope.badge.imageUrl = result.selectedFiles[0];
 

@@ -112,6 +112,7 @@ a {
 }
 .caption {
   font-size: 0.75rem;
+  opacity: .75;
 }
 /*Icons*/
 .icon,
@@ -436,4 +437,14 @@ input[type="password"] {
   .badges-grid{
     grid-template-columns: repeat(4, 1fr);
   }
+.fake-modal{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% - .5rem);
+  padding: 1rem;
+  background-color: #fff;
+  margin: .25rem;
+  border-radius: .5rem;
+  box-shadow: 0 .25rem 1rem rgba(128, 128, 128, .5);
 }

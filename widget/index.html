@@ -47,6 +47,146 @@
 		<header id="searchBar" class="backgroundColorTheme"></header>
 		<div id="listViewContainer"></div>
 		<div id="drawer"></div>
+		<!-- fake-modal is just a placeholder, remove this element before copying inside core modal -->
+		<!-- <div class="fake-modal">
+
+			<style> 
+				.center-content{
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						padding: 1rem 0;
+					}
+					.center-content.active-user .badge-user,
+					.center-content.active-user .badge-user img{
+						width: 5rem;
+						height: 5rem;
+					}
+					.center-content.active-user .badge-user{
+						margin: 1rem;
+					}
+					.badge-user{
+						width: 3rem;
+						height: 3rem;
+						border-radius: .5rem;
+						overflow: hidden;
+					}
+					.center-content .badge-user{
+						margin: .5rem;
+					}
+					.badge-user img{
+						width: 3rem;
+						height: 3rem;
+						border-radius: .5rem;
+						overflow: hidden;
+						object-fit: cover;
+					}
+					.center-content .avatar{
+						margin: .5rem;
+					}
+					.center-content .avatar,
+					.center-content .avatar img{
+						width: 4.5rem;
+						height: 4.5rem;
+						overflow: hidden;
+						border-radius: 50%;
+						margin-bottom: .75rem;
+					}
+					.center-content .avatar img{
+						object-fit: cover;
+					}
+			</style>
+			<div class="center-content">
+				<div class="avatar">
+					<img src="https://randomuser.me/api/portraits/men/29.jpg" alt="">
+				</div>
+				<p>User Name</p>
+				<h4 class="title text-center">Received a New Badge!</h4>
+				<div class="badge-user">
+					<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
+				</div>
+				<p class="caption">Badge Name</p>
+			</div>
+
+			<div class="center-content active-user">
+				<h4 class="title text-center">New Badge Received!</h4>
+				<div class="badge-user">
+					<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
+				</div>
+				<p>Badge Name</p>
+			</div>
+
+			<style>
+				.input-list [type="radio"] {
+						position: absolute;
+						opacity: 0;
+						left: 1rem;
+						top: 50%;
+						transform: translateY(-50%);
+				}
+				.input-list [type="radio"] + label{
+						word-break: break-word;
+						position: relative;
+						padding: 1rem;
+						padding-left: 3.5rem;
+						cursor: pointer;
+						display: block;
+						font-size: 14px;
+						transition: background-color .3s ease-in-out;
+				}
+				.input-list [type="radio"] + label:hover{
+					background-color: rgba(150,150,150,.05);
+				}
+				.input-list .selector{
+					position: absolute;
+					width: .625rem;
+					height: .625rem;
+					display: block;
+					border-radius: 50%;
+					left: 1.25rem;
+					top: 50%;
+					transform: translateY(-50%);
+					transition: background-color .2s ease-in-out;
+				}
+				.input-list .selector::before{
+					content: '';
+					position: absolute;
+					width: 1.25rem;
+					height: 1.25rem;
+					display: block;
+					border-radius: 50%;
+					border: 2px solid rgba(128, 128, 128, .5);
+					left: -.325rem;
+					top: 50%;
+					transform: translateY(-50%);
+				}
+				.input-list [type="radio"]:not(:checked) + label .selector{
+					background-color: transparent !important;
+					transform: translateY(-50%);
+				}
+			</style>
+			<form class="input-list">
+				<div class="input-list-item">
+					<input type="radio" id="test1" name="radio-group" checked>
+    			<label for="test1"><span class="selector primaryBackgroundTheme"></span>Inappropriate Profile Pictures</label>
+				</div>
+				<div class="input-list-item">
+					<input type="radio" id="test2" name="radio-group">
+    			<label for="test2"><span class="selector primaryBackgroundTheme"></span>Harrassment</label>
+				</div>
+				<div class="input-list-item">
+					<input type="radio" id="test3" name="radio-group">
+    			<label for="test3"><span class="selector primaryBackgroundTheme"></span>Spamming</label>
+				</div>
+				<div class="input-list-item">
+					<input type="radio" id="test4" name="radio-group">
+    			<label for="test4"><span class="selector primaryBackgroundTheme"></span>Fraud</label>
+				</div>
+			</form>
+
+
+		</div> -->
+		
 
 		<script>
 			const widget = new Widget();

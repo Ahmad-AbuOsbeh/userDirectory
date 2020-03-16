@@ -128,13 +128,16 @@ class Widget {
 		const { displayName, email } = user;
 		const options = {
 			header: `
-			<div class="avatar">
-        <img src="https://czi3m2qn.cloudimg.io/crop/128x128/n/https://randomuser.me/api/portraits/men/97.jpg">
-      </div>
-			<div class="copy">
-				<h4 class="whiteTheme ellipsis">Name</h4>
-				<p class="whiteTheme ellipsis">Title</p>
-			</div>
+				<div class="user-container">
+					<div class="avatar">
+						<img src="https://via.placeholder.com/100" />
+					</div>
+
+					<div class="user-info-holder ellipsis">
+						<h4 class="user-title whiteTheme">${displayName}</h4>
+						<p class="user-subtitle whiteTheme">${email}</p>
+					</div>
+				</div>
 			`,
 			// <div class="avatar">
       //     <img src="https://czi3m2qn.cloudimg.io/crop/128x128/n/https://randomuser.me/api/portraits/men/97.jpg">

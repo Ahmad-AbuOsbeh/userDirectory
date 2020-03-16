@@ -88,7 +88,7 @@ class Directory {
 							result.data.isFavorite = this.favoritesList.indexOf(result.data.userId) > -1;
 						}
 						result.data.action = {
-							icon: result.data.isFavorite ? 'icon icon-star' : 'icon icon-star-empty',
+							icon: result.data.isFavorite ? 'icon icon-star btn-primary' : 'icon icon-star-empty',
 							// handler: item => {
 								// if (item.isFavorite) {
 								// 	return this.removeFavorite(item.data, (error, result) => {

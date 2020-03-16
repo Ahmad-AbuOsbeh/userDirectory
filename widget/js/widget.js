@@ -132,9 +132,9 @@ class Widget {
 						<img src="https://via.placeholder.com/100" />
 					</div>
 
-					<div class="user-info-holder">
-						<h2 class="user-title">${displayName}</h2>
-						<h4 class="user-subtitle">${email}</h4>
+					<div class="user-info-holder ellipsis">
+						<h4 class="user-title whiteTheme">${displayName}</h4>
+						<p class="user-subtitle whiteTheme">${email}</p>
 					</div>
 				</div>
 			`,

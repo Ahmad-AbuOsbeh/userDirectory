@@ -66,3 +66,47 @@ html {
 .drawer-tab-container .list-item * {
   pointer-events: none;
 }
+
+/* Action List */
+.action-list{
+  list-style: none;
+  margin: 0;
+  padding: .75rem 0;
+}
+.action-list .item-icon{
+  display: block;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.action-list li{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color ease-in-out .3s;
+}
+.action-list li:hover, .action-list li:active {
+  background-color: rgba(150,150,150,.05);
+}
+.action-list li.divider-top{
+  border-top: 1px solid rgba(50,50,50,.1);
+}
+/* Buttons */
+.btn-icon, button.btn-icon, .btn.btn-icon {
+  cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: .25rem;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.125rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  box-shadow: 0;
+  transition: transform ease-in-out .2s, opacity ease-in-out .1s, background-color ease-in-out .2s;
+}

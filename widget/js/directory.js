@@ -15,12 +15,6 @@ class Directory {
 
 		if (!this.user) return;
 
-		if (this.isService && typeof Badges !== 'undefined') {
-			// buildfire.auth.getCurrentUser((e, user) => {
-			// 	this.badges.computeUserBadges(user, console.error);
-			// });
-		}
-
 		if (!this.isService && typeof Favorites !== 'undefined') {
 			this.Favorites = new Favorites(this.user);
 			this.Favorites.get((error, favorites) => {
@@ -185,7 +179,9 @@ class Directory {
 
 					hasUpdate = true;
 				} else {
-					userBadgeIds.forEach((badgeId, index) => {});
+					userBadgeIds.forEach((badgeId, index) => {
+						
+					});
 				}
 
 				// debugger

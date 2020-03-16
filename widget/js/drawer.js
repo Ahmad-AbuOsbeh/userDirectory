@@ -30,7 +30,7 @@ buildfire.components.drawer = class Drawer {
 
 		////////////////////////// header //////////////////////////
 		this.header = document.createElement('div');
-		this.header.classList = 'drawer-header';
+		this.header.classList = 'bottom-drawer-header';
 		this.drawer.appendChild(this.header);
 
 		/////////////////////// tab container //////////////////////

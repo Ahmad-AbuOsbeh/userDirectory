@@ -85,15 +85,6 @@
 			})
 			.catch(console.error);
 
-		// Badges.get((error, badges) => {
-
-		// 	if (error) return console.error(error);
-
-		// 	$scope.badges = badges;
-		// 	badgeList.
-		// 	if (!$scope.$$phase) $scope.$apply();
-		// });
-
 		$scope.save = obj => {
 			const { data } = $scope;
 

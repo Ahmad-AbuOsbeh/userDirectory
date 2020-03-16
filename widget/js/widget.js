@@ -102,6 +102,7 @@ class Widget {
 
 		this.listView.onItemActionClicked = (item, e) => {
 			if (!item.data.userId) return;
+			debugger
 			if (item.isFavorite) {
 				return this.directoryUI.directory.removeFavorite(item.data, (error, result) => {
 					if (!error) {
@@ -127,17 +128,22 @@ class Widget {
 		const { displayName, email } = user;
 		const options = {
 			header: `
-				<div class="user-container">
-					<div class="avatar">
-						<img src="https://via.placeholder.com/100" />
-					</div>
-
-					<div class="user-info-holder">
-						<h2 class="user-title">${displayName}</h2>
-						<h4 class="user-subtitle">${email}</h4>
-					</div>
-				</div>
+			<div class="avatar">
+        <img src="https://czi3m2qn.cloudimg.io/crop/128x128/n/https://randomuser.me/api/portraits/men/97.jpg">
+      </div>
+			<div class="copy">
+				<h4 class="whiteTheme ellipsis">Name</h4>
+				<p class="whiteTheme ellipsis">Title</p>
+			</div>
 			`,
+			// <div class="avatar">
+      //     <img src="https://czi3m2qn.cloudimg.io/crop/128x128/n/https://randomuser.me/api/portraits/men/97.jpg">
+      //   </div>
+      //   <div class="copy">
+      //     <h4 class="whiteTheme ellipsis">Name</h4>
+      //     <p class="whiteTheme ellipsis">Title</p>
+      //   </div>
+      // </div>
 			tabs: [
 				{
 					header: `<span class="icon icon-star"></span>`,
@@ -171,9 +177,56 @@ class Widget {
 				{
 					header: `<span class="icon icon-star"></span>`,
 					content: `
-						<div class="well-lg">
-							<h1>tab 2</h1>
+					<div class="badges-grid">
+						<div class="grid-item">
+							<div class="user-badge">
+								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
+								<span class="badge-count successBackgroundTheme">999</span>
+							</div>
+							<h5>Badge Name</h5>
+							<p class="caption">15 Feb 2020</p>
 						</div>
+						<div class="grid-item">
+							<div class="user-badge">
+								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
+								<span class="badge-count successBackgroundTheme">999</span>
+							</div>
+							<h5>Badge Name</h5>
+							<p class="caption">15 Feb 2020</p>
+						</div>
+						<div class="grid-item">
+							<div class="user-badge">
+								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
+								<span class="badge-count successBackgroundTheme">999</span>
+							</div>
+							<h5>Badge Name</h5>
+							<p class="caption">15 Feb 2020</p>
+						</div>
+						<div class="grid-item">
+							<div class="user-badge">
+								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
+								<span class="badge-count successBackgroundTheme">999</span>
+							</div>
+							<h5>Badge Name</h5>
+							<p class="caption">15 Feb 2020</p>
+						</div>
+						<div class="grid-item">
+							<div class="user-badge">
+								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
+								<span class="badge-count successBackgroundTheme">999</span>
+							</div>
+							<h5>Badge Name</h5>
+							<p class="caption">15 Feb 2020</p>
+						</div>
+						<div class="grid-item">
+							<div class="user-badge">
+								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
+								<span class="badge-count successBackgroundTheme">999</span>
+							</div>
+							<h5>Badge Name</h5>
+							<p class="caption">15 Feb 2020</p>
+						</div>
+					</div>
 					`
 				}
 			]

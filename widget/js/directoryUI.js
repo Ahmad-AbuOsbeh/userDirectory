@@ -13,12 +13,6 @@ class DirectoryUI {
 			callback(null, this.handleResults(results));
 		});
 	}
-	
-
-	toggleFavorite(user, callback) {
-		if (!this.user) return buildfire.auth.login({});
-
-	}
 
 	handleResults(data) {
 		let results = [];

@@ -5,7 +5,7 @@ buildfire.components.listView = class ListView {
 	constructor(containerId, options) {
 		this.container = document.getElementById(containerId);
 		if (!this.container) throw 'Cant find container';
-		this.container.classList.add('listViewContainer');
+		this.container.classList.add('listViewContainer', 'full-width');
 		this.options = options || {};
 		this.container.innerHTML = '';
 		this.items = [];

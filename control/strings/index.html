@@ -4,7 +4,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<script src="../../../../scripts/buildfire.min.js"></script>
-
+		<link href="../../../../styles/helper.css" rel="stylesheet" />
+		<link href="../../../../styles/siteIcons.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../assets/base.css">
 		<style>
 			.subTitle {
 				margin-bottom: 25px;
@@ -51,6 +53,86 @@
 		</div>
 		<a id="saveButton" class="btn btn-success pull-right hidden" onclick="save()">Save</a>
 		<a id="deleteButton" class="text-danger pull-right hidden" onclick="deleteLanguage(strings.id)">Delete</a>
+
+		<div class="test">
+			<h1 class="section__title">Join Dialog</h1>
+			<p class="info margin-bottom-thirty">Only users  that confirm this prompt will be added to the user directory</p>
+			<div class="input-row">
+				<label class="label-container">Title</label>
+				<input class="input-container" type="text" value="User Directory">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Message</label>
+				<input class="input-container" type="text" value="Do you wish to be added to the User Directory?">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Cancel Button</label>
+				<div class="input-container">
+					<input class="input-container" type="text" value="No">
+					<label class="margin-right-fifteen margin-left-fifteen">Confirm Button</label>
+					<input class="input-container" type="text" value="Join">
+				</div>
+			</div>
+
+			<h1 class="section__title">Leave Dialog</h1>
+			<div class="input-row">
+				<label class="label-container">Title</label>
+				<input class="input-container" type="text" value="User Directory">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Message</label>
+				<input class="input-container" type="text" value="Do you wish to leave the User Directory?">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Cancel Button</label>
+				<div class="input-container">
+					<input class="input-container" type="text" value="Cancel">
+					<label class="margin-right-fifteen margin-left-fifteen">Confirm Button</label>
+					<input class="input-container" type="text" value="Leave">
+				</div>
+			</div>
+
+			<h1 class="section__title">Information Messages</h1>
+			<div class="input-row">
+				<label class="label-container">Added to Favorites</label>
+				<input class="input-container" type="text" value="Added to Favorites">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Removed from Favorites</label>
+				<input class="input-container" type="text" value="Removed from Favorites">
+			</div>
+			
+			<h1 class="section__title">Other</h1>
+			<div class="input-row">
+				<label class="label-container">Message User</label>
+				<input class="input-container" type="text" value="Message User">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Add to Favorites</label>
+				<input class="input-container" type="text" value="Add to Favorites">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Remove from Favorites</label>
+				<input class="input-container" type="text" value="Remove from Favorites">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Report User</label>
+				<input class="input-container" type="text" value="Report User">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Leave User Directory</label>
+				<input class="input-container" type="text" value="Leave User Directory">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Search</label>
+				<input class="input-container" type="text" value="Search">
+			</div>
+			<div class="input-row">
+				<label class="label-container">Favorites</label>
+				<input class="input-container" type="text" value="Favorites">
+			</div>
+
+		</div>
 
 		<script>
 			let strings;

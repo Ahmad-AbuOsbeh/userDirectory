@@ -40,23 +40,23 @@
 		<!-- endbuild -->
 	</head>
 	<body ng-app="directoryContent">
-		<div class="container-fluid" ng-controller="directoryContentCtrl">
-			<div class="row margin-bottom-ten">
-				<p class="pull-left">Auto enlist all users</p>
-				<div class="button-switch pull-right">
+		<div ng-controller="directoryContentCtrl">
+			<div class="input-row">
+				<p class="label-container">Auto enlist all users</p>
+				<div class="button-switch margin-left-auto">
 					<input id="enlistUsers" type="checkbox" ng-model="data.autoEnlistAll" />
 					<label for="enlistUsers"></label>
 				</div>
 			</div>
 
-			<div class="row margin-bottom-thirty">
+			<div class="margin-bottom-thirty">
 				<p class="info">BuildFire is not liable for any compliance issues</p>
 			</div>
 
-			<div class="row margin-bottom-thirty">
-				<p class="pull-left">Auto enlist all users with the following tags</p>
+			<div class="input-row">
+				<p class="label-container margin-zero">Auto enlist all users with the following tags</p>
 
-				<div class="tags">
+				<div class="tags input-container">
 					<ul class="tag-list">
 						<li class="tag-item" ng-repeat="tag in data.autoEnlistTags">
 							<span>{{ tag }}</span>
@@ -70,57 +70,59 @@
 				</div>
 			</div>
 
-			<div class="row">
-				<p class="pull-left">Action Item</p>
+			<div class="input-row">
+				<p class="label-container">Action Item</p>
 
-				<button class="btn btn-default" ng-click="editAction()">Edit Action</button>
-				<button class="btn btn-danger" ng-click="editAction(true)" ng-disabled="!data.actionItem">Reset</button>
-
-				<div ng-if="data.actionItem">
-					<div>Title: {{ data.actionItem.title }}</div>
-					<div>Type: {{ data.actionItem.action }}</div>
-				</div>
-
-				<div ng-if="!data.actionItem">
-					<div>Title: Message User</div>
-					<div>Type: messageUser</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<h1 class="title">Badges</h1>
-			</div>
-
-			<div class="row">
-				<div class="col-xs-2">
-					<div class="new-badge-image" ng-click="pickImage()">
-						<img ng-if="badge.imageUrl" ng-src="{{ badge.imageUrl | cropImg }}" />
-						<span ng-if="!badge.imageUrl" class="icon icon-plus"></span>
+				<div class="input-container">
+					<div  class="flex-auto" ng-if="!data.actionItem">
+						<p class="margin-right-twenty">Title: Message User</p>
+						<p class="margin-right-twenty">Type: messageUser</p>
+					</div>
+					<div  class="flex-auto" ng-if="data.actionItem">
+						<p class="margin-right-twenty">Title: {{ data.actionItem.title }}</p>
+						<p class="margin-right-twenty">Type: {{ data.actionItem.action }}</p>
+					</div>
+					<div class="actions-container margin-left-auto">
+						<button class="btn btn-primary" ng-click="editAction()">Edit Action</button>
+						<button class="btn btn-danger" ng-click="editAction(true)" ng-disabled="!data.actionItem">Reset</button>
 					</div>
 				</div>
+			</div>
 
-				<div class="col-xs-3">
-					<input type="text" ng-model="badge.name" />
-				</div>
-				<div class="col-xs-3">
-					<input type="text" ng-model="badge.tag" />
-				</div>
-				<div class="col-xs-2">
-					<input type="number" ng-model="badge.tagCount" />
-				</div>
-				<div class="col-xs-2">
-					<button ng-click="addBadge()">Add</button>
+			<h1 class="title margin-bottom-thirty">Badges</h1>
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-2">
+						<div class="new-badge-image" ng-click="pickImage()">
+							<img ng-if="badge.imageUrl" ng-src="{{ badge.imageUrl | cropImg }}" />
+							<span ng-if="!badge.imageUrl" class="icon icon-plus"></span>
+						</div>
+					</div>
+	
+					<div class="col-xs-3">
+						<input type="text" ng-model="badge.name" />
+					</div>
+					<div class="col-xs-3">
+						<input type="text" ng-model="badge.tag" />
+					</div>
+					<div class="col-xs-2">
+						<input type="number" ng-model="badge.tagCount" />
+					</div>
+					<div class="col-xs-2">
+						<button ng-click="addBadge()">Add</button>
+					</div>
 				</div>
 			</div>
 			<div id="badges"></div>
-
-			<div class="row">
-				<h1 class="title">New Badge Dialog</h1>
-
-				<p class="pull-left">Send push notification if a new Badge is earned</p>
-				<div class="button-switch pull-right">
-					<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
-					<label for="pushNotifications" ></label>
+			<div class="container">
+				<div class="row">
+					<h1 class="title">New Badge Dialog</h1>
+	
+					<p class="pull-left">Send push notification if a new Badge is earned</p>
+					<div class="button-switch pull-right">
+						<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
+						<label for="pushNotifications" ></label>
+					</div>
 				</div>
 			</div>
 		</div>

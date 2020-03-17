@@ -263,3 +263,18 @@ button.btn-icon,
       opacity: .9;
       transform: scale(.95);
   }
+
+  .listViewItemCopy .badge{
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    overflow: hidden;
+    min-width: 18px;
+    margin-right: .125rem;
+    background-color: rgba(150,150,150,.1);
+  }
+  .listViewItemCopy .badge  img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }

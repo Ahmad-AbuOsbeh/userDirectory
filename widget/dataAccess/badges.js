@@ -81,7 +81,7 @@ class Badges {
 				});
 
 				if (match) {
-					userBadges.push(badge);
+					userBadges.push(badge.id);
 				}
 			});
 

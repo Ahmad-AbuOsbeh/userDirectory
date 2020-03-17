@@ -437,6 +437,7 @@ input[type="password"] {
   .badges-grid{
     grid-template-columns: repeat(4, 1fr);
   }
+}
 .fake-modal{
   position: absolute;
   top: 0;
@@ -447,4 +448,20 @@ input[type="password"] {
   margin: .25rem;
   border-radius: .5rem;
   box-shadow: 0 .25rem 1rem rgba(128, 128, 128, .5);
+}
+
+.listViewItemCopy .badge{
+  padding: 0px !important;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  overflow: hidden;
+  min-width: 18px;
+  margin-right: .125rem;
+  background-color: rgba(150,150,150,.1);
+}
+.listViewItemCopy .badge  img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }

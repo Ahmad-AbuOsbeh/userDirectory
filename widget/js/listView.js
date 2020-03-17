@@ -120,11 +120,11 @@ class ListViewItem {
 			actionIcon.classList = this.action.icon || 'icon icon-star';
 			actionHolder.appendChild(actionIcon);
 
-			if (this.action.actionItem) {
-				actionIcon.onclick = () => {
-					buildfire.actionItems.execute(this.action.actionItem);
-				};
-			}
+			// if (this.action.actionItem) {
+			// 	actionIcon.onclick = () => {
+			// 		buildfire.actionItems.execute(this.action.actionItem);
+			// 	};
+			// }
 			actionIcon.onclick = () => {
 				this.onActionClicked();
 			};

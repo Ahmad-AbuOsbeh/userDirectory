@@ -65,7 +65,7 @@ class DirectoryUI {
 
 		this.directory.checkUser((error, userObj) => {
 			if (error) return console.error(error);
-			if (userObj) return this.directory.updateUser();
+			if (userObj) return this.directory.updateUser(userObj);
 
 			if (autoEnlistAll) {
 				return this.directory.addUser(e => {

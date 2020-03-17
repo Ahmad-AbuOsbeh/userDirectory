@@ -97,26 +97,25 @@ class Widget {
 		this.listView.onItemClicked = (item, e) => {
 			if (!item.data.userId) return;
 
-			this.renderUserModal(item.data);
+			this.renderUserModal(item);
 		};
 
 		this.listView.onItemActionClicked = (item, e) => {
 			if (!item.data.userId) return;
-			debugger
-			if (item.isFavorite) {
+			if (item.data.isFavorite) {
 				return this.directoryUI.directory.removeFavorite(item.data, (error, result) => {
 					if (!error) {
-						item.isFavorite = false;
+						item.data.isFavorite = false;
 						item.action.icon = 'icon icon-star-empty';
 						item.update();
 					}
 				});
 			}
-			if (!item.isFavorite) {
+			if (!item.data.isFavorite) {
 				return this.directoryUI.directory.addFavorite(item.data, (error, result) => {
 					if (!error) {
-						item.isFavorite = true;
-						item.action.icon = 'icon icon-star';
+						item.data.isFavorite = true;
+						item.action.icon = 'icon icon-star btn-primary';
 						item.update();
 					}
 				});
@@ -124,13 +123,19 @@ class Widget {
 		};
 	}
 
-	renderUserModal(user) {
-		const { displayName, email } = user;
+	reportUser(userData) {
+		window.location = `mailto:${email}?subject=${encodeURIComponent()}&body=${encodeURIComponent()}`;
+	}
+
+	renderUserModal(item) {
+		const { imageUrl, data } = item;
+		const { displayName, email, badges } = data;
+		const { actionItem } = this.settings;
 		const options = {
 			header: `
 				<div class="user-container">
 					<div class="avatar">
-						<img src="https://via.placeholder.com/100" />
+						<img src="${imageUrl}" />
 					</div>
 
 					<div class="user-info-holder ellipsis">
@@ -139,14 +144,6 @@ class Widget {
 					</div>
 				</div>
 			`,
-			// <div class="avatar">
-      //     <img src="https://czi3m2qn.cloudimg.io/crop/128x128/n/https://randomuser.me/api/portraits/men/97.jpg">
-      //   </div>
-      //   <div class="copy">
-      //     <h4 class="whiteTheme ellipsis">Name</h4>
-      //     <p class="whiteTheme ellipsis">Title</p>
-      //   </div>
-      // </div>
 			tabs: [
 				{
 					header: `<span class="icon icon-star"></span>`,
@@ -154,26 +151,44 @@ class Widget {
 						{
 							id: 'action',
 							icon: 'icon icon-star',
-							text: 'Message User',
-							callback: () => this.directoryUI.handleAction(user)
+							text: actionItem ? actionItem.title : 'Message User',
+							callback: () => this.directoryUI.handleAction(data)
 						},
 						{
 							id: 'favorites',
-							icon: 'icon icon-star-empty',
-							text: 'Add To Favorites',
+							icon: data.isFavorite ? 'icon icon-star' : 'icon icon-star-empty',
+							text: data.isFavorite ? 'Remove From Favorites' : 'Add To Favorites',
 							callback: e => {
-								this.directoryUI.directory.addFavorite(user, (error, result) => {
-									if (!error) {
-										e.target.querySelectorAll('.icon')[0].classList.replace('icon-star-empty', 'icon-star');
-									}
-								});
+								if (data.isFavorite) {
+									this.directoryUI.directory.removeFavorite(data, (error, result) => {
+										if (!error) {
+											e.target.querySelectorAll('.icon')[0].classList.replace('icon-star', 'icon-star-empty');
+											e.target.querySelectorAll('.list-item-text')[0].innerHTML = 'Add To Favorites';
+											data.isFavorite = false;
+											item.data.isFavorite = false;
+											item.action.icon = 'icon icon-star-empty';
+											item.update();
+										}
+									});
+								} else {
+									this.directoryUI.directory.addFavorite(data, (error, result) => {
+										if (!error) {
+											e.target.querySelectorAll('.icon')[0].classList.replace('icon-star-empty', 'icon-star');
+											e.target.querySelectorAll('.list-item-text')[0].innerHTML = 'Remove From Favorites';
+											data.isFavorite = true;
+											item.data.isFavorite = true;
+											item.action.icon = 'icon icon-star btn-primary';
+											item.update();
+										}
+									});
+								}
 							}
 						},
 						{
 							id: 'report',
-							icon: 'icon icon-star-empty',
+							icon: 'glyphicon glyphicon-warning-sign',
 							text: 'Report User',
-							callback: () => console.error('!!TODO: report user')
+							callback: () => this.reportUser(data)
 						}
 					]
 				},
@@ -181,54 +196,23 @@ class Widget {
 					header: `<span class="icon icon-star"></span>`,
 					content: `
 					<div class="badges-grid">
-						<div class="grid-item">
-							<div class="user-badge">
-								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
-								<span class="badge-count successBackgroundTheme">999</span>
-							</div>
-							<h5>Badge Name</h5>
-							<p class="caption">15 Feb 2020</p>
-						</div>
-						<div class="grid-item">
-							<div class="user-badge">
-								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
-								<span class="badge-count successBackgroundTheme">999</span>
-							</div>
-							<h5>Badge Name</h5>
-							<p class="caption">15 Feb 2020</p>
-						</div>
-						<div class="grid-item">
-							<div class="user-badge">
-								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
-								<span class="badge-count successBackgroundTheme">999</span>
-							</div>
-							<h5>Badge Name</h5>
-							<p class="caption">15 Feb 2020</p>
-						</div>
-						<div class="grid-item">
-							<div class="user-badge">
-								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
-								<span class="badge-count successBackgroundTheme">999</span>
-							</div>
-							<h5>Badge Name</h5>
-							<p class="caption">15 Feb 2020</p>
-						</div>
-						<div class="grid-item">
-							<div class="user-badge">
-								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
-								<span class="badge-count successBackgroundTheme">999</span>
-							</div>
-							<h5>Badge Name</h5>
-							<p class="caption">15 Feb 2020</p>
-						</div>
-						<div class="grid-item">
-							<div class="user-badge">
-								<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
-								<span class="badge-count successBackgroundTheme">999</span>
-							</div>
-							<h5>Badge Name</h5>
-							<p class="caption">15 Feb 2020</p>
-						</div>
+						${badges.length ?
+								badges.map(badge => {
+								return `
+								<div class="grid-item">
+									<div class="user-badge">
+										<img src="${badge.imageUrl}" alt="">
+										<span class="badge-count successBackgroundTheme">999</span>
+									</div>
+									<h5>${badge.name}</h5>
+									<p class="caption">15 Feb 2020</p>
+								</div>
+								`;
+							}).join(' ')
+						: (`
+							<div>no badges yet!</div>
+						`)
+					}
 					</div>
 					`
 				}
@@ -269,10 +253,6 @@ class Widget {
 		});
 	}
 
-	getFavorites() {}
-
-	openDrawer(user) {}
-
 	markFavorites(favorites) {
 		this.listView.items.forEach(item => {
 			if (typeof item.isFavorite !== 'undefined') return;
@@ -304,8 +284,6 @@ class Widget {
 			if (error) return console.error(error);
 
 			this.listView.loadListViewItems(results);
-
-			this.markFavorites(this.directoryUI.directory.favorites);
 
 			this.inProgress = false;
 

@@ -75,21 +75,39 @@ class Directory {
 		}
 	}
 
+	getBadges(callback) {
+		if (this.badges && this.badges.length) {
+			callback(null, this.badges);
+		}
+		Badges.get((error, badges) => {
+			if (error) return callback(error, null);
+
+			this.badges = badges;
+			callback(null, this.badges);
+		});
+	}
+
 	search(searchText, pageIndex, pageSize, callback) {
 		let userIds = null;
 
 		const _search = () => {
 			this.getFavorites(() => {
-				Users.search({ userIds, pageIndex, pageSize }, (error, results) => {
-					if (error) return callback(error, null);
+				this.getBadges(() => {
+					Users.search({ userIds, pageIndex, pageSize }, (error, results) => {
+						if (error) return callback(error, null);
 
-					results = results.map(result => {
-						if (this.user) {
-							result.data.isFavorite = this.favoritesList.indexOf(result.data.userId) > -1;
-						}
-						result.data.action = {
-							icon: result.data.isFavorite ? 'icon icon-star btn-primary' : 'icon icon-star-empty',
-							// handler: item => {
+						results = results.map(result => {
+							if (this.user) {
+								result.data.isFavorite = this.favoritesList.indexOf(result.data.userId) > -1;
+							}
+							if (result.data.badges.length) {
+								result.data.badges = this.badges.filter(badge => {
+									return result.data.badges.indexOf(badge.id) > -1;
+								});
+							}
+							result.data.action = {
+								icon: result.data.isFavorite ? 'icon icon-star btn-primary' : 'icon icon-star-empty'
+								// handler: item => {
 								// if (item.isFavorite) {
 								// 	return this.removeFavorite(item.data, (error, result) => {
 								// 		if (!error) {
@@ -108,12 +126,13 @@ class Directory {
 								// 		}
 								// 	});
 								// }
-							// }
-						};
-						return result;
-					});
+								// }
+							};
+							return result;
+						});
 
-					callback(null, results);
+						callback(null, results);
+					});
 				});
 			});
 		};
@@ -155,43 +174,30 @@ class Directory {
 		});
 	}
 
-	updateUser() {
+	updateUser(userObj) {
 		if (!this.user) return;
 
 		buildfire.auth.getCurrentUser((error, user) => {
 			if (error) return console.error(error);
 
-			Badges.computeUserBadges(user, (err, badges) => {
+			Badges.computeUserBadges(user, (err, badgeIds) => {
 				if (err) return console.error(err);
+
+				// this.getBadges((e, badges) => {
 				let hasUpdate = false;
-				let newBadges = null;
-				const newBadgeIds = badges.map(badge => badge.id).sort();
-				const userBadgeIds = this.user.badges.map(badge => badge.id).sort();
 
-				if (this.user.badges.length < badges.length) {
-					newBadges = badges.filter(badge => userBadgeIds.indexOf(badge.id) < -1);
+				if (this.user.badges.length < userObj.data.badges.length) {
+					const newBadgeIds = badgeIds.filter(badgeId => {
+						return userObj.data.badges.indexOf(badgeId) < 0;
+					});
 
-					this.user.badges = badges;
-
-					hasUpdate = true;
-				} else if (this.user.badges.length > badges.length) {
-					this.user.badges = badges;
+					this.user.badges = badgeIds;
 
 					hasUpdate = true;
 				} else {
-					userBadgeIds.forEach((badgeId, index) => {
-						
-					});
+					this.user.badges = badgeIds;
+					hasUpdate = true;
 				}
-
-				// debugger
-
-				// const newBadges = badges.filter(badge => )
-
-				// if (this.user.badges.length !== badges.length) {
-				// hasUpdate = true;
-				// this.user.badges = badges;
-				// }
 
 				const updateQueue = ['displayName', 'email', 'firstName', 'lastName'];
 
@@ -206,6 +212,7 @@ class Directory {
 
 				Users.update(this.user.toJson(), console.error);
 				Lookup.update(this.user.toJson(), console.error);
+				// });
 			});
 		});
 	}

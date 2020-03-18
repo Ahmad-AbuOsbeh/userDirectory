@@ -104,12 +104,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-.draggable-list-view span.btn-icon::before{
-    content: "\e60e";
-}
-.draggable-list-view span.btn-icon::after{
-    content: '';
-}
 /* .draggable-list-view span.btn-icon.btn-danger{
     color: #000;
     background-color: inherit !important;
@@ -119,6 +113,48 @@
 } */
 
 /* Buttons style */
+.btn-icon {
+    width: 2.5rem;
+    height: 2.5rem; 
+    border-radius: .25rem;
+    font-size: 1.125rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn-icon:hover {
+    background-color: #F2F2F2;
+}
 .btn.btn--icon.icon.icon-cross:hover {
     color: #ed4b4b;
+}
+.draggable-list-view .icon-cross2{
+    margin-right: 0 !important;
+    display: flex;
+}
+.draggable-list-view .d-item span.icon.icon-pencil{
+    margin-left: auto;
+    margin-right: 2.5rem;
+}
+.draggable-list-view .badge-name,
+.draggable-list-view .tag-name{
+	flex: auto;
+    margin-right: 1rem;
+    flex-shrink: 0;
+    width: 19%;
+}
+.draggable-list-view .tag-count{
+	width: 5rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+.draggable-list-view .d-item img{
+    width: 34px;
+    height: 34px;
+    object-fit: cover;
+    border-radius: .25rem;
+    overflow: hidden;
+    margin-right: 1rem;
+    margin-left: .25rem;
+    flex-shrink: 0;
 }

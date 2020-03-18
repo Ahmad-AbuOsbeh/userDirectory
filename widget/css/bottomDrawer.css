@@ -109,7 +109,8 @@ html{
 	padding-top: .75rem;
 	padding-bottom: calc(1rem + env(safe-area-inset-bottom));
 }
-.tab-content .list-item .icon{
+.tab-content .list-item .icon,
+.tab-content .list-item .glyphicon{
   display: block;
   width: 3.5rem;
   height: 3.5rem;

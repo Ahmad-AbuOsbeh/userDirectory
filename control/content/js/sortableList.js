@@ -70,15 +70,17 @@
 		// Add the required classes to the elements
 		divRow.className = 'd-item clearfix';
 		moveHandle.className = 'icon icon-menu cursor-grab';
-		title.className = 'ellipsis';
+		title.className = 'badge-name ellipsis';
 
 		deleteButton.className = 'btn btn--icon icon icon-cross2';
 		title.innerHTML = item.name;
 
-		edit.className = 'icon icon-star';
+		edit.className = 'icon icon-pencil btn-icon';
 
+		tag.classList.add('tag-name');
 		tag.innerHTML = item.tag;
 		tagCount.innerHTML = item.tagCount;
+		tagCount.classList.add('tag-count');
 
 		// Append elements to the DOM
 		divRow.appendChild(moveHandle);

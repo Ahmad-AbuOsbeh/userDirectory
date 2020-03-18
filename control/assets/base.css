@@ -42,7 +42,8 @@ select,
 input[type="text"],
 input[type="date"],
 input[type="email"],
-input[type="number"]{
+input[type="number"],
+.tags{
     font-family: 'Conv_apercu_regular','Helvetica','Sans-Serif','Arial';
     font-size: .875rem;
     padding: .5rem .75rem;
@@ -55,6 +56,10 @@ input[type="number"]{
 input[type="date"] {
     font-size: .75rem;  
 }
+.tags:hover,
+.tags:focus,
+.tags:active,
+.tags:focus-within,
 select:hover,
 select:focus,
 select:active,
@@ -357,7 +362,8 @@ color: #000;
 }
 p.info{
 	background-color: #f9f9f9;
-	line-height: 1.33;
+    line-height: 1.33;
+    font-size: 14px;
 	text-align: left;
 	border-radius: 4px;
 	color: #9e9e9e;
@@ -389,4 +395,32 @@ p.info::before{
 }
 .flex-auto{
 	flex: auto;
+}
+.single-action-item{
+    background-color: #f9f9f9;
+    line-height: 1.33;
+    color: #808080;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+.single-action-item .action-info{
+    display: flex;
+    flex: auto;
+    margin-right: 1rem;
+}
+.single-action-item .action-info div{
+    flex: auto;
+}
+.single-action-item .action-info div p:last-of-type{
+    margin-bottom: 0;
+}
+.caption{
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+.strong{
+    color: #000;
 }

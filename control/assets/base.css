@@ -390,6 +390,9 @@ p.info::before{
 	display: flex;
 	justify-content: space-between;
 }
+.tags.input-container{
+    justify-content: start;
+}
 .margin-left-auto{
 	margin-left: auto;
 }

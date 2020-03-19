@@ -141,6 +141,13 @@
 	align-items: flex-end;
 	margin-left: 4rem;
 }
+.badges-input-group label{
+	color: #000;
+}
+.badges-input-group label::after{
+	content: '*';
+	color: #ed4b4b;
+}
 .btn-default.new-badge-image{
 	background-color: #EEF0F0;
 	border-color: transparent;

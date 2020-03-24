@@ -387,7 +387,7 @@ p.info::before{
 }
 .input-row .input-container{
 	flex: auto;
-	display: flex;
+	/* display: flex; */
 	justify-content: space-between;
 }
 .margin-left-auto{
@@ -424,3 +424,27 @@ p.info::before{
 .strong{
     color: #000;
 }
+
+.d-item:not(.edit) .edit {
+    display: none;
+}
+
+.d-item.edit :not(.edit):not(.cursor-grab) {
+    display: none;
+}
+
+.has-error {
+    border: 1px solid #ed4b4b !important;
+}
+
+/* .d-item.edit input, .d-item button {
+    display: block !important;
+}
+
+.d-item.edit :not(input):not(button):not(.cursor-grab){
+    display: none;
+}
+
+.d-item input, .d-item button {
+    display: none;
+} */

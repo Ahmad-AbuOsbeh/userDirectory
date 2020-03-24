@@ -46,15 +46,14 @@
 		<script src="../../../../scripts/tinymce/tinymce.min.js"></script>
 	</head>
 	<body>
-		<a id="createButton" class="text-success hidden" onclick="createLanguage(langOptions.value)">Click here to begin supporting this language</a>
 
 		<div id="stringsContainer" class="hidden">
 			loading...
 		</div>
 		<a id="saveButton" class="btn btn-success pull-right hidden" onclick="save()">Save</a>
-		<a id="deleteButton" class="text-danger pull-right hidden" onclick="deleteLanguage(strings.id)">Delete</a>
+		<!-- <a id="deleteButton" class="text-danger pull-right hidden" onclick="deleteLanguage(strings.id)">Delete</a> -->
 
-		<div class="test">
+		<!-- <div class="test">
 			<h1 class="section__title">Join Dialog</h1>
 			<p class="info margin-bottom-thirty">Only users  that confirm this prompt will be added to the user directory</p>
 			<div class="input-row">
@@ -132,15 +131,18 @@
 				<input class="input-container" type="text" value="Favorites">
 			</div>
 
-		</div>
+		</div> -->
 
 		<script>
 			let strings;
 
 			function loadLanguage(lang) {
 				stringsContainer.classList.add('hidden');
-				strings = new buildfire.services.Strings(lang, stringsConfig);
+				strings = new buildfire.services.Strings('en-us', stringsConfig);
 				strings.init().then(() => {
+					if (!strings.id) {
+						createLanguage('en-us', () => loadLanguage('en-us'));
+					}
 					showNewLanguageState(strings.id);
 					strings.inject();
 				});
@@ -150,22 +152,23 @@
 
 			function showNewLanguageState(show) {
 				if (show) {
-					deleteButton.classList.remove('hidden');
+					// deleteButton.classList.remove('hidden');
 					saveButton.classList.remove('hidden');
 					stringsContainer.classList.remove('hidden');
-					createButton.classList.add('hidden');
+					// createButton.classList.add('hidden');
 				} else {
-					deleteButton.classList.add('hidden');
+					// deleteButton.classList.add('hidden');
 					saveButton.classList.add('hidden');
 					stringsContainer.classList.add('hidden');
-					createButton.classList.remove('hidden');
+					// createButton.classList.remove('hidden');
 				}
 			}
 
-			function createLanguage(language) {
+			function createLanguage(language, callback) {
 				stringsContainer.disabled = true;
 				strings.createLanguage(language, () => {
 					stringsContainer.disabled = false;
+					if (callback) callback();
 				});
 				showNewLanguageState(true);
 				return false;

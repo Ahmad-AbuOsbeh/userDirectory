@@ -58,6 +58,7 @@ gulp.task('lint', () => {
 
 const cssTasks = [
 	{ name: 'widgetCSS', src: 'widget/**/*.css', dest: '/widget' },
+	// { name: 'controlSharedCSS', src: 'control/assets/**/*.css', dest: '/control/assets' },
 	{ name: 'controlContentCSS', src: 'control/content/**/*.css', dest: '/control/content' },
 	{ name: 'controlDesignCSS', src: 'control/design/**/*.css', dest: '/control/design' },
 	{ name: 'controlSettingsCSS', src: 'control/settings/**/*.css', dest: '/control/settings' },
@@ -87,6 +88,13 @@ cssTasks.forEach(function(task) {
 				.pipe(gulp.dest(destinationFolder + task.dest))
 		);
 	});
+});
+
+// { name: 'controlFonts', src: 'control/assets/linearicons/fonts/**/*', dest: '/control/assets/fonts' },
+gulp.task('controlAssets', function() {
+	return gulp
+		.src(['control/assets/**/*'], { base: '.' })
+		.pipe(gulp.dest(destinationFolder));
 });
 
 gulp.task('sharedJS', function() {
@@ -195,7 +203,7 @@ gulp.task('images', function() {
 		.pipe(gulp.dest(destinationFolder));
 });
 
-var buildTasksToRun = ['controlHTML', 'widgetHTML', 'resources', 'images', 'sharedJS'];
+var buildTasksToRun = ['controlHTML', 'widgetHTML', 'resources', 'images', 'sharedJS', 'controlAssets'];
 
 cssTasks.forEach(function(task) {
 	buildTasksToRun.push(task.name);

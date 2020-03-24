@@ -14,11 +14,12 @@ const badgeListUI = {
 		let t = this;
 
 		Badges.get((err, badges) => {
+			
 			this.badges = badges;
-			if (badges.length == 0) this.container.innerHTML = 'No badges have been added yet.';
+			if (this.badges.length == 0) this.container.innerHTML = 'No badges have been added yet.';
 			else this.container.innerHTML = '';
 
-			badgeListUI.render(badges);
+			badgeListUI.render(this.badges);
 		});
 	},
 
@@ -38,14 +39,18 @@ const badgeListUI = {
 					if (e) console.error(e);
 					if (data.selectedButton.key == 'y') {
 						badgeListUI.badgeList.badges.splice(index, 1);
-						Badges.delete(item, callback);
+						Badges.delete(item.id, callback);
+						badgeListUI.badgeList.loadItems(badgeListUI.badgeList.badges, false);
 					}
 				}
 			);
 		};
 
 		this.badgeList.onOrderChange = (item, oldIndex, newIndex) => {
-
+			badgeListUI.badgeList.badges.forEach((badge, index) => {
+				badgeListUI.badgeList.badges[index].rank = index;
+				Badges.update(badgeListUI.badgeList.badges[index], console.error);
+			});
 		};
 	},
 	/**
@@ -67,9 +72,13 @@ const badgeListUI = {
 	 * @param {Function} callback Optional callback function
 	 */
 	addItem(item, callback) {
-		Badges.add(item, callback);
+		Badges.add(item, (error, result) => {
+			if (error) return callback(error, null);
+			
+			badgeListUI.badgeList.append(result.data);
+			callback(null, result.data);
+		});
 
-		badgeListUI.badgeList.append(item);
 	},
 	onItemClick(item, divRow) {
 		buildfire.notifications.alert({ message: item.title + ' clicked' });

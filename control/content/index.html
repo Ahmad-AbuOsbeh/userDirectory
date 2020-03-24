@@ -5,10 +5,10 @@
 
 		<link href="../../../../styles/helper.css" rel="stylesheet" />
 		<link href="../../../../styles/siteIcons.css" rel="stylesheet" />
-		<!-- build:bundleCSSFiles -->
 		<link rel="stylesheet" href="../assets/base.css" />
-		<link rel="stylesheet" href="css/content.css" />
 		<link rel="stylesheet" href="../assets/linearicons/cpIcons.css" />
+		<!-- build:bundleCSSFiles -->
+		<link rel="stylesheet" href="css/content.css" />
 		<link rel="stylesheet" href="sortableList.css" />
 		<!-- endbuild -->
 
@@ -103,41 +103,40 @@
 			<h1 class="title margin-bottom-thirty">Badges</h1>
 			<p class="info margin-bottom-twenty">To make your badges look good on the app, make sure to submit 80 x 80px images. The badges will be displayed at a minimum of 18 x 18px.</p>
 			
-			<div class="badges-input-group">
+			<form name="newBadge" ng-submit="addBadge(newBadge.$valid)" class="badges-input-group" novalidate>
 				<div>
 					<label>Icon</label>	
-					<button class="btn btn-default new-badge-image" ng-click="pickImage()">
+					<button name="badgeImage" class="btn btn-default new-badge-image" ng-click="pickImage($event)" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.imageUrl.$invalid}">
+						<input name="imageUrl" ng-hide="true" ng-model="badge.imageUrl" id="imgSrc" required></input>
 						<img ng-if="badge.imageUrl" ng-src="{{ badge.imageUrl | cropImg }}" />
 						<span ng-if="!badge.imageUrl" class="icon icon-plus"></span>
 					</button>
 				</div>
 				<div class="badge-name">
 					<label for="">Badge Name</label>
-					<input type="text" ng-model="badge.name" />
+					<input name="badgeName" type="text" ng-model="badge.name" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.badgeName.$invalid}" required />
 				</div>
 				<div class="tag-name">
 					<label for="">Tags</label>
-					<input type="text" ng-model="badge.tag" />
+					<input name="badgeTag" type="text" ng-model="badge.tag" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.badgeTag.$invalid}" required />
 				</div>
 				<div class="tag-count">
 					<label for="">Tag Count</label>
-					<input type="number" ng-model="badge.tagCount" />
+					<input name="badgeTagCount" type="number" ng-model="badge.tagCount" />
 				</div>
-				<button class="btn btn-success" ng-click="addBadge()"><span class="icon icon-plus"></span> Add</button>
-			</div>
+				<button ng-click="newBadge.$valid ? newBadge.$hasSubmit = false : newBadge.$hasSubmit = true" type="submit" class="btn btn-success"><span class="icon icon-plus"></span> Add</button>
+			</form>
 
 			<div id="badges"></div>
-			<div class="container">
-				<div class="row">
-					<h1 class="title">New Badge Dialog</h1>
-	
-					<p class="pull-left">Send push notification if a new Badge is earned</p>
-					<div class="button-switch pull-right">
-						<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
-						<label for="pushNotifications" ></label>
-					</div>
-				</div>
+
+			<h1 class="title">New Badge Dialog</h1>
+
+			<p class="pull-left">Send push notification if a new Badge is earned</p>
+			<div class="button-switch pull-right">
+				<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
+				<label for="pushNotifications" ></label>
 			</div>
+
 		</div>
 	</body>
 </html>

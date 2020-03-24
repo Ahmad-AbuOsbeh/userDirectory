@@ -4,9 +4,9 @@
  */
 
 class Directory {
-	constructor(user) {
+	constructor(user, settings) {
 		this.user = user ? new DirectoryUser(user) : null;
-
+		this.settings = settings;
 		this.badges = null;
 		this.Favorites = null;
 
@@ -59,10 +59,10 @@ class Directory {
 
 	getFavorites(callback) {
 		if (!this.user) {
-			callback(null, []);
+			return callback(null, []);
 		}
 		if (this.favoritesList && this.favoritesList.length) {
-			callback(null, this.favoritesList);
+			return callback(null, this.favoritesList);
 		}
 		if (this.user && !this.isService && typeof Favorites !== 'undefined') {
 			this.Favorites = new Favorites(this.user);
@@ -77,7 +77,7 @@ class Directory {
 
 	getBadges(callback) {
 		if (this.badges && this.badges.length) {
-			callback(null, this.badges);
+			return callback(null, this.badges);
 		}
 		Badges.get((error, badges) => {
 			if (error) return callback(error, null);
@@ -101,8 +101,12 @@ class Directory {
 								result.data.isFavorite = this.favoritesList.indexOf(result.data.userId) > -1;
 							}
 							if (result.data.badges.length) {
-								result.data.badges = this.badges.filter(badge => {
-									return result.data.badges.indexOf(badge.id) > -1;
+								const badges = [];
+								result.data.badges = result.data.badges.map(badge => {
+									// return({ ...badge, ...this.badges.find(b => b.id === badge.id) });
+									const b = this.badges.find(b => b.id === badge.id);
+									b.earned = badge.earned;
+									return b;
 								});
 							}
 							result.data.action = {
@@ -161,6 +165,8 @@ class Directory {
 	addUser(callback) {
 		if (!this.user) return;
 
+		buildfire.notifications.pushNotification.subscribe({ groupName: '$$userDirectory' }, console.log);
+
 		Users.add(this.user.toJson(), callback);
 	}
 
@@ -182,22 +188,26 @@ class Directory {
 
 			Badges.computeUserBadges(user, (err, badgeIds) => {
 				if (err) return console.error(err);
-
-				// this.getBadges((e, badges) => {
 				let hasUpdate = false;
-
-				if (this.user.badges.length < userObj.data.badges.length) {
-					const newBadgeIds = badgeIds.filter(badgeId => {
-						return userObj.data.badges.indexOf(badgeId) < 0;
-					});
-
-					this.user.badges = badgeIds;
-
-					hasUpdate = true;
-				} else {
-					this.user.badges = badgeIds;
+				this.user.badges = userObj.data.badges.filter(b => badgeIds.indexOf(b.id) > -1);
+				if (this.user.badges.length !== userObj.data.badges.length) {
 					hasUpdate = true;
 				}
+
+				const newBadges = [];
+
+				badgeIds.forEach(badgeId => {
+					if (!userObj.data.badges.some(badge => badge.id === badgeId)) {
+						const newBadge = {
+							id: badgeId,
+							earned: Date.now()
+						};
+
+						this.user.badges.push(newBadge);
+						newBadges.push(newBadge);
+						hasUpdate = true;
+					}
+				});
 
 				const updateQueue = ['displayName', 'email', 'firstName', 'lastName'];
 
@@ -208,17 +218,99 @@ class Directory {
 					}
 				});
 
+				if (newBadges.length) {
+					this.getBadges(() => {
+						this.sendNewBadgePN(userObj, newBadges[0]);
+					});
+				}
 				if (!hasUpdate) return;
 
 				Users.update(this.user.toJson(), console.error);
 				Lookup.update(this.user.toJson(), console.error);
-				// });
 			});
 		});
 	}
 
+	sendNewBadgePN(user, newBadge) {
+		const { email, displayName, userId } = user.data;
+		const badge = this.badges.find(badge => badge.id === newBadge.id);
+
+		const imgUrl = buildfire.auth.getUserPictureUrl({ email });
+		const inAppMessage = `
+			<div class="center-content">
+				<div class="avatar">
+					<img src="${imgUrl}" alt="">
+				</div>
+				<p>${displayName}</p>
+				<h4 class="title text-center">Received a New Badge!</h4>
+				<div class="badge-user">
+					<img src="${badge.imageUrl}" alt="">
+				</div>
+				<p class="caption">${badge.name}</p>
+			</div>
+			<style> 
+				.center-content{
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						padding: 1rem 0;
+					}
+					.center-content.active-user .badge-user,
+					.center-content.active-user .badge-user img{
+						width: 5rem;
+						height: 5rem;
+					}
+					.center-content.active-user .badge-user{
+						margin: 1rem;
+					}
+					.badge-user{
+						width: 3rem;
+						height: 3rem;
+						border-radius: .5rem;
+						overflow: hidden;
+					}
+					.center-content .badge-user{
+						margin: .5rem;
+					}
+					.badge-user img{
+						width: 3rem;
+						height: 3rem;
+						border-radius: .5rem;
+						overflow: hidden;
+						object-fit: cover;
+					}
+					.center-content .avatar{
+						margin: .5rem;
+					}
+					.center-content .avatar,
+					.center-content .avatar img{
+						width: 4.5rem;
+						height: 4.5rem;
+						overflow: hidden;
+						border-radius: 50%;
+						margin-bottom: .75rem;
+					}
+					.center-content .avatar img{
+						object-fit: cover;
+					}
+			</style>
+		`;
+
+		const options = {
+			title: `${displayName} has earned a new badge!`,
+			text: `${displayName} has earned a new badge!`,
+			inAppMessage,
+			groupName: '$$userDirectory',
+			queryString: userId
+		};
+
+		buildfire.notifications.pushNotification.schedule(options, console.error);
+	}
+
 	removeUser(callback) {
 		if (!this.user) return;
+
+		buildfire.notifications.pushNotification.unsubscribe({ groupName: '$$userDirectory' }, console.log);
 
 		Users.delete(this.user.userId, callback);
 	}

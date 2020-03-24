@@ -83,6 +83,12 @@ const stringsConfig = {
 				maxLength: 100,
 				defaultValue: 'Message User'
 			},
+			openProfile: {
+				title: 'Open Profile',
+				placeholder: 'Open Profile',
+				maxLength: 100,
+				defaultValue: 'Open Profile'
+			},
 			addToFavorites: {
 				title: 'Add to favorites',
 				placeholder: 'Add to favorites',

@@ -20,10 +20,13 @@
 			imageUrl: '',
 			name: '',
 			tag: '',
-			tagCount: 0
+			tagCount: 0,
+			rank: 0
 		};
 
-		$scope.pickImage = () => {
+		$scope.pickImage = (e) => {
+			e.preventDefault();
+
 			buildfire.imageLib.showDialog({showIcons: false, multiSelection: false}, (error, result) => {
 				if (result && result.selectedFiles && result.selectedFiles.length) {
 					$scope.badge.imageUrl = result.selectedFiles[0];
@@ -33,13 +36,17 @@
 			});
 		};
 
-		$scope.addBadge = () => {
+		$scope.addBadge = (isValid) => {
+			if (!isValid) return;
+
+			$scope.badge.rank = $scope.badgeListUI.badgeList.badges.length;
 			$scope.badgeListUI.addItem($scope.badge, console.error);
 			$scope.badge = {
 				imageUrl: '',
 				name: '',
 				tag: '',
-				tagCount: 0
+				tagCount: 0,
+				rank: 0
 			};
 		};
 

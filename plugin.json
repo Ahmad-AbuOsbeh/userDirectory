@@ -14,8 +14,7 @@
     "enabled":false
   }
 , "customTabs": [
-    { "title": "Language", "url": "/strings/index.html" },
-    { "title": "tests", "url": "/tests/index.html"}
+    { "title": "Language", "url": "/strings/index.html" }
   ]
 }
 ,"widget":{

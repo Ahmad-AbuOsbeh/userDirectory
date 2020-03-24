@@ -1,7 +1,7 @@
 class DirectoryUI {
 	constructor(user, strings, settings, isService) {
 		this.user = user;
-		this.directory = new Directory(user);
+		this.directory = new Directory(user, settings);
 		this.strings = strings || new buildfire.services.Strings('en-us', stringsConfig);
 		this.settings = settings;
 	}
@@ -18,18 +18,16 @@ class DirectoryUI {
 		let results = [];
 
 		data.forEach((row, i) => {
-			// buildfire.services.searchEngine.delete({ id: row.id, tag: "userDirectory"},e=>{});
-			// buildfire.appData.delete(row.id,"userDirectory",e=>{});
-			// return;
 
 			const { data } = row;
 			const { displayName, email, userId, badges, isFavorite, action } = data;
 
 			let imageUrl = buildfire.auth.getUserPictureUrl({ email });
-			imageUrl = buildfire.imageLib.cropImage(imageUrl, { width: 64, height: 64 });
+			// imageUrl = buildfire.imageLib.cropImage(imageUrl, { width: 64, height: 64 });
 
 			let badgesHTML = '';
 			
+			badges.sort((a, b) => a.rank - b.rank);
 			badges.forEach(badge => {
 				badgesHTML += `
 					<div class="badge">
@@ -143,7 +141,8 @@ class DirectoryUI {
 				title: confirmButtonText
 			},
 			richContent: `
-				<img src="undefined" style="display:none" onerror="document.getElementsByClassName('dismiss-button')[0].innerHTML = '${cancelButtonText}'"></button>
+				<img src="undefined" style="display:none" onerror="document.getElementsByClassName('dismiss-button')[0].innerHTML = '${cancelButtonText}'"></img>
+				<style>.rich-content { display: none }</style>
 			`
 		};
 

@@ -1,8 +1,9 @@
 class Widget {
 	constructor() {
 		this.listView = new buildfire.components.listView('listViewContainer', { enableAddButton: false, Title: '' });
-		this.searchBar = new SearchBar('searchBar', {});
 		this.strings = new buildfire.services.Strings('en-us', stringsConfig);
+
+		this.searchBar = new SearchBar('searchBar');
 		this.drawer = new buildfire.components.drawer('drawer');
 
 		this.directoryUI = null;
@@ -60,6 +61,22 @@ class Widget {
 				});
 			}
 
+			this.searchBar.setDropdownItems([
+				{
+					text: this.strings.get('other.openProfile'),
+					action: () => buildfire.auth.openProfile()
+				},
+				{
+					text: this.strings.get('other.leaveDirectory'),
+					action: () => {
+						this.directoryUI.leaveDirectory(() => {
+							this.searchBar.shouldShowAddButton(true);
+							this.search();
+						});
+					}
+				}
+			]);
+
 			this.search();
 		});
 	}
@@ -76,13 +93,32 @@ class Widget {
 			});
 		};
 
-		this.searchBar.onOptionsButtonClicked = () => {
-			if (!this.user) return;
-			this.directoryUI.leaveDirectory(() => {
-				this.searchBar.shouldShowAddButton(true);
-				this.search();
-			});
-		};
+		// this.searchBar.onOptionsButtonClicked = () => {
+		// 	if (!this.user) return;
+
+		// 	const leave = () => {
+		// 		this.directoryUI.leaveDirectory(() => {
+		// 			this.searchBar.shouldShowAddButton(true);
+		// 			this.search();
+		// 		});
+		// 	};
+
+		// 	const options = {
+		// 		richContent: `
+		// 			<button onclick="${() => leave()}">View Profile</button>
+		// 			<button onclick="${() => leave()}">Leave Directory</button>
+		// 		`
+		// 	};
+
+		// 	// const options = {
+		// 	// 	richContent: `
+		// 	// 		<button onclick="${() => leave()}">View Profile</button>
+		// 	// 		<button onclick="${() => leave()}">Leave Directory</button>
+		// 	// 	`
+		// 	// };
+
+		// 	buildfire.components.popup.display(options, console.error);
+		// };
 
 		this.searchBar.onFavoritesButtonClicked = value => {
 			// this.favoritesFilter = value;
@@ -128,9 +164,11 @@ class Widget {
 	}
 
 	renderUserModal(item) {
+		debugger;
 		const { imageUrl, data } = item;
 		const { displayName, email, badges } = data;
 		const { actionItem } = this.settings;
+
 		const options = {
 			header: `
 				<div class="user-container">
@@ -146,24 +184,24 @@ class Widget {
 			`,
 			tabs: [
 				{
-					header: `<span class="icon icon-star"></span>`,
+					header: `<span class="glyphicon glyphicon-user"></span>`,
 					content: [
 						{
 							id: 'action',
-							icon: 'icon icon-star',
-							text: actionItem ? actionItem.title : 'Message User',
+							icon: 'glyphicon glyphicon-circle-arrow-right',
+							text: actionItem ? actionItem.title : this.strings.get('other.messageUser'),
 							callback: () => this.directoryUI.handleAction(data)
 						},
 						{
 							id: 'favorites',
 							icon: data.isFavorite ? 'icon icon-star' : 'icon icon-star-empty',
-							text: data.isFavorite ? 'Remove From Favorites' : 'Add To Favorites',
+							text: data.isFavorite ? this.strings.get('other.removeFromFavorites') : this.strings.get('other.addToFavorites'),
 							callback: e => {
 								if (data.isFavorite) {
 									this.directoryUI.directory.removeFavorite(data, (error, result) => {
 										if (!error) {
 											e.target.querySelectorAll('.icon')[0].classList.replace('icon-star', 'icon-star-empty');
-											e.target.querySelectorAll('.list-item-text')[0].innerHTML = 'Add To Favorites';
+											e.target.querySelectorAll('.list-item-text')[0].innerHTML = this.strings.get('other.addToFavorites');
 											data.isFavorite = false;
 											item.data.isFavorite = false;
 											item.action.icon = 'icon icon-star-empty';
@@ -174,7 +212,7 @@ class Widget {
 									this.directoryUI.directory.addFavorite(data, (error, result) => {
 										if (!error) {
 											e.target.querySelectorAll('.icon')[0].classList.replace('icon-star-empty', 'icon-star');
-											e.target.querySelectorAll('.list-item-text')[0].innerHTML = 'Remove From Favorites';
+											e.target.querySelectorAll('.list-item-text')[0].innerHTML = this.strings.get('other.removeFromFavorites');
 											data.isFavorite = true;
 											item.data.isFavorite = true;
 											item.action.icon = 'icon icon-star btn-primary';
@@ -187,32 +225,35 @@ class Widget {
 						{
 							id: 'report',
 							icon: 'glyphicon glyphicon-warning-sign',
-							text: 'Report User',
+							text: this.strings.get('other.reportUser'),
 							callback: () => this.reportUser(data)
 						}
 					]
 				},
 				{
-					header: `<span class="icon icon-star"></span>`,
+					header: `<span class="glyphicon glyphicon-tags"></span>`,
 					content: `
 					<div class="badges-grid">
-						${badges.length ?
-								badges.map(badge => {
-								return `
+						${
+							badges.length
+								? badges
+										.map(badge => {
+											return `
 								<div class="grid-item">
 									<div class="user-badge">
 										<img src="${badge.imageUrl}" alt="">
-										<span class="badge-count successBackgroundTheme">999</span>
+										<!-- <span class="badge-count successBackgroundTheme">999</span> -->
 									</div>
 									<h5>${badge.name}</h5>
-									<p class="caption">15 Feb 2020</p>
+									<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>
 								</div>
 								`;
-							}).join(' ')
-						: (`
+										})
+										.join(' ')
+								: `
 							<div>no badges yet!</div>
-						`)
-					}
+						`
+						}
 					</div>
 					`
 				}

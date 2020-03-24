@@ -14,13 +14,51 @@ class SearchBar {
 
 		this.add = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'icon-plus']);
 
-		this.options = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'icon-ellipsis', 'hidden']);
+		// this.options = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'icon-ellipsis', 'hidden']);
+
+		// if (options.menuItems) {
+		this.options = ui.create('div', this.container, null, ['btn-group']);
+
+		const btn = ui.create('div', this.options, '<span class="icon icon-ellipsis"></span>', ['dropdown-toggle']);
+
+		btn.setAttribute('data-toggle', 'dropdown');
+		btn.setAttribute('aria-haspopup', 'true');
+		btn.setAttribute('aria-expanded', 'false');
+
+		this.dropdown = ui.create('ul', this.options, null, ['dropdown-menu']);
+		// options.menuItems.forEach(item => {
+		// 	const i = ui.create('li', this.dropdown, item.text, []);
+		// 	i.onclick = () => {
+		// 		item.action();
+		// 		this.dropdown.classList.remove('show');
+		// 	};
+		// });
+
+		btn.onclick = () => {
+			if (this.dropdown.classList.contains('show')) {
+				this.dropdown.classList.remove('show');
+			} else {
+				this.dropdown.classList.add('show');
+			}
+		};
+		// }
 
 		this.favoritesFilter = false;
 	}
 
 	get value() {
 		return this.input.value;
+	}
+
+	setDropdownItems(items) {
+		this.dropdown.innerHTML = '';
+		items.forEach(item => {
+			const i = ui.create('li', this.dropdown, item.text, []);
+			i.onclick = () => {
+				item.action();
+				this.dropdown.classList.remove('show');
+			};
+		});
 	}
 
 	shouldShowAddButton(value) {

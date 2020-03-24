@@ -58,48 +58,114 @@
 		if (!item) throw 'Missing Item';
 		divRow.innerHTML = '';
 		divRow.setAttribute('arrayIndex', index);
-
 		// Create the required DOM elements
 		var moveHandle = document.createElement('span'),
+			img = document.createElement('img'),
+			editImg = document.createElement('img'),
 			title = document.createElement('a'),
+			editTitle = document.createElement('input'),
 			tag = document.createElement('span'),
+			editTag = document.createElement('input'),
 			tagCount = document.createElement('span'),
+			editTagCount = document.createElement('input'),
 			edit = document.createElement('span'),
-			deleteButton = document.createElement('span');
+			cancel = document.createElement('button'),
+			deleteButton = document.createElement('span'),
+			save = document.createElement('button');
 
 		// Add the required classes to the elements
 		divRow.className = 'd-item clearfix';
 		moveHandle.className = 'icon icon-menu cursor-grab';
-		title.className = 'badge-name ellipsis';
 
-		deleteButton.className = 'btn btn--icon icon icon-cross2';
+		title.className = 'badge-name ellipsis';
 		title.innerHTML = item.name;
 
-		edit.className = 'icon icon-pencil btn-icon';
+		editTitle.setAttribute('type', 'text');
+		editTitle.value = item.name;
+		editTitle.classList = 'badge-name edit';
 
 		tag.classList.add('tag-name');
 		tag.innerHTML = item.tag;
+		editTag.setAttribute('type', 'text');
+		editTag.value = item.tag;
+		editTag.classList = 'tag-name edit';
+
 		tagCount.innerHTML = item.tagCount;
 		tagCount.classList.add('tag-count');
+		editTagCount.setAttribute('type', 'number');
+		editTagCount.value = item.tagCount;
+		editTagCount.classList = 'tag-count edit';
 
-		// Append elements to the DOM
-		divRow.appendChild(moveHandle);
+		edit.className = 'icon icon-pencil btn-icon';
+		deleteButton.className = 'btn btn--icon icon icon-cross2';
+		cancel.innerHTML = 'Cancel';
+		cancel.classList = 'btn edit';
+		cancel.onclick = () => {
+			editTag.value = item.tag;
+			editTitle.value = item.name;
+			editTagCount = item.tagCount;
+			divRow.classList.remove('edit');
+		};
+		save.innerHTML = 'Save';
+		save.classList = 'btn btn-success edit';
+		save.onclick = () => {
+			img.src = editImg.src;
+			title.innerHTML = editTitle.value;
+			tag.innerHTML = editTag.value;
+			tagCount.innerHTML = editTagCount.value;
+			divRow.classList.remove('edit');
+
+			const badgeData = {
+				imageUrl: editImg.getAttribute('data-src'),
+				name: editTitle.value,
+				tag: editTag.value,
+				tagCount: editTagCount.value,
+				rank: index,
+				id: item.id
+			};
+
+			Badges.update(badgeData, console.error);
+		};
+
 		if (item.imageUrl) {
-			let img = document.createElement('img');
 			img.src = buildfire.imageLib.cropImage(item.imageUrl, { width: 16, height: 16 });
-			divRow.appendChild(img);
 		}
+
+		editImg.src = buildfire.imageLib.cropImage(item.imageUrl, { width: 16, height: 16 });
+		editImg.classList = 'item-img edit';
+		editImg.setAttribute('data-src', item.imageUrl);
+		editImg.onclick = () => {
+			buildfire.imageLib.showDialog({ showIcons: false, multiSelection: false }, (error, result) => {
+				if (result && result.selectedFiles && result.selectedFiles.length) {
+					editImg.src = buildfire.imageLib.cropImage(result.selectedFiles[0], { width: 16, height: 16 });
+					editImg.setAttribute('data-src', result.selectedFiles[0]);
+				}
+			});
+		};
+
+		divRow.appendChild(moveHandle);
+		divRow.appendChild(img);
+		divRow.appendChild(editImg);
 		divRow.appendChild(title);
+		divRow.appendChild(editTitle);
 		divRow.appendChild(tag);
+		divRow.appendChild(editTag);
 		divRow.appendChild(tagCount);
+		divRow.appendChild(editTagCount);
 		divRow.appendChild(edit);
+		divRow.appendChild(cancel);
 		divRow.appendChild(deleteButton);
+		divRow.appendChild(save);
 
 		title.onclick = () => {
 			let index = divRow.getAttribute('arrayIndex'); /// it may have bee reordered so get value of current property
 			index = parseInt(index);
 			this.onItemClick(item, index, divRow);
 			return false;
+		};
+
+		edit.onclick = () => {
+			divRow.classList.add('edit');
 		};
 
 		deleteButton.onclick = () => {
@@ -129,6 +195,7 @@
 				var tmp = me.badges.splice(oldIndex, 1)[0];
 				me.badges.splice(newIndex, 0, tmp);
 				me.reIndexRows();
+				debugger;
 				me.onOrderChange(tmp, oldIndex, newIndex);
 			},
 			onStart: function(evt) {
@@ -178,4 +245,3 @@
 		console.error('please handle onItemClick', item);
 	}
 }
-

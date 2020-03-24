@@ -23,13 +23,15 @@ class Settings {
 		this.autoEnlistAll = dbObj.data.autoEnlistAll || false;
 		this.autoEnlistTags = dbObj.data.autoEnlistTags || [];
 		this.actionItem = dbObj.data.actionItem || null;
+		this.badgePushNotifications = dbObj.data.badgePushNotifications || null;
 	}
 
 	toRawData() {
 		return {
 			autoEnlistAll: this.autoEnlistAll,
 			autoEnlistTags: this.autoEnlistTags,
-			actionItem: this.actionItem
+			actionItem: this.actionItem,
+			badgePushNotifications: this.badgePushNotifications
 		};
 	}
 

@@ -80,11 +80,12 @@
 
 		Settings.get()
 			.then(data => {
-				const { autoEnlistAll, autoEnlistTags, actionItem } = data;
+				const { autoEnlistAll, autoEnlistTags, actionItem, badgePushNotifications } = data;
 
 				$scope.data.autoEnlistAll = autoEnlistAll || false;
 				$scope.data.autoEnlistTags = autoEnlistTags || [];
 				$scope.data.actionItem = actionItem || null;
+				$scope.data.badgePushNotifications = badgePushNotifications || null;
 
 				if (!$scope.$$phase) $scope.$apply();
 

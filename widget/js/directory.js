@@ -109,6 +109,9 @@ class Directory {
 									return b;
 								});
 							}
+							if (this.user && result.data.userId === this.user.userId) {
+								return result;
+							}
 							result.data.action = {
 								icon: result.data.isFavorite ? 'icon icon-star btn-primary' : 'icon icon-star-empty'
 								// handler: item => {
@@ -218,7 +221,7 @@ class Directory {
 					}
 				});
 
-				if (newBadges.length) {
+				if (newBadges.length && this.settings.badgePushNotifications) {
 					this.getBadges(() => {
 						this.sendNewBadgePN(userObj, newBadges[0]);
 					});

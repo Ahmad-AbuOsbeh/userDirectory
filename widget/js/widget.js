@@ -4,7 +4,6 @@ class Widget {
 		this.strings = new buildfire.services.Strings('en-us', stringsConfig);
 
 		this.searchBar = new SearchBar('searchBar');
-		this.drawer = new buildfire.components.drawer('drawer');
 
 		this.directoryUI = null;
 
@@ -93,33 +92,6 @@ class Widget {
 			});
 		};
 
-		// this.searchBar.onOptionsButtonClicked = () => {
-		// 	if (!this.user) return;
-
-		// 	const leave = () => {
-		// 		this.directoryUI.leaveDirectory(() => {
-		// 			this.searchBar.shouldShowAddButton(true);
-		// 			this.search();
-		// 		});
-		// 	};
-
-		// 	const options = {
-		// 		richContent: `
-		// 			<button onclick="${() => leave()}">View Profile</button>
-		// 			<button onclick="${() => leave()}">Leave Directory</button>
-		// 		`
-		// 	};
-
-		// 	// const options = {
-		// 	// 	richContent: `
-		// 	// 		<button onclick="${() => leave()}">View Profile</button>
-		// 	// 		<button onclick="${() => leave()}">Leave Directory</button>
-		// 	// 	`
-		// 	// };
-
-		// 	buildfire.components.popup.display(options, console.error);
-		// };
-
 		this.searchBar.onFavoritesButtonClicked = value => {
 			// this.favoritesFilter = value;
 			this.directoryUI.directory.filterFavorites = value;
@@ -164,7 +136,6 @@ class Widget {
 	}
 
 	renderUserModal(item) {
-		debugger;
 		const { imageUrl, data } = item;
 		const { displayName, email, badges } = data;
 		const { actionItem } = this.settings;
@@ -177,90 +148,195 @@ class Widget {
 					</div>
 
 					<div class="user-info-holder ellipsis">
-						<h4 class="user-title whiteTheme">${displayName}</h4>
-						<p class="user-subtitle whiteTheme">${email}</p>
+						<h4 class="user-title">${displayName}</h4>
+						<p class="user-subtitle">${email}</p>
 					</div>
 				</div>
 			`,
-			tabs: [
-				{
-					header: `<span class="glyphicon glyphicon-user"></span>`,
-					content: [
-						{
-							id: 'action',
-							icon: 'glyphicon glyphicon-circle-arrow-right',
-							text: actionItem ? actionItem.title : this.strings.get('other.messageUser'),
-							callback: () => this.directoryUI.handleAction(data)
-						},
-						{
-							id: 'favorites',
-							icon: data.isFavorite ? 'icon icon-star' : 'icon icon-star-empty',
-							text: data.isFavorite ? this.strings.get('other.removeFromFavorites') : this.strings.get('other.addToFavorites'),
-							callback: e => {
-								if (data.isFavorite) {
-									this.directoryUI.directory.removeFavorite(data, (error, result) => {
-										if (!error) {
-											e.target.querySelectorAll('.icon')[0].classList.replace('icon-star', 'icon-star-empty');
-											e.target.querySelectorAll('.list-item-text')[0].innerHTML = this.strings.get('other.addToFavorites');
-											data.isFavorite = false;
-											item.data.isFavorite = false;
-											item.action.icon = 'icon icon-star-empty';
-											item.update();
-										}
-									});
-								} else {
-									this.directoryUI.directory.addFavorite(data, (error, result) => {
-										if (!error) {
-											e.target.querySelectorAll('.icon')[0].classList.replace('icon-star-empty', 'icon-star');
-											e.target.querySelectorAll('.list-item-text')[0].innerHTML = this.strings.get('other.removeFromFavorites');
-											data.isFavorite = true;
-											item.data.isFavorite = true;
-											item.action.icon = 'icon icon-star btn-primary';
-											item.update();
-										}
-									});
-								}
-							}
-						},
-						{
-							id: 'report',
-							icon: 'glyphicon glyphicon-warning-sign',
-							text: this.strings.get('other.reportUser'),
-							callback: () => this.reportUser(data)
-						}
-					]
-				},
-				{
-					header: `<span class="glyphicon glyphicon-tags"></span>`,
-					content: `
-					<div class="badges-grid">
-						${
-							badges.length
-								? badges
-										.map(badge => {
-											return `
-								<div class="grid-item">
-									<div class="user-badge">
-										<img src="${badge.imageUrl}" alt="">
-										<!-- <span class="badge-count successBackgroundTheme">999</span> -->
-									</div>
-									<h5>${badge.name}</h5>
-									<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>
-								</div>
-								`;
-										})
-										.join(' ')
-								: `
-							<div>no badges yet!</div>
-						`
-						}
-					</div>
-					`
-				}
-			]
+			tabs: []
 		};
 
-		this.drawer.open(options);
+		if (this.user && item.data.userId === this.user._id) {
+			options.tabs.push({
+				text: `<span class="glyphicon glyphicon-user"></span>`,
+				listItems: [
+					{
+						id: 'openProfile',
+						icon: 'glyphicon glyphicon-circle-arrow-right',
+						text: this.strings.get('other.openProfile')
+					},
+					{
+						id: 'leaveDirectory',
+						icon: 'glyphicon glyphicon-remove-circle',
+						text: this.strings.get('other.leaveDirectory')
+					}
+				]
+			});
+		} else {
+			options.tabs.push({
+				text: `<span class="glyphicon glyphicon-user"></span>`,
+				listItems: [
+					{
+						id: 'action',
+						icon: 'glyphicon glyphicon-circle-arrow-right',
+						text: actionItem ? actionItem.title : this.strings.get('other.messageUser')
+					},
+					{
+						id: 'favorite',
+						icon: data.isFavorite ? 'icon icon-star' : 'icon icon-star-empty',
+						text: data.isFavorite ? this.strings.get('other.removeFromFavorites') : this.strings.get('other.addToFavorites')
+					},
+					{
+						id: 'report',
+						icon: 'glyphicon glyphicon-warning-sign',
+						text: this.strings.get('other.reportUser')
+					}
+				]
+			});
+		}
+
+		options.tabs.push({
+			text: `<span class="glyphicon glyphicon-tags"></span>`,
+			richContent: `
+			<div class="badges-grid">
+				${
+					badges.length
+						? badges
+								.map(badge => {
+									return `
+						<div class="grid-item">
+							<div class="user-badge">
+								<img src="${badge.imageUrl}" alt="">
+								<!-- <span class="badge-count successBackgroundTheme">999</span> -->
+							</div>
+							<h5>${badge.name}</h5>
+							<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>
+						</div>
+						`;
+								})
+								.join(' ')
+						: `
+					<div>no badges yet!</div>
+				`
+				}
+			</div>
+			<style>
+				.badges-grid{
+					display: grid;
+					grid-template-columns: repeat(3, 1fr);
+					grid-column-gap: .75rem;
+					grid-row-gap: 1.5rem;
+					padding: 1rem .5rem;
+					padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+				}
+				.badges-grid .grid-item{
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					text-align: center;
+				}
+				.badges-grid .user-badge{
+					border-radius: .25rem;
+					width: 4rem;
+					height: 4rem;
+					position: relative;
+				}
+				.badges-grid .grid-item h5{
+					margin: .75rem 0 .125rem 0;
+					font-weight: bold;
+					word-break: break;
+				}
+				.badges-grid .user-badge img{
+					border-radius: .25rem;
+					width: 4rem;
+					height: 4rem;
+					object-fit: cover;
+					overflow: hidden;
+				}
+				.user-badge .badge-count{
+					display: block;
+					background-color: rgba(120, 120, 120, 0.5);
+					color: #fff;
+					border-radius: 1rem;
+					position: absolute;
+					top: -.75rem;
+					right: calc(0% - .75rem);
+					padding: .25rem .5rem;
+					text-align: left;
+				}
+				.caption{
+					font-size: .75rem;
+					opacity: .75;
+					margin: 0;
+				}
+				@media(min-width: 700px){
+					.badges-grid{
+						grid-template-columns: repeat(4, 1fr);
+					}
+				}
+			</style>
+			`
+		});
+
+		const callback = (error, result) => {
+			if (error) return console.error(error);
+
+			const { id } = result;
+
+			switch (id) {
+				case 'openProfile': {
+					buildfire.auth.openProfile();
+					buildfire.components.drawer.closeDrawer();
+					break;
+				}
+				case 'leaveDirectory': {
+					this.directoryUI.leaveDirectory(() => {
+						this.searchBar.shouldShowAddButton(true);
+						this.search();
+					});
+					buildfire.components.drawer.closeDrawer();
+					break;
+				}
+				case 'action': {
+					this.directoryUI.handleAction(data);
+					buildfire.components.drawer.closeDrawer();
+					break;
+				}
+				case 'favorite': {
+					if (data.isFavorite) {
+						this.directoryUI.directory.removeFavorite(data, (error, result) => {
+							if (!error) {
+								data.isFavorite = false;
+								item.data.isFavorite = false;
+								item.action.icon = 'icon icon-star-empty';
+								item.update();
+							}
+						});
+					} else {
+						this.directoryUI.directory.addFavorite(data, (error, result) => {
+							if (!error) {
+								data.isFavorite = true;
+								item.data.isFavorite = true;
+								item.action.icon = 'icon icon-star btn-primary';
+								item.update();
+							}
+						});
+					}
+					buildfire.components.drawer.closeDrawer();
+					break;
+				}
+				case 'report': {
+					this.reportUser(data);
+					buildfire.components.drawer.closeDrawer();
+					break;
+				}
+				default:
+					buildfire.components.drawer.closeDrawer();
+					break;
+			}
+		};
+
+		buildfire.components.drawer.openBottomDrawer(options, callback);
 	}
 
 	getUser() {

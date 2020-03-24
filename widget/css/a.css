@@ -384,7 +384,7 @@ input[type="password"] {
 
 
 
-/* Badge Grid */
+/* Badge Grid
 .badges-grid{
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -437,7 +437,7 @@ input[type="password"] {
   .badges-grid{
     grid-template-columns: repeat(4, 1fr);
   }
-}
+} */
 .fake-modal{
   position: absolute;
   top: 0;

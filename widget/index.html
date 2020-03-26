@@ -49,6 +49,368 @@
 		<header id="searchBar" class="backgroundColorTheme"></header>
 		<div id="listViewContainer"></div>
 		<div id="drawer"></div>
+		<!-- fake-modal is just a placeholder, remove this element before copying inside core modal -->
+		<div class="fake-modal">
+
+			<style> 
+				.center-content{
+						font-size: 16px;
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						padding: 1em 0;
+					}
+					.center-content h4{
+						font-size: 1.25em;
+					}
+					.center-content.active-user .badge-user,
+					.center-content.active-user .badge-user img{
+						width: 5em;
+						height: 5em;
+					}
+					.center-content.active-user .badge-user{
+						margin: 1em;
+					}
+					.badge-user{
+						width: 3em;
+						height: 3em;
+						border-radius: .5em;
+						overflow: hidden;
+					}
+					.center-content .badge-user{
+						margin: .5em;
+					}
+					.badge-user img{
+						width: 3em;
+						height: 3em;
+						border-radius: .5em;
+						overflow: hidden;
+						object-fit: cover;
+					}
+					.center-content .avatar{
+						margin: .5em;
+					}
+					.center-content .avatar,
+					.center-content .avatar img{
+						width: 4.5em;
+						height: 4.5em;
+						overflow: hidden;
+						border-radius: 50%;
+						margin-bottom: .75em;
+					}
+					.center-content .avatar img{
+						object-fit: cover;
+					}
+			</style>
+			<div class="center-content">
+				<div class="avatar">
+					<img src="https://randomuser.me/api/portraits/men/29.jpg" alt="">
+				</div>
+				<p>User Name</p>
+				<h4 class="title text-center">Received a New Badge!</h4>
+				<div class="badge-user">
+					<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
+				</div>
+				<p class="caption">Badge Name</p>
+			</div>
+
+			<!-- <div class="center-content active-user">
+				<h4 class="title text-center">New Badge Received!</h4>
+				<div class="badge-user">
+					<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">
+				</div>
+				<p>Badge Name</p>
+			</div> -->
+
+			<!-- <style>
+				.input-list [type="radio"] {
+						position: absolute;
+						opacity: 0;
+						left: 1rem;
+						top: 50%;
+						transform: translateY(-50%);
+				}
+				.input-list [type="radio"] + label{
+						word-break: break-word;
+						position: relative;
+						padding: 1rem;
+						padding-left: 3.5rem;
+						cursor: pointer;
+						display: block;
+						font-size: 14px;
+						transition: background-color .3s ease-in-out;
+				}
+				.input-list [type="radio"] + label:hover{
+					background-color: rgba(150,150,150,.05);
+				}
+				.input-list .selector{
+					position: absolute;
+					width: .625rem;
+					height: .625rem;
+					display: block;
+					border-radius: 50%;
+					left: 1.25rem;
+					top: 50%;
+					transform: translateY(-50%);
+					transition: background-color .2s ease-in-out;
+				}
+				.input-list .selector::before{
+					content: '';
+					position: absolute;
+					width: 1.25rem;
+					height: 1.25rem;
+					display: block;
+					border-radius: 50%;
+					border: 2px solid rgba(128, 128, 128, .5);
+					left: -.325rem;
+					top: 50%;
+					transform: translateY(-50%);
+				}
+				.input-list [type="radio"]:not(:checked) + label .selector{
+					background-color: transparent !important;
+					transform: translateY(-50%);
+				}
+			</style> -->
+			<!-- <form class="input-list">
+				<div class="input-list-item">
+					<input type="radio" id="test1" name="radio-group" checked>
+    			<label for="test1"><span class="selector primaryBackgroundTheme"></span>Inappropriate Profile Pictures</label>
+				</div>
+				<div class="input-list-item">
+					<input type="radio" id="test2" name="radio-group">
+    			<label for="test2"><span class="selector primaryBackgroundTheme"></span>Harrassment</label>
+				</div>
+				<div class="input-list-item">
+					<input type="radio" id="test3" name="radio-group">
+    			<label for="test3"><span class="selector primaryBackgroundTheme"></span>Spamming</label>
+				</div>
+				<div class="input-list-item">
+					<input type="radio" id="test4" name="radio-group">
+    			<label for="test4"><span class="selector primaryBackgroundTheme"></span>Fraud</label>
+				</div>
+			</form> -->
+
+			<!-- <style> 
+				.center-content{
+						font-size: 16px;
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						padding: 1em 0;
+					}
+					.center-content.active-user .badge-user,
+					.center-content.active-user .badge-user img{
+						width: 5em;
+						height: 5em;
+					}
+					.center-content.active-user .badge-user{
+						margin: 1em;
+					}
+					.badge-user{
+						width: 3em;
+						height: 3em;
+						border-radius: .5em;
+						overflow: hidden;
+					}
+					.center-content .badge-user{
+						margin: .5em;
+					}
+					.badge-user img{
+						width: 3em;
+						height: 3em;
+						border-radius: .5em;
+						overflow: hidden;
+						object-fit: cover;
+					}
+					.center-content .avatar{
+						margin: .5em;
+					}
+					.center-content .avatar,
+					.center-content .avatar img{
+						width: 4.5em;
+						height: 4.5em;
+						overflow: hidden;
+						border-radius: 50%;
+						margin-bottom: .75em;
+					}
+					.center-content .avatar img{
+						object-fit: cover;
+					}
+					/* Grid Styling Start */
+					.badges-grid{
+						font-size: 16px;
+						display: grid;
+						grid-template-columns: repeat(2, 1fr);
+						grid-column-gap: .75em;
+						grid-row-gap: 1.5em;
+						padding: 1em .5em;
+						padding-bottom: calc(1em + env(safe-area-inset-bottom));
+					}
+					.badges-grid .grid-item{
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						text-align: center;
+					}
+					.badges-grid .user-badge{
+						border-radius: .25em;
+						width: 4em;
+						height: 4em;
+						position: relative;
+					}
+					.badges-grid .grid-item h5{
+						margin: .75em 0 .125em 0;
+						font-weight: bold;
+						word-break: break;
+					}
+					.badges-grid .user-badge img{
+						border-radius: .25em;
+						width: 4em;
+						height: 4em;
+						object-fit: cover;
+						overflow: hidden;
+					}
+					.user-badge .badge-count{
+						display: block;
+						background-color: rgba(120, 120, 120, 0.5);
+						color: #fff;
+						border-radius: 1em;
+						position: absolute;
+						top: -.75em;
+						right: calc(0% - .75em);
+						padding: .25em .5em;
+						text-align: left;
+					}
+					.caption{
+						font-size: .75em;
+						opacity: .75;
+						margin: 0;
+					}
+					@media(min-width: 700px){
+						.badges-grid{
+							grid-template-columns: repeat(4, 1fr);
+						}
+					}
+			</style>
+
+			<div class="center-content">
+				<div class="avatar">
+					<img src="https://randomuser.me/api/portraits/men/29.jpg" alt="">
+				</div>
+				<p>User Name</p>
+				<h4 class="title text-center">Received New Badges!</h4>
+			</div>
+
+			<div class="badges-grid">
+				<div class="grid-item">
+					<div class="user-badge">
+						<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">						
+					</div>
+					<h5>Badge Name</h5>
+					<p class="caption">15 Feb 2020</p>
+				</div>
+				<div class="grid-item">
+					<div class="user-badge">
+						<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">						
+					</div>
+					<h5>Badge Name</h5>
+					<p class="caption">15 Feb 2020</p>
+				</div>
+				<div class="grid-item">
+					<div class="user-badge">
+						<img src="https://i.pinimg.com/474x/d3/8d/7b/d38d7bed5ce7cf83cda809a2471be11b.jpg" alt="">						
+					</div>
+					<h5>Badge Name</h5>
+					<p class="caption">15 Feb 2020</p>
+				</div>
+			</div> -->
+
+			<style>
+				.input-list.checkbox-list{
+					font-size: 16px;
+				}
+				.input-list.checkbox-list [type="checkbox"] {
+						position: absolute;
+						opacity: 0;
+						left: 1em ;
+						top: 50%;
+						transform: translateY(-50%);
+				}
+				.input-list.checkbox-list [type="checkbox"] + label{
+						word-break: break-word;
+						position: relative;
+						padding: 1em ;
+						padding-left: 3.5em ;
+						cursor: pointer;
+						display: block;
+						font-size: 16px;
+						transition: background-color .3s ease-in-out;
+				}
+				.input-list.checkbox-list [type="checkbox"] + label:hover{
+					background-color: rgba(150,150,150,.05);
+				}
+				.input-list.checkbox-list .selector{
+					position: absolute;
+					width: 1.25em ;
+					height: 1.25em ;
+					display: block;
+					border-radius: .25em;
+					left: 1.25em;
+					top: 0;
+					top: 50%;
+					transform: translateY(-50%);
+					transition: background-color .2s ease-in-out;
+					color: #fff;
+					font-family: 'Glyphicons Halflings' !important;
+				}
+				.input-list.checkbox-list .selector::before{
+					content: '';
+					position: absolute;
+					width: 1.25em ;
+					height: 1.25em ;
+					display: block;
+					border-radius: .25em;
+					border: 2px solid rgba(128, 128, 128, .5);
+					left: 0;
+					top: 0;
+					top: 50%;
+					transform: translateY(-50%);
+				}
+				.input-list.checkbox-list [type="checkbox"]:checked + label .selector::before{
+					border-color: transparent;
+				}
+				.input-list.checkbox-list [type="checkbox"]:checked + label .selector::after{
+					content: "\e013";
+					font-size: 10px;
+					position: absolute;
+					left: 50%;
+					top: 50%;
+					transform: translateX(-50%) translateY(-50%);
+				}
+				.input-list.checkbox-list [type="checkbox"]:not(:checked) + label .selector{
+					background-color: transparent !important;
+					transform: translateY(-50%);
+				}
+			</style>
+			<form class="input-list checkbox-list">
+				<div class="input-list-item">
+					<input type="checkbox" id="test1" name="radio-group" checked>
+    			<label for="test1"><span class="selector primaryBackgroundTheme"></span>Inappropriate Profile Pictures</label>
+				</div>
+				<div class="input-list-item">
+					<input type="checkbox" id="test2" name="radio-group">
+    			<label for="test2"><span class="selector primaryBackgroundTheme"></span>Harrassment</label>
+				</div>
+				<div class="input-list-item">
+					<input type="checkbox" id="test3" name="radio-group">
+    			<label for="test3"><span class="selector primaryBackgroundTheme"></span>Spamming</label>
+				</div>
+				<div class="input-list-item">
+					<input type="checkbox" id="test4" name="radio-group">
+    			<label for="test4"><span class="selector primaryBackgroundTheme"></span>Fraud</label>
+				</div>
+			</form>
+		</div>
 
 		<script>
 			const widget = new Widget();

@@ -132,10 +132,69 @@ class Widget {
 	}
 
 	reportUser(userData) {
+		const options = {
+			title: 'Reason of Report',
+			multiSelect: false,
+			listItems: [
+				{
+					text: 'Inappropriate Profile Image',
+					value: 'profileImage'
+				},
+				{
+					text: 'Harrassment',
+					value: 'harrassment'
+				},
+				{
+					text: 'Spamming',
+					value: 'spam'
+				},
+				{
+					text: 'Fraud',
+					value: 'fraud'
+				},
+			],
+			confirmButton: {
+				text: 'Send',
+				value: 'send'
+			}
+		};
+
+		const callback = (error, result) => {
+			if (error) return console.error(error);
+
+			if (result.canceled) return;
+
+			if (result.selected[0] && result.selected[0].value) {
+				switch (result.selected[0].value) {
+					case 'profileImage': {
+						
+						break;
+					}
+					case 'harrassment': {
+						
+						break;
+					}
+					case 'spam': {
+						
+						break;
+					}
+					case 'fraud': {
+						
+						break;
+					}
+					default:
+						break;
+				}
+			}
+		};
+
+		buildfire.input.showListDialog(options, callback);
+	
 		window.location = `mailto:${email}?subject=${encodeURIComponent()}&body=${encodeURIComponent()}`;
 	}
 
 	renderUserModal(item) {
+		if (!buildfire.components || !buildfire.components.drawer) return;
 		const { imageUrl, data } = item;
 		const { displayName, email, badges } = data;
 		const { actionItem } = this.settings;

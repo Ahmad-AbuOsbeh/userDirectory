@@ -117,7 +117,7 @@
 					<input name="badgeName" type="text" ng-model="badge.name" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.badgeName.$invalid}" required />
 				</div>
 				<div class="tag-name">
-					<label for="">Tags</label>
+					<label for="">Tag</label>
 					<input name="badgeTag" type="text" ng-model="badge.tag" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.badgeTag.$invalid}" required />
 				</div>
 				<div class="tag-count">
@@ -128,13 +128,14 @@
 			</form>
 
 			<div id="badges"></div>
-				<h1 class="title">New Badge Dialog</h1>
 
-				<p class="pull-left">Send push notification if a new Badge is earned</p>
-				<div class="button-switch pull-right">
-					<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
-					<label for="pushNotifications" ></label>
-				</div>
+			<h1 class="title">New Badge Dialog</h1>
+
+			<p class="pull-left">Send push notification if a new Badge is earned</p>
+			<div class="button-switch pull-right">
+				<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
+				<label for="pushNotifications" ></label>
+			</div>
 		</div>
 	</body>
 </html>

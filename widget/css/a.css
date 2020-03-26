@@ -340,6 +340,7 @@ input[type="password"] {
 }
 
 .search-bar {
+  z-index: 99;
   margin: .75em;
   display: flex;
   border-radius: .25rem;

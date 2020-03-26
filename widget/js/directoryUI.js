@@ -1,7 +1,7 @@
 class DirectoryUI {
 	constructor(user, strings, settings, isService) {
 		this.user = user;
-		this.directory = new Directory(user, settings);
+		this.directory = new Directory(user, strings, settings);
 		this.strings = strings || new buildfire.services.Strings('en-us', stringsConfig);
 		this.settings = settings;
 	}

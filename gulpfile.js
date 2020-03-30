@@ -60,6 +60,7 @@ const cssTasks = [
 	{ name: 'widgetCSS', src: 'widget/**/*.css', dest: '/widget' },
 	// { name: 'controlSharedCSS', src: 'control/assets/**/*.css', dest: '/control/assets' },
 	{ name: 'controlContentCSS', src: 'control/content/**/*.css', dest: '/control/content' },
+	{ name: 'controlAbuseCSS', src: 'control/abuse/**/*.css', dest: '/control/abuse' },
 	{ name: 'controlDesignCSS', src: 'control/design/**/*.css', dest: '/control/design' },
 	{ name: 'controlSettingsCSS', src: 'control/settings/**/*.css', dest: '/control/settings' },
 	{ name: 'controlStringsCSS', src: 'control/strings/**/*.css', dest: '/control/strings' }
@@ -92,9 +93,7 @@ cssTasks.forEach(function(task) {
 
 // { name: 'controlFonts', src: 'control/assets/linearicons/fonts/**/*', dest: '/control/assets/fonts' },
 gulp.task('controlAssets', function() {
-	return gulp
-		.src(['control/assets/**/*'], { base: '.' })
-		.pipe(gulp.dest(destinationFolder));
+	return gulp.src(['control/assets/**/*'], { base: '.' }).pipe(gulp.dest(destinationFolder));
 });
 
 gulp.task('sharedJS', function() {
@@ -190,7 +189,6 @@ gulp.task('widgetHTML', function() {
 		.pipe(minHTML({ removeComments: true, collapseWhitespace: true }))
 		.pipe(gulp.dest(destinationFolder));
 });
-
 
 gulp.task('resources', function() {
 	return gulp.src(['resources/*', 'plugin.json'], { base: '.' }).pipe(gulp.dest(destinationFolder));

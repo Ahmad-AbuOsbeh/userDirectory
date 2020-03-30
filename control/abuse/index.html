@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<!-- Inherit App Colors and Font -->
+		<meta name="buildfire" content="enableMDTheme,disableBootstrap" />
+
+		<!-- Material Design -->
+		<link href="../../../../styles/materialDesign/material-components-web@4.0.0.min.css" rel="stylesheet" />
+		<script src="../../../../scripts/materialDesign/material-components-web@4.0.0.min.js" type="text/javascript"></script>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+		<!-- build:bundleCSSFiles -->
+		<link rel="stylesheet" href="style.css" />
+    <!-- endbuild -->
+
+
+		<!-- JS -->
+    <script src="../../../../scripts/buildfire.js"></script>
+    
+		<!-- build:bundleSharedJSFiles  -->
+    <script src="../../widget/js/shared/analytics.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:bundleDataJSFiles  -->
+    <script src="../../widget/dataAccess/reports.js"></script>
+    <!-- endbuild -->
+	</head>
+
+	<body>
+		<div class="container">
+			<h3>Reported For Abuse</h3>
+			<div class="mdc-data-table">
+				<table class="mdc-data-table__table" aria-label="Abuse">
+					<div role="progressbar" id="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate" aria-label="Progress Bar">
+						<div class="mdc-linear-progress__buffering-dots"></div>
+						<div class="mdc-linear-progress__buffer"></div>
+						<div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+							<span class="mdc-linear-progress__bar-inner"></span>
+						</div>
+						<div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+							<span class="mdc-linear-progress__bar-inner"></span>
+						</div>
+					</div>
+					<thead>
+						<tr class="mdc-data-table__header-row">
+							<th class="mdc-data-table__header-cell header" role="columnheader" scope="col"></th>
+							<th class="mdc-data-table__header-cell header" role="columnheader" scope="col">
+								Display Name
+							</th>
+							<th class="mdc-data-table__header-cell header" role="columnheader" scope="col">
+								Email
+							</th>
+							<th class="mdc-data-table__header-cell header  mdc-data-table__header-cell--numeric" role="columnheader" scope="col">
+								Reports
+							</th>
+						</tr>
+					</thead>
+					<tbody class="mdc-data-table__content" id="tableBody">
+						<!--  -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<script>
+			function loadAbuse() {
+				setProgressBar(true);
+				tableBody.innerHTML = '';
+
+				Reports.search(0, 15, (error, results) => {
+					if (error) {
+						setProgressBar(false);
+						return console.error(error);
+					}
+
+					getUser();
+
+					function getUser() {
+						if (results.length < 1) {
+							return setProgressBar(false);
+						}
+						const { data, id } = results.pop();
+
+						const report = { ...data, id };
+
+						buildfire.auth.getUserProfile({ userId: report.userId }, (error, userData) => {
+							if (error) {
+								getUser();
+							}
+
+							report.user = userData;
+
+							addExpandableRow(report);
+							getUser();
+						});
+					}
+				});
+			}
+
+			loadAbuse();
+
+			function addExpandableRow(data) {
+				// Add two tr tag one for row collapse and other for content
+				let collapsibleRow = createCollapsibleRow(data);
+				let contentRow = createContentRow(data);
+
+				tableBody.appendChild(collapsibleRow);
+				tableBody.appendChild(contentRow);
+			}
+
+			function setProgressBar(isLoading) {
+				if (isLoading) {
+					progressbar.classList.remove('mdc-linear-progress--closed');
+				} else {
+					progressbar.classList.add('mdc-linear-progress--closed');
+				}
+			}
+
+			function createCollapsibleRow(data) {
+				let row = document.createElement('TR');
+				row.classList.add('mdc-data-table__row');
+				row.classList.add('collapsible');
+				row.setAttribute('id', data.id);
+				let cells = createCollapsibleRowCells(data);
+				row.innerHTML = cells;
+
+				const onReportClick = (e, reportId, reportContainer, card) => {
+					if (e.target.tagName === 'BUTTON') {
+						Reports.resolveReport(data.userId, reportId, (error, result) => {
+							if (error) return console.error(error);
+
+							if (result.status && result.status === 'deleted') {
+								row.parentElement.removeChild(reportContainer.parentElement.parentElement);
+								row.parentElement.removeChild(row);
+								return;
+							}
+
+							reportContainer.removeChild(card);
+
+							const activeReports = row.querySelectorAll('.active-reports')[0];
+
+							if (activeReports) {
+								activeReports.innerHTML = result.data.reports.length;
+							}
+						});
+						return;
+					}
+				};
+
+				row.addEventListener('click', function(e) {
+					e.preventDefault();
+
+					let spanIcon = row.children[0].children[0];
+					let content = this.nextElementSibling;
+					let reportContainer = content.children[0].children[1];
+					if (content.style.display === 'table-row') {
+						content.style.display = 'none';
+						spanIcon.innerHTML = 'expand_more';
+						reportContainer.innerHTML = '';
+					} else {
+						content.style.display = 'table-row';
+						spanIcon.innerHTML = 'expand_less';
+						for (const report of data.reports) {
+							addReportCard(data, report, reportContainer, onReportClick);
+						}
+					}
+				});
+				return row;
+			}
+
+			function deleteTopic(topic, row) {
+				topic
+					.delete('public')
+					.then(result => {
+						tableBody.removeChild(row);
+						loadAbuse();
+					})
+					.catch(err => {
+						console.error(err);
+					});
+			}
+
+			function approveTopic(topic, row) {
+				topic.reportedBy = [];
+				topic
+					.update('public')
+					.then(result => {
+						tableBody.removeChild(row);
+						loadAbuse();
+					})
+					.catch(err => {
+						console.error(err);
+					});
+			}
+
+			function createContentRow() {
+				let row = document.createElement('TR');
+				row.classList.add('mdc-data-table__row');
+				row.classList.add('content');
+				let cell = `
+          <td colspan="6" class="mdc-data-table__cell">
+            <h3>Reports</h3>
+            <div class="mdc-layout-grid reports-container">
+            </div>
+          </td>`;
+				row.innerHTML = cell;
+				return row;
+			}
+
+			function addReportCard(data, report, reportContainer, onReportClick) {
+				let card = document.createElement('DIV');
+				card.classList.add('mdc-layout-grid__inner');
+				card.classList.add('card');
+				card.innerHTML = 'loading...';
+				card.onclick = e => onReportClick(e, report.id, reportContainer, card);
+
+				reportContainer.appendChild(card);
+
+				buildfire.auth.getUserProfile({ userId: report.reportedBy }, (error, userData) => {
+					if (error) {
+						console.error(error);
+					}
+					if (!userData) {
+						report.user = {
+							email: report.reportedBy,
+							displayName: ''
+						};
+					} else {
+						report.user = userData;
+					}
+
+					let cells = createReportCard(report);
+					card.innerHTML = cells;
+				});
+			}
+
+			function createCollapsibleRowCells(report) {
+				return `<td class="mdc-data-table__cell icon-column" id="icon">
+        <span class="material-icons icon">expand_more</span>
+        </td>
+        <td class="mdc-data-table__cell text-blue">${report.user.displayName}</td>
+        <td class="mdc-data-table__cell">${report.user.email}</td>
+        <td class="mdc-data-table__cell mdc-data-table__cell--numeric active-reports">${report.reports.length}</td>
+        <!-- <td class="mdc-data-table__cell">
+          <button class="mdc-icon-button material-icons" name="approve">check</button>
+          <button class="mdc-icon-button material-icons" name="delete">delete</button>
+        </td> -->`;
+			}
+
+			function createReportCard(report) {
+				return `
+        <div class="mdc-layout-grid__cell--span-2">
+          <h4>Reported By</h4>
+          <span class="text-blue">${report.user.email}</span>
+        </div>
+        <div class="mdc-layout-grid__cell--span-2">
+          <h4>Reported On</h4>
+          <span>${new Date(report.reportedOn).toDateString()}</span>
+        </div>
+        <div class="mdc-layout-grid__cell--span-2">
+          <h4>Report Reason</h4>
+          <span>${report.reason}</span>
+        </div>
+        <div class="mdc-layout-grid__cell--span-2">
+          <h4>Action</h4>
+          <button class="mdc-icon-button material-icons" name="approve">check</button>
+          <!-- <button class="mdc-icon-button material-icons" name="delete">delete</button> -->
+        </div>`;
+			}
+		</script>
+	</body>
+</html>

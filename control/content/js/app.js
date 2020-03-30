@@ -1,6 +1,8 @@
 ((angular, buildfire) => {
 	'use strict';
 
+	Analytics.init();
+	
 	const app = angular.module('directoryContent', []);
 
 	const directoryContentCtrl = $scope => {

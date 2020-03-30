@@ -24,23 +24,11 @@ const dummyData = {
 			email
 		};
 
-		// this.fields.forEach(field => {
-		// 	obj[field] = dummyData.getRandomString();
-		// });
-
 		return obj;
 	},
 
 	getRandomString: () => {
 		return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-		// var result = '';
-		// var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		// var charactersLength = characters.length;
-		// for (var i = 0; i < 5; i++) {
-		// 	result += characters.charAt(Math.floor(Math.random() * charactersLength));
-		// }
-		// return result;
 	},
 
 	getRandomNames: callback => {
@@ -64,15 +52,3 @@ const dummyData = {
 		oReq.send();
 	}
 };
-
-// https://uinames.com/api/?amount=25
-
-// {
-//   "_id": "5b311a44b4050410eccb16f2",
-
-//   "displayName": "Chris Berger",
-//   "lastName": "Berger",
-//   "username": "chrisb000@gmail.com",
-//   "firstName": "Chris",
-//   "email": "chrisb000@gmail.com",
-// }

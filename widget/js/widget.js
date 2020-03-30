@@ -131,7 +131,7 @@ class Widget {
 		};
 	}
 
-	reportUser(userData) {
+	reportUser(userId) {
 		const options = {
 			title: 'Reason of Report',
 			multiSelect: false,
@@ -162,35 +162,22 @@ class Widget {
 		const callback = (error, result) => {
 			if (error) return console.error(error);
 
-			if (result.canceled) return;
+			if (result.canceled || !result.selected[0]) return;
 
-			if (result.selected[0] && result.selected[0].value) {
-				switch (result.selected[0].value) {
-					case 'profileImage': {
-						
-						break;
-					}
-					case 'harrassment': {
-						
-						break;
-					}
-					case 'spam': {
-						
-						break;
-					}
-					case 'fraud': {
-						
-						break;
-					}
-					default:
-						break;
-				}
-			}
+			Reports.reportUser(userId, this.user._id, result.selected[0].value, (error, result) => {
+				let text = 'User reported';
+
+				if (error) text = 'Error reporting user';
+
+				buildfire.components.toast.showToastMessage({ text });
+			});
 		};
 
+		if (!this.user) {
+			return buildfire.auth.login();
+		}
+
 		buildfire.input.showListDialog(options, callback);
-	
-		window.location = `mailto:${email}?subject=${encodeURIComponent()}&body=${encodeURIComponent()}`;
 	}
 
 	renderUserModal(item) {
@@ -385,7 +372,7 @@ class Widget {
 					break;
 				}
 				case 'report': {
-					this.reportUser(data);
+					this.reportUser(data.userId);
 					buildfire.components.drawer.closeDrawer();
 					break;
 				}

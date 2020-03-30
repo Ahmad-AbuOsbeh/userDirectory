@@ -14,7 +14,8 @@
     "enabled":false
   }
 , "customTabs": [
-    { "title": "Language", "url": "/strings/index.html" }
+    { "title": "Language", "url": "/strings/index.html" },
+    { "title": "Abuse", "url": "/abuse/index.html" }
   ]
 }
 ,"widget":{

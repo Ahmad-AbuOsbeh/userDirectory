@@ -116,7 +116,7 @@ class Directory {
 								return result;
 							}
 							result.data.action = {
-								icon: result.data.isFavorite ? 'icon icon-star btn-primary' : 'icon icon-star-empty'
+								icon: result.data.isFavorite ? 'icon glyphicon glyphicon-star btn-primary' : 'icon glyphicon glyphicon-star-empty'
 							};
 							return result;
 						});

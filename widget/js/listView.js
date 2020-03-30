@@ -117,7 +117,7 @@ class ListViewItem {
 			actionHolder.classList = 'action-holder';
 
 			const actionIcon = document.createElement('span');
-			actionIcon.classList = this.action.icon || 'icon icon-star';
+			actionIcon.classList = this.action.icon || 'icon glyphicon glyphicon-star-empty';
 			actionHolder.appendChild(actionIcon);
 
 			// if (this.action.actionItem) {

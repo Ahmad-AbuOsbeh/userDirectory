@@ -363,6 +363,9 @@ input[type="password"] {
   cursor: pointer;
   transition: transform ease-in-out .2s, opacity ease-in-out .1s, background-color ease-in-out .2s;
 }
+.search-bar .glyphicon-plus{
+  font-size: 14px;
+}
 .search-bar input{
   background-color: transparent;
 }

@@ -30,7 +30,7 @@
 
 	<body>
 		<div class="container">
-			<h3>Reported For Abuse</h3>
+			<h3 class="title">Reported For Abuse</h3>
 			<div class="mdc-data-table">
 				<table class="mdc-data-table__table" aria-label="Abuse">
 					<div role="progressbar" id="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate" aria-label="Progress Bar">
@@ -251,21 +251,21 @@
 
 			function createReportCard(report) {
 				return `
-        <div class="mdc-layout-grid__cell--span-2">
+        <div class="mdc-layout-grid__cell--span-3">
           <h4>Reported By</h4>
           <span class="text-blue">${report.user.email}</span>
         </div>
-        <div class="mdc-layout-grid__cell--span-2">
+        <div class="mdc-layout-grid__cell--span-3">
           <h4>Reported On</h4>
           <span>${new Date(report.reportedOn).toDateString()}</span>
         </div>
-        <div class="mdc-layout-grid__cell--span-2">
+        <div class="mdc-layout-grid__cell--span-3">
           <h4>Report Reason</h4>
           <span>${report.reason}</span>
         </div>
         <div class="mdc-layout-grid__cell--span-2">
-          <h4>Action</h4>
-          <button class="mdc-icon-button material-icons" name="approve">check</button>
+          <h4 class="margin-bottom-eight">Mark As Resolved</h4>
+					<button class="mdc-icon-button material-icons text-center" name="approve">check</button>
           <!-- <button class="mdc-icon-button material-icons" name="delete">delete</button> -->
         </div>`;
 			}

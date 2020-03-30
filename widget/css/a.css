@@ -341,6 +341,7 @@ input[type="password"] {
 
 .search-bar {
   z-index: 99;
+  background-color: rgba(255, 255, 255, 0.1);
   margin: .75em;
   display: flex;
   border-radius: .25rem;
@@ -368,6 +369,11 @@ input[type="password"] {
 }
 .search-bar input{
   background-color: transparent;
+  color: inherit;
+}
+.search-bar input::placeholder{
+  color: inherit;
+  opacity: .7;
 }
 .search-bar .icon:hover{
   background-color: rgba(150,150,150,.1);

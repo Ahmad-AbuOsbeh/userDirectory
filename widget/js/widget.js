@@ -188,15 +188,13 @@ class Widget {
 
 		const options = {
 			header: `
-				<div class="user-container">
-					<div class="avatar">
-						<img src="${imageUrl}" />
-					</div>
+				<div class="avatar">
+					<img src="${imageUrl}" />
+				</div>
 
-					<div class="user-info-holder ellipsis">
-						<h4 class="user-title">${displayName}</h4>
-						<p class="user-subtitle">${email}</p>
-					</div>
+				<div class="user-info-holder ellipsis">
+					<h4 class="user-title ellipsis">${displayName}</h4>
+					<p class="user-subtitle ellipsis">${email}</p>
 				</div>
 			`,
 			tabs: []

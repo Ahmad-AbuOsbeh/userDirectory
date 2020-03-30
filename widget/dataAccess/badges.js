@@ -92,7 +92,7 @@ class Badges {
 
 	static computeUserBadges(user, callback) {
 		const { appId } = buildfire.getContext();
-		const userTags = user.tags ? user.tags[appId] || [];
+		const userTags = user.tags ? user.tags[appId] : [];
 
 		this.get((e, badges) => {
 			if (e) return callback(e, null);

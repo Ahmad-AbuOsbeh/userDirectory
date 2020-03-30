@@ -58,7 +58,6 @@ gulp.task('lint', () => {
 
 const cssTasks = [
 	{ name: 'widgetCSS', src: 'widget/**/*.css', dest: '/widget' },
-	// { name: 'controlSharedCSS', src: 'control/assets/**/*.css', dest: '/control/assets' },
 	{ name: 'controlContentCSS', src: 'control/content/**/*.css', dest: '/control/content' },
 	{ name: 'controlAbuseCSS', src: 'control/abuse/**/*.css', dest: '/control/abuse' },
 	{ name: 'controlDesignCSS', src: 'control/design/**/*.css', dest: '/control/design' },
@@ -91,7 +90,6 @@ cssTasks.forEach(function(task) {
 	});
 });
 
-// { name: 'controlFonts', src: 'control/assets/linearicons/fonts/**/*', dest: '/control/assets/fonts' },
 gulp.task('controlAssets', function() {
 	return gulp.src(['control/assets/**/*'], { base: '.' }).pipe(gulp.dest(destinationFolder));
 });

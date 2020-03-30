@@ -89,18 +89,4 @@ class Favorites {
 
 		buildfire.appData.searchAndUpdate(options, update, this.tag, callback);
 	}
-
-	// checkUser() {
-	// 	if (!this.user) {
-	// 		buildfire.auth.login({}, (error, user) => {
-	// 			if (error) return console.error(error);
-
-	// 			this.user = user || null;
-	// 		});
-
-	// 		return false;
-	// 	}
-
-	// 	return true;
-	// }
 }

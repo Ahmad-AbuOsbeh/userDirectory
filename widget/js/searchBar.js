@@ -14,9 +14,6 @@ class SearchBar {
 
 		this.add = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'icon-plus']);
 
-		// this.options = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'icon-ellipsis', 'hidden']);
-
-		// if (options.menuItems) {
 		this.options = ui.create('div', this.container, null, ['btn-group']);
 
 		const btn = ui.create('div', this.options, '<span class="icon icon-ellipsis"></span>', ['dropdown-toggle']);
@@ -26,13 +23,6 @@ class SearchBar {
 		btn.setAttribute('aria-expanded', 'false');
 
 		this.dropdown = ui.create('ul', this.options, null, ['dropdown-menu']);
-		// options.menuItems.forEach(item => {
-		// 	const i = ui.create('li', this.dropdown, item.text, []);
-		// 	i.onclick = () => {
-		// 		item.action();
-		// 		this.dropdown.classList.remove('show');
-		// 	};
-		// });
 
 		btn.onclick = () => {
 			if (this.dropdown.classList.contains('show')) {
@@ -41,7 +31,6 @@ class SearchBar {
 				this.dropdown.classList.add('show');
 			}
 		};
-		// }
 
 		this.favoritesFilter = false;
 	}
@@ -103,56 +92,3 @@ class SearchBar {
 		this.input.onkeyup = this.onChange;
 	}
 }
-
-// class SearchBar extends HTMLElement {
-// 	constructor() {
-// 		super();
-
-// 		this.wrapper = ui.create('header', null, null, ['search-bar']);
-
-// 		let style = `
-// 			.search-bar {
-// 				padding: 1em;
-// 				display: flex;
-// 			}
-
-// 			.search-bar__input {
-// 				border: 0;
-// 				outline: 0;
-// 				display: block;
-// 				width: 100%;
-// 				height: 34px;
-// 				padding: 6px 12px;
-// 				font-size: 13px;
-// 				line-height: 20px;
-// 				color: #555555;
-// 				background-color: #ffffff;
-// 				background-image: none;
-// 				border: 1px solid #dddddd;
-// 				border-radius: 4px;
-// 				box-shadow:none;
-// 				-webkit-appearance:none;
-// 			}
-
-// 			.search-bar__icon {
-
-// 			}
-// 		`;
-// 		ui.create('style', this.wrapper, style, []);
-
-// 		this.input = ui.create('input', this.wrapper, null, ['search-bar__input', 'form-control']);
-// 		this.input.setAttribute('type', 'search');
-// 		this.input.setAttribute('bfString', 'other.searchUser');
-
-// 		this.favorites = ui.create('span', this.wrapper, null, ['favorites', 'search-bar__icon', 'icon', 'icon-star']);
-
-// 		let shadowRoot = this.attachShadow({ mode: 'open' });
-// 		shadowRoot.appendChild(this.wrapper);
-// 	}
-
-// 	get value() {
-// 		return this.input.value;
-// 	}
-// }
-
-// window.customElements.define('search-bar', SearchBar);

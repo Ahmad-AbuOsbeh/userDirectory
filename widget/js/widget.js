@@ -151,7 +151,7 @@ class Widget {
 				{
 					text: 'Fraud',
 					value: 'fraud'
-				},
+				}
 			],
 			confirmButton: {
 				text: 'Send',
@@ -250,20 +250,19 @@ class Widget {
 						? badges
 								.map(badge => {
 									return `
-						<div class="grid-item">
-							<div class="user-badge">
-								<img src="${badge.imageUrl}" alt="">
-								<!-- <span class="badge-count successBackgroundTheme">999</span> -->
-							</div>
-							<h5>${badge.name}</h5>
-							<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>
-						</div>
-						`;
+										<div class="grid-item">
+											<div class="user-badge">
+												<img src="${badge.imageUrl}" alt="">
+											</div>
+											<h5>${badge.name}</h5>
+											<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>
+										</div>
+										`;
 								})
 								.join(' ')
 						: `
-					<div>no badges yet!</div>
-				`
+						<div>no badges yet!</div>
+					`
 				}
 			</div>
 			<style>

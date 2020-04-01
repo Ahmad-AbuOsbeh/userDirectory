@@ -158,3 +158,6 @@
     margin-left: .25rem;
     flex-shrink: 0;
 }
+.draggable-list-view .d-item.edit .btn-cancel{
+    margin-right: 18px;
+}

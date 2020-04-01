@@ -99,7 +99,7 @@
 		edit.className = 'icon icon-pencil btn-icon';
 		deleteButton.className = 'btn btn--icon icon icon-cross2';
 		cancel.innerHTML = 'Cancel';
-		cancel.classList = 'btn edit';
+		cancel.classList = 'btn btn-cancel edit';
 		cancel.onclick = () => {
 			editTag.value = item.tag;
 			editTitle.value = item.name;

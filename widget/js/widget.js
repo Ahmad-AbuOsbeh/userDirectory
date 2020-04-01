@@ -114,7 +114,7 @@ class Widget {
 				return this.directoryUI.directory.removeFavorite(item.data, (error, result) => {
 					if (!error) {
 						item.data.isFavorite = false;
-						item.action.icon = 'icon icon-star-empty';
+						item.action.icon = 'icon glyphicon glyphicon-star-empty';
 						item.update();
 					}
 				});
@@ -123,7 +123,7 @@ class Widget {
 				return this.directoryUI.directory.addFavorite(item.data, (error, result) => {
 					if (!error) {
 						item.data.isFavorite = true;
-						item.action.icon = 'icon icon-star btn-primary';
+						item.action.icon = 'icon glyphicon glyphicon-star btn-primary';
 						item.update();
 					}
 				});

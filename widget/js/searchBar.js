@@ -9,14 +9,14 @@ class SearchBar {
 		this.input.setAttribute('type', 'search');
 		this.input.setAttribute('bfString', 'other.searchUser');
 
-		this.favorites = ui.create('span', this.container, null, ['favorites', 'search-bar__icon', 'icon', 'icon-star-empty']);
+		this.favorites = ui.create('span', this.container, null, ['favorites', 'search-bar__icon', 'icon', 'glyphicon' , 'glyphicon-star-empty']);
 		this.favorites.onclick = () => this.filterFavorites();
 
-		this.add = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'icon-plus']);
+		this.add = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'glyphicon' , 'glyphicon-plus']);
 
 		this.options = ui.create('div', this.container, null, ['btn-group']);
 
-		const btn = ui.create('div', this.options, '<span class="icon icon-ellipsis"></span>', ['dropdown-toggle']);
+		const btn = ui.create('div', this.options, '<span class="icon glyphicon glyphicon-option-vertical"></span>', ['dropdown-toggle']);
 
 		btn.setAttribute('data-toggle', 'dropdown');
 		btn.setAttribute('aria-haspopup', 'true');
@@ -63,10 +63,10 @@ class SearchBar {
 	filterFavorites() {
 		if (this.favoritesFilter) {
 			this.favoritesFilter = false;
-			this.favorites.classList.replace('icon-star', 'icon-star-empty');
+			this.favorites.classList.replace('glyphicon-star', 'glyphicon-star-empty');
 		} else {
 			this.favoritesFilter = true;
-			this.favorites.classList.replace('icon-star-empty', 'icon-star');
+			this.favorites.classList.replace('glyphicon-star-empty', 'glyphicon-star');
 		}
 
 		this.onFavoritesButtonClicked(this.favoritesFilter);

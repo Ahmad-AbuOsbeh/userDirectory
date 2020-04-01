@@ -44,12 +44,14 @@ class Badges {
 		buildfire.appData.search(searchOptions, this.tag, (error, results) => {
 			if (error) return callback(error, null);
 
-			callback(null, results.map(result => result.data));
+			callback(
+				null,
+				results.map(result => result.data)
+			);
 		});
 	}
 
 	static add(badgeData, callback) {
-
 		const badge = new Badge(badgeData);
 
 		buildfire.appData.insert(badge.toJson(), this.tag, (error, record) => {
@@ -78,12 +80,11 @@ class Badges {
 	}
 
 	static update(badgeData, callback) {
-
 		const badge = new Badge(badgeData);
 
 		const searchOptions = {
 			// filter: {
-				'_buildfire.index.string1': badge.id
+			'_buildfire.index.string1': badge.id
 			// }
 		};
 
@@ -92,6 +93,7 @@ class Badges {
 
 	static computeUserBadges(user, callback) {
 		const { appId } = buildfire.getContext();
+
 		const userTags = user.tags ? user.tags[appId] : [];
 
 		this.get((e, badges) => {

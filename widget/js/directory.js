@@ -105,6 +105,9 @@ class Directory {
 							}
 							if (result.data.badges.length) {
 								const badges = [];
+								result.data.badges = result.data.badges.filter(badge => {
+									return this.badges.find(b => b.id === badge.id);
+								});
 								result.data.badges = result.data.badges.map(badge => {
 									// return({ ...badge, ...this.badges.find(b => b.id === badge.id) });
 									const b = this.badges.find(b => b.id === badge.id);
@@ -153,6 +156,8 @@ class Directory {
 
 		buildfire.notifications.pushNotification.subscribe({ groupName: '$$userDirectory' }, console.log);
 
+		buildfire.components.toast.showToastMessage({ text: 'Joined Directory' });
+
 		Users.add(this.user.toJson(), callback);
 	}
 
@@ -182,7 +187,7 @@ class Directory {
 					hasUpdate = true;
 				}
 
-				const newBadges = [];
+				let newBadges = [];
 
 				badgeIds.forEach(badgeId => {
 					if (!userObj.data.badges.some(badge => badge.id === badgeId)) {
@@ -206,27 +211,52 @@ class Directory {
 					}
 				});
 
-				if (newBadges.length && this.settings.badgePushNotifications) {
+				if (newBadges.length) {
+					debugger;
 					this.getBadges(() => {
-						this.sendNewBadgePN(userObj, newBadges);
+						const badges = newBadges.map(badge => {
+							const b = this.badges.find(b => b.id === badge.id);
+							b.earned = badge.earned;
+							return b;
+						});
+						if (this.settings.badgePushNotifications) {
+							this.sendNewBadgePN(userObj, badges);
+						}
+						
+						const richContent = `
+						<div class="center-content active-user">
+						<h4 class="title text-center">New Badge${badges.length > 1 ? 's' : ''} Received!</h4>
+						${badges.length > 1 ? this.renderMultipleBadges(badges) : renderSingleBadge(badges[0])}
+						</div>
+						${this.getModalStyles()}
+						`;
+						
+						buildfire.components.popup.display({ richContent }, console.error);
 					});
 				}
 				if (!hasUpdate) return;
 
 				Users.update(this.user.toJson(), console.error);
 				Lookup.update(this.user.toJson(), console.error);
+
+				function renderSingleBadge(badge) {
+					const { name, imageUrl } = badge;
+					return `
+						<div class="badge-user">
+							<img src="${imageUrl}" alt="">
+						</div>
+						<p>${name}</p>
+
+					`;
+				}
 			});
 		});
 	}
 
-	sendNewBadgePN(user, newBadges) {
+	sendNewBadgePN(user, badges) {
 		const { email, displayName, userId } = user.data;
-		const badges = newBadges.map(badge => {
-			const b = this.badges.find(b => b.id === badge.id);
-			b.earned = badge.earned;
-			return b;
-		});
 
+		const { instanceId } = buildfire.getContext();
 		const imgUrl = buildfire.auth.getUserPictureUrl({ email });
 		const inAppMessage = `
 			<div class="center-content">
@@ -239,13 +269,57 @@ class Directory {
 					${badges.length ? 'Received New Badges!' : 'Received a New Badge!'}
 				</h4>
 	
-				${badges.length ? renderMultipleBadges(badges) : (
+				${badges.length ? this.renderMultipleBadges(badges) : (
 					`<div class="badge-user">
 						<img src="${badges[0].imageUrl}" alt="">
 					</div>
 					<p class="caption">${badges[0].name}</p>`
 				)}
 			</div>
+			${this.getModalStyles()}
+		`;
+
+		const options = {
+			// language settings here
+			// check exclude user
+			title: `${displayName} has earned ${badges.length ? 'new badges!' : 'a new badge!'}`,
+			text: `${displayName} has earned ${badges.length ? 'new badges!' : 'a new badge!'}`,
+			inAppMessage,
+			groupName: '$$userDirectory',
+			queryString: userId,
+			actionItem: {
+				action: 'linkToApp',
+				instanceId
+			}
+		};
+
+		// date format!!!
+		// PN exclude user
+
+		buildfire.notifications.pushNotification.schedule(options, console.error);
+	}
+
+	renderMultipleBadges(badges) {
+		return `
+			<div class="badges-grid">
+			${badges.map(badge => {
+				return `
+					<div class="grid-item">
+						<div class="user-badge">
+							<img src="${badge.imageUrl}" alt="">
+							<!-- <span class="badge-count successBackgroundTheme">999</span> -->
+						</div>
+						<h5>${badge.name}</h5>
+						<!-- <p class="caption">${new Date(badge.earned).toLocaleDateString()}</p> -->
+					</div>
+				`;
+			}).join(' ')}
+			</div>
+		`;
+	}
+
+	getModalStyles() {
+		return `
 			<style> 
 				.center-content{
 						font-size: 16px;
@@ -347,48 +421,16 @@ class Directory {
 							grid-template-columns: repeat(4, 1fr);
 						}
 					}
-			</style>
-		`;
-
-		const options = {
-			// language settings here
-			// check exclude user
-			title: `${displayName} has earned ${badges.length ? 'new badges!' : 'a new badge!'}`,
-			text: `${displayName} has earned ${badges.length ? 'new badges!' : 'a new badge!'}`,
-			inAppMessage,
-			groupName: '$$userDirectory',
-			queryString: userId
-		};
-
-		// date format!!!
-		// PN exclude user
-
-		buildfire.notifications.pushNotification.schedule(options, console.error);
-
-		function renderMultipleBadges(badges) {
-			return `
-				<div class="badges-grid">
-				${badges.map(badge => {
-					return `
-						<div class="grid-item">
-							<div class="user-badge">
-								<img src="${badge.imageUrl}" alt="">
-								<!-- <span class="badge-count successBackgroundTheme">999</span> -->
-							</div>
-							<h5>${badge.name}</h5>
-							<!-- <p class="caption">${new Date(badge.earned).toLocaleDateString()}</p> -->
-						</div>
-					`;
-				}).join(' ')}
-				</div>
+				</style>
 			`;
-		}
 	}
 
 	removeUser(callback) {
 		if (!this.user) return;
 
 		buildfire.notifications.pushNotification.unsubscribe({ groupName: '$$userDirectory' }, console.log);
+
+		buildfire.components.toast.showToastMessage({ text: 'Left Directory' });
 
 		Users.delete(this.user.userId, callback);
 	}

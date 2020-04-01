@@ -2,8 +2,8 @@ class Widget {
 	constructor() {
 		this.listView = new buildfire.components.listView('listViewContainer', { enableAddButton: false, Title: '' });
 		this.strings = new buildfire.services.Strings('en-us', stringsConfig);
-
 		this.searchBar = new SearchBar('searchBar');
+		this.emptyState = document.getElementById('emptyState');
 
 		this.directoryUI = null;
 
@@ -86,7 +86,7 @@ class Widget {
 		this.searchBar.onAddButtonClicked = () => {
 			if (!this.user) return buildfire.auth.login();
 
-			this.directoryUI.promptUser(() => {
+			this.directoryUI.promptUser(true, () => {
 				this.searchBar.shouldShowAddButton(false);
 				this.search();
 			});
@@ -189,7 +189,7 @@ class Widget {
 		const options = {
 			header: `
 				<div class="avatar">
-					<img src="${imageUrl}" />
+					<img src="${imageUrl}" onerror="this.src=window._appRoot+'media/avatar.png'" />
 				</div>
 
 				<div class="user-info-holder ellipsis">
@@ -241,7 +241,7 @@ class Widget {
 
 		options.tabs.push({
 			text: `<span class="glyphicon glyphicon-tags"></span>`,
-			richContent: `
+			content: `
 			<div class="badges-grid">
 				${
 					badges.length
@@ -449,6 +449,12 @@ class Widget {
 
 			if (results.length == 0) {
 				this.listView.container.onscroll = null;
+			}
+
+			if (widget.listView.container.childElementCount < 1) {
+				this.emptyState.classList.add('active');
+			} else {
+				this.emptyState.classList.remove('active');
 			}
 		});
 	}

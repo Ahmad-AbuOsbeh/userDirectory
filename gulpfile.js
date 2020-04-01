@@ -194,7 +194,7 @@ gulp.task('resources', function() {
 
 gulp.task('images', function() {
 	return gulp
-		.src(['**/.images/**'], { base: '.' })
+		.src(['**/images/**'], { base: '.' })
 		.pipe(imagemin())
 		.pipe(gulp.dest(destinationFolder));
 });

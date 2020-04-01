@@ -53,8 +53,14 @@ class DirectoryUI {
 		return results;
 	}
 
-	promptUser(callback) {
+	promptUser(force, callback) {
 		if (!this.user) return buildfire.auth.login();
+		
+		const { _id } = this.user || {};
+
+		if (!force && localStorage.getItem(`$$userDirectoryPrompt-${_id}`)) {
+			return;
+		}
 
 		const { appId } = buildfire.getContext();
 		const { autoEnlistTags, autoEnlistAll } = this.settings;
@@ -90,6 +96,21 @@ class DirectoryUI {
 				}
 			});
 		});
+	}
+
+	autoUpdateUser() {
+		if (this.autoUpdater) {
+			clearInterval(this.autoUpdater);
+		}
+
+		this.autoUpdater = setInterval(() => {			
+			this.directory.checkUser((error, userObj) => {
+				if (!error && userObj) {
+					this.directory.updateUser(userObj);
+				}
+			});
+		}, 10000); // 5 min
+	// }, 3e5); // 5 min
 	}
 
 	handleAction(user) {
@@ -149,9 +170,10 @@ class DirectoryUI {
 		const handleResponse = (error, result) => {
 			if (error) return console.error(error);
 
+			const { _id } = this.user || {};
 			if (result && result.buttonType) {
 				callback(result.buttonType === 'action');
-				localStorage.setItem('$$userDirectoryPrompt', 'true');
+				localStorage.setItem(`$$userDirectoryPrompt-${_id}`, 'true');
 			}
 		};
 

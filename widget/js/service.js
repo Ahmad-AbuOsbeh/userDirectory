@@ -18,9 +18,11 @@ class Service {
 		Promise.all([this.getUser(), this.getSettings(), this.getStrings()]).then(() => {
 			if (this.user) {
 				this.directoryUI = new DirectoryUI(this.user, this.strings, this.settings);
-				this.directoryUI.promptUser(() => {
+				this.directoryUI.promptUser(false, () => {
 					buildfire.messaging.sendMessageToWidget({ cmd: 'userAdded' });
 				});
+
+				this.directoryUI.autoUpdateUser();
 			}
 		});
 	}

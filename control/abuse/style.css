@@ -39,7 +39,11 @@
 }
 
 tr {
-  cursor: pointer;
+	cursor: pointer;
+}
+tr.content,
+thead tr{
+	cursor: auto;
 }
 
 .collapsible {
@@ -58,7 +62,7 @@ tr {
   background: #eef0f0;
 }
 .mdc-data-table__row:not(.mdc-data-table__row--selected):hover {
-  background-color: transparent;
+  background-color:rgba(0, 0, 0, .01);
 }
 .margin-bottom-eight{
   margin-bottom: 8px;

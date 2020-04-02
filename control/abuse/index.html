@@ -240,7 +240,7 @@
 				return `<td class="mdc-data-table__cell icon-column" id="icon">
         <span class="material-icons icon">expand_more</span>
         </td>
-        <td class="mdc-data-table__cell text-blue">${report.user.displayName}</td>
+        <td class="mdc-data-table__cell">${report.user.displayName}</td>
         <td class="mdc-data-table__cell">${report.user.email}</td>
         <td class="mdc-data-table__cell mdc-data-table__cell--numeric active-reports">${report.reports.length}</td>
         <!-- <td class="mdc-data-table__cell">
@@ -253,7 +253,7 @@
 				return `
         <div class="mdc-layout-grid__cell--span-3">
           <h4>Reported By</h4>
-          <span class="text-blue">${report.user.email}</span>
+          <span>${report.user.email}</span>
         </div>
         <div class="mdc-layout-grid__cell--span-3">
           <h4>Reported On</h4>

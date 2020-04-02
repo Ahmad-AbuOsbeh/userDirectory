@@ -4,6 +4,7 @@ class SearchBar {
 		if (!this.container) throw 'Cant find container';
 
 		this.container.classList.add('search-bar');
+		this.container.classList.add('backgroundColorTheme');
 
 		this.input = ui.create('input', this.container, null, ['search-bar__input', 'form-control']);
 		this.input.setAttribute('type', 'search');

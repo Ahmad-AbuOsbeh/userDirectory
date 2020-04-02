@@ -24,12 +24,21 @@ class Widget {
 		this.initSearchBar();
 		this.initListView();
 
-		buildfire.auth.onLogin(() => this.init());
-		buildfire.auth.onLogout(() => this.init());
+		// buildfire.auth.onLogin(() => this.init());
+		// buildfire.auth.onLogout(() => this.init());
 
-		buildfire.messaging.onReceivedMessage = ({ cmd }) => {
-			switch (cmd) {
+		buildfire.auth.onLogin(() => location.reload());
+		buildfire.auth.onLogout(() => location.reload());
+
+		buildfire.messaging.onReceivedMessage = msg => {
+			switch (msg.cmd) {
 				case 'userAdded': {
+					this.search();
+					this.searchBar.shouldShowAddButton(false);
+					break;
+				}
+				case 'userUpdated': {
+					this.directoryUI.directory.badges = [];
 					this.search();
 					this.searchBar.shouldShowAddButton(false);
 					break;
@@ -58,6 +67,8 @@ class Widget {
 					if (err) return console.error(err);
 					this.searchBar.shouldShowAddButton(typeof userObj !== 'object');
 				});
+			} else {
+				this.searchBar.shouldShowAddButton(true);
 			}
 
 			this.searchBar.setDropdownItems([
@@ -384,6 +395,8 @@ class Widget {
 
 	getUser() {
 		return new Promise(resolve => {
+			this.user = null;
+
 			buildfire.auth.getCurrentUser((error, user) => {
 				if (error) console.error(error);
 				this.user = user || null;

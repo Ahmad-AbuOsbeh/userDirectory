@@ -464,3 +464,8 @@ input[type="password"] {
   height: 100%;
   object-fit: cover;
 }
+
+.listViewContainer {
+  padding-top: 3rem !important;
+  margin-top: 1rem !important;
+}

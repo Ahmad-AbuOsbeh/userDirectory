@@ -92,7 +92,7 @@ class Directory {
 
 	search(searchText, pageIndex, pageSize, callback) {
 		let userIds = null;
-
+		this.badges = [];
 		const _search = () => {
 			this.getFavorites(() => {
 				this.getBadges(() => {
@@ -171,7 +171,7 @@ class Directory {
 		});
 	}
 
-	updateUser(userObj) {
+	updateUser(userObj, onUpdate) {
 		if (!this.user) return;
 
 		buildfire.auth.getCurrentUser((error, user) => {
@@ -179,41 +179,52 @@ class Directory {
 
 			Badges.computeUserBadges(user, (err, badgeIds) => {
 				if (err) return console.error(err);
-				let hasUpdate = false;
 
-				this.user.badges = userObj.data.badges.filter(b => badgeIds.indexOf(b.id) > -1);
+				this.badges = [];
 
-				if (this.user.badges.length !== userObj.data.badges.length) {
-					hasUpdate = true;
-				}
+				this.getBadges(() => {
+					let hasUpdate = false;
 
-				let newBadges = [];
+					this.user.badges = userObj.data.badges.filter(b => badgeIds.indexOf(b.id) > -1);
 
-				badgeIds.forEach(badgeId => {
-					if (!userObj.data.badges.some(badge => badge.id === badgeId)) {
-						const newBadge = {
-							id: badgeId,
-							earned: Date.now()
-						};
-
-						this.user.badges.push(newBadge);
-						newBadges.push(newBadge);
+					if (this.user.badges.length !== userObj.data.badges.length) {
 						hasUpdate = true;
+					} else {
+						this.user.badges = this.user.badges.filter(b => {
+							const match = this.badges.find(badge => badge.id === b.id);
+							
+							if (!match) hasUpdate = true;
+
+							return this.badges.find(badge => badge.id === b.id);
+						});
 					}
-				});
 
-				const updateQueue = ['displayName', 'email', 'firstName', 'lastName'];
+					let newBadges = [];
 
-				updateQueue.forEach(key => {
-					if (this.user[key] !== user[key]) {
-						this.user[key] = user[key];
-						hasUpdate = true;
-					}
-				});
+					badgeIds.forEach(badgeId => {
+						if (!userObj.data.badges.some(badge => badge.id === badgeId)) {
+							const newBadge = {
+								id: badgeId,
+								earned: Date.now()
+							};
 
-				if (newBadges.length) {
-					debugger;
-					this.getBadges(() => {
+							this.user.badges.push(newBadge);
+							newBadges.push(newBadge);
+							hasUpdate = true;
+						}
+					});
+
+					const updateQueue = ['displayName', 'email', 'firstName', 'lastName'];
+
+					updateQueue.forEach(key => {
+						if (this.user[key] !== user[key]) {
+							this.user[key] = user[key];
+							hasUpdate = true;
+						}
+					});
+
+					if (newBadges.length) {
+
 						const badges = newBadges.map(badge => {
 							const b = this.badges.find(b => b.id === badge.id);
 							b.earned = badge.earned;
@@ -222,7 +233,7 @@ class Directory {
 						if (this.settings.badgePushNotifications) {
 							this.sendNewBadgePN(userObj, badges);
 						}
-						
+
 						const richContent = `
 						<div class="center-content active-user">
 						<h4 class="title text-center">New Badge${badges.length > 1 ? 's' : ''} Received!</h4>
@@ -230,14 +241,16 @@ class Directory {
 						</div>
 						${this.getModalStyles()}
 						`;
-						
-						buildfire.components.popup.display({ richContent }, console.error);
-					});
-				}
-				if (!hasUpdate) return;
 
-				Users.update(this.user.toJson(), console.error);
-				Lookup.update(this.user.toJson(), console.error);
+						buildfire.components.popup.display({ richContent }, console.error);
+					}
+					if (!hasUpdate) return;
+
+					Users.update(this.user.toJson(), () => {
+						if (onUpdate) onUpdate(this.user);
+					});
+					Lookup.update(this.user.toJson(), console.error);
+				});
 
 				function renderSingleBadge(badge) {
 					const { name, imageUrl } = badge;
@@ -266,15 +279,17 @@ class Directory {
 				<p>${displayName}</p>
 
 				<h4 class="title text-center">
-					${badges.length ? 'Received New Badges!' : 'Received a New Badge!'}
+					${badges.length > 1 ? 'Received New Badges!' : 'Received a New Badge!'}
 				</h4>
 	
-				${badges.length ? this.renderMultipleBadges(badges) : (
-					`<div class="badge-user">
+				${
+					badges.length > 1
+						? this.renderMultipleBadges(badges)
+						: `<div class="badge-user">
 						<img src="${badges[0].imageUrl}" alt="">
 					</div>
 					<p class="caption">${badges[0].name}</p>`
-				)}
+				}
 			</div>
 			${this.getModalStyles()}
 		`;
@@ -282,8 +297,8 @@ class Directory {
 		const options = {
 			// language settings here
 			// check exclude user
-			title: `${displayName} has earned ${badges.length ? 'new badges!' : 'a new badge!'}`,
-			text: `${displayName} has earned ${badges.length ? 'new badges!' : 'a new badge!'}`,
+			title: `${displayName} has earned ${badges.length > 1 ? 'new badges!' : 'a new badge!'}`,
+			text: `${displayName} has earned ${badges.length > 1 ? 'new badges!' : 'a new badge!'}`,
 			inAppMessage,
 			groupName: '$$userDirectory',
 			queryString: userId,
@@ -302,8 +317,9 @@ class Directory {
 	renderMultipleBadges(badges) {
 		return `
 			<div class="badges-grid">
-			${badges.map(badge => {
-				return `
+			${badges
+				.map(badge => {
+					return `
 					<div class="grid-item">
 						<div class="user-badge">
 							<img src="${badge.imageUrl}" alt="">
@@ -313,7 +329,8 @@ class Directory {
 						<!-- <p class="caption">${new Date(badge.earned).toLocaleDateString()}</p> -->
 					</div>
 				`;
-			}).join(' ')}
+				})
+				.join(' ')}
 			</div>
 		`;
 	}

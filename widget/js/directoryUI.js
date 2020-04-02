@@ -1,5 +1,5 @@
 class DirectoryUI {
-	constructor(user, strings, settings, isService) {
+	constructor(user, strings, settings) {
 		this.user = user;
 		this.directory = new Directory(user, strings, settings);
 		this.strings = strings || new buildfire.services.Strings('en-us', stringsConfig);
@@ -18,15 +18,13 @@ class DirectoryUI {
 		let results = [];
 
 		data.forEach((row, i) => {
-
 			const { data } = row;
 			const { displayName, email, userId, badges, isFavorite, action } = data;
 
 			let imageUrl = buildfire.auth.getUserPictureUrl({ email });
-			// imageUrl = buildfire.imageLib.cropImage(imageUrl, { width: 64, height: 64 });
 
 			let badgesHTML = '';
-			
+
 			badges.sort((a, b) => a.rank - b.rank);
 			badges.forEach(badge => {
 				badgesHTML += `
@@ -55,7 +53,7 @@ class DirectoryUI {
 
 	promptUser(force, callback) {
 		if (!this.user) return buildfire.auth.login();
-		
+
 		const { _id } = this.user || {};
 
 		if (!force && localStorage.getItem(`$$userDirectoryPrompt-${_id}`)) {
@@ -67,33 +65,40 @@ class DirectoryUI {
 
 		const userTags = this.user.tags && this.user.tags[appId] ? this.user.tags[appId].map(tag => tag.tagName) : [];
 
-		this.directory.checkUser((error, userObj) => {
-			if (error) return console.error(error);
-			if (userObj) return this.directory.updateUser(userObj);
+		buildfire.auth.getCurrentUser((e, user) => {
 
-			if (autoEnlistAll) {
-				return this.directory.addUser(e => {
-					if (e) return console.error(e);
-					callback();
-				});
+			if (user._id !== this.user._id) {
+				console.error('fail!!', this.user, user);
+				return;
 			}
+			this.directory.checkUser((error, userObj) => {
+				if (error) return console.error(error);
+				if (userObj) return this.directory.updateUser(userObj);
 
-			if (autoEnlistTags && userTags) {
-				if (autoEnlistTags.some(tag => userTags.indexOf(tag) > -1)) {
+				if (autoEnlistAll) {
 					return this.directory.addUser(e => {
 						if (e) return console.error(e);
 						callback();
 					});
 				}
-			}
 
-			this._showDialog('join', value => {
-				if (value) {
-					this.directory.addUser(e => {
-						if (e) return console.error(e);
-						callback();
-					});
+				if (autoEnlistTags && userTags) {
+					if (autoEnlistTags.some(tag => userTags.indexOf(tag) > -1)) {
+						return this.directory.addUser(e => {
+							if (e) return console.error(e);
+							callback();
+						});
+					}
 				}
+
+				this._showDialog('join', value => {
+					if (value) {
+						this.directory.addUser(e => {
+							if (e) return console.error(e);
+							callback();
+						});
+					}
+				});
 			});
 		});
 	}
@@ -101,16 +106,19 @@ class DirectoryUI {
 	autoUpdateUser() {
 		if (this.autoUpdater) {
 			clearInterval(this.autoUpdater);
+			this.autoUpdater = null;
 		}
 
-		this.autoUpdater = setInterval(() => {			
+		this.autoUpdater = setInterval(() => {
 			this.directory.checkUser((error, userObj) => {
 				if (!error && userObj) {
-					this.directory.updateUser(userObj);
+					this.directory.updateUser(userObj, usr => {
+						buildfire.messaging.sendMessageToWidget({ cmd: 'userUpdated', data: usr });
+					});
 				}
 			});
-		}, 10000); // 5 min
-	// }, 3e5); // 5 min
+		}, 30000); // 5 min
+		// }, 3e5); // 5 min
 	}
 
 	handleAction(user) {

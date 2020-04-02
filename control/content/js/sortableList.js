@@ -93,6 +93,8 @@
 		tagCount.innerHTML = item.tagCount;
 		tagCount.classList.add('tag-count');
 		editTagCount.setAttribute('type', 'number');
+		editTagCount.setAttribute('min', '0');
+		editTagCount.setAttribute('max', '999');
 		editTagCount.value = item.tagCount;
 		editTagCount.classList = 'tag-count edit';
 

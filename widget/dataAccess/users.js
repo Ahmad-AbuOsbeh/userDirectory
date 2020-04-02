@@ -33,6 +33,9 @@ class Users {
 	static getByUserId(userId, callback) {
 		const searchOptions = {
 			filter: {
+				"$json.userId": {
+					"$eq": userId
+				},
 				'_buildfire.index.string1': userId
 			}
 		};
@@ -67,7 +70,11 @@ class Users {
 	 * @param {Function} callback callback for handling response
 	 */
 	static update(userData, callback) {
+
 		const searchOptions = {
+			"$json.userId": {
+				"$eq": userData.userId
+			},
 			'_buildfire.index.string1': userData.userId
 		};
 

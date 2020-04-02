@@ -5,7 +5,7 @@ class Entry {
 		const { userId, displayName, email, firstName, lastName } = user;
 
 		this.key = userId;
-		this.title = displayName;
+		this.title = displayName || email;
 		this.description = email;
 		this.keywords = `${firstName}, ${lastName}`;
 		this.imageUrl = buildfire.auth.getUserPictureUrl({ userId });

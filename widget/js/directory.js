@@ -216,6 +216,10 @@ class Directory {
 
 					const updateQueue = ['displayName', 'email', 'firstName', 'lastName'];
 
+					if (this.user.userId !== user._id) {
+						return console.error('fail!!!', this.user, user);
+					}
+
 					updateQueue.forEach(key => {
 						if (this.user[key] !== user[key]) {
 							this.user[key] = user[key];
@@ -297,8 +301,8 @@ class Directory {
 		const options = {
 			// language settings here
 			// check exclude user
-			title: `${displayName} has earned ${badges.length > 1 ? 'new badges!' : 'a new badge!'}`,
-			text: `${displayName} has earned ${badges.length > 1 ? 'new badges!' : 'a new badge!'}`,
+			title: `${displayName || email} has earned ${badges.length > 1 ? 'new badges!' : 'a new badge!'}`,
+			text: `${displayName || email} has earned ${badges.length > 1 ? 'new badges!' : 'a new badge!'}`,
 			inAppMessage,
 			groupName: '$$userDirectory',
 			queryString: userId,
@@ -311,7 +315,9 @@ class Directory {
 		// date format!!!
 		// PN exclude user
 
-		buildfire.notifications.pushNotification.schedule(options, console.error);
+		buildfire.notifications.pushNotification.schedule(options, (e, d) => {
+			if (e) console.error(e, options, d);
+		});
 	}
 
 	renderMultipleBadges(badges) {

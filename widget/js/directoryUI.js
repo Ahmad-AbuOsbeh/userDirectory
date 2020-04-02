@@ -68,7 +68,6 @@ class DirectoryUI {
 		buildfire.auth.getCurrentUser((e, user) => {
 
 			if (user._id !== this.user._id) {
-				console.error('fail!!', this.user, user);
 				return;
 			}
 			this.directory.checkUser((error, userObj) => {
@@ -117,8 +116,7 @@ class DirectoryUI {
 					});
 				}
 			});
-		}, 30000); // 5 min
-		// }, 3e5); // 5 min
+		}, 3e5); // 5 min
 	}
 
 	handleAction(user) {

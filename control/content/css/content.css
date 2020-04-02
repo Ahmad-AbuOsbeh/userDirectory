@@ -87,6 +87,9 @@
 	font-weight: 500;
 	top: -1px;
 }
+.tags .tag-item .remove-button .icon-cross2{
+	font-size: 10px;
+}
 
 .button-switch{
 	position: relative;

@@ -17,6 +17,32 @@ p {
 h4, h5, h6 {
 margin-bottom: .5em;    
 }
+.title {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	-webkit-font-smoothing: antialiased !important;
+	-webkit-text-stroke: 0.35px;
+	text-rendering: optimizeLegibility;
+	outline: none;
+	padding: 0;
+	box-sizing: border-box;
+	margin: 0.67em 0;
+	font-family: inherit;
+	line-height: 1.1;
+	font-size: 1.125rem;
+	color: #000;
+	font-weight: 700;
+	margin-bottom: 0.875rem;
+	padding-top: 0.875rem;
+	margin-top: 20px;
+}
+.title::before {
+	display: block;
+	content: '';
+	height: 0.25rem;
+	width: 3.5rem;
+	background-color: #000;
+	margin-bottom: 0.875rem;
+}
 .section__title {
     font-size: 1.125rem;
     font-weight: bold;

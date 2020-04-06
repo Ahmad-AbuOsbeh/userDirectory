@@ -58,7 +58,7 @@ const stringsUI = {
 	buildSection(container, sectionProp, sectionObj) {
 		let sec = this.createAndAppend('section', '', [], container);
 
-		this.createIfNotEmpty('h3', sectionObj.title, [], sec);
+		this.createIfNotEmpty('h3', sectionObj.title, ['title'], sec);
 		this.createIfNotEmpty('div', sectionObj.subtitle, ['subTitle'], sec);
 		for (let key in sectionObj.labels) this.buildLabel(sec, sectionProp + '.' + key, sectionObj.labels[key]);
 		container.appendChild(sec);

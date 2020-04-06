@@ -39,8 +39,10 @@ const badgeListUI = {
 					if (e) console.error(e);
 					if (data.selectedButton.key == 'y') {
 						badgeListUI.badgeList.badges.splice(index, 1);
-						Badges.delete(item.id, callback);
-						badgeListUI.badgeList.loadItems(badgeListUI.badgeList.badges, false);
+						Badges.delete(item.id, (err, result) => {
+							callback(!err && result.status && result.status === 'deleted');
+							if (t.badges.length == 0) t.container.innerHTML = 'No badges have been added yet.';
+						});
 					}
 				}
 			);
@@ -51,6 +53,10 @@ const badgeListUI = {
 				badgeListUI.badgeList.badges[index].rank = index;
 				Badges.update(badgeListUI.badgeList.badges[index], console.error);
 			});
+		};
+
+		this.badgeList.onUpdate = () => {
+			if (this.badgeList.badges.length == 0) this.container.innerHTML = 'No badges have been added yet.';
 		};
 	},
 	/**
@@ -81,6 +87,6 @@ const badgeListUI = {
 
 	},
 	onItemClick(item, divRow) {
-		buildfire.notifications.alert({ message: item.title + ' clicked' });
+		// buildfire.notifications.alert({ message: item.title + ' clicked' });
 	}
 };

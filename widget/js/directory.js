@@ -227,30 +227,35 @@ class Directory {
 						}
 					});
 
-					if (newBadges.length) {
-
-						const badges = newBadges.map(badge => {
-							const b = this.badges.find(b => b.id === badge.id);
-							b.earned = badge.earned;
-							return b;
-						});
-						if (this.settings.badgePushNotifications) {
-							this.sendNewBadgePN(userObj, badges);
-						}
-
-						const richContent = `
-						<div class="center-content active-user">
-						<h4 class="title text-center">New Badge${badges.length > 1 ? 's' : ''} Received!</h4>
-						${badges.length > 1 ? this.renderMultipleBadges(badges) : renderSingleBadge(badges[0])}
-						</div>
-						${this.getModalStyles()}
-						`;
-
-						buildfire.components.popup.display({ richContent }, console.error);
-					}
 					if (!hasUpdate) return;
 
-					Users.update(this.user.toJson(), () => {
+					Users.update(this.user.toJson(), (e, res) => {
+						if (e) {
+							return buildfire.components.toast.showToastMessage({ text: 'user not updated' });
+						}
+						if (res && res.status === 'updated' && res.nModified === 1) {
+							if (newBadges.length) {
+
+								const badges = newBadges.map(badge => {
+									const b = this.badges.find(b => b.id === badge.id);
+									b.earned = badge.earned;
+									return b;
+								});
+								if (this.settings.badgePushNotifications) {
+									this.sendNewBadgePN(userObj, badges);
+								}
+		
+								const richContent = `
+								<div class="center-content active-user">
+								<h4 class="title text-center">New Badge${badges.length > 1 ? 's' : ''} Received!</h4>
+								${badges.length > 1 ? this.renderMultipleBadges(badges) : renderSingleBadge(badges[0])}
+								</div>
+								${this.getModalStyles()}
+								`;
+		
+								buildfire.components.popup.display({ richContent }, console.error);
+							}
+						}
 						if (onUpdate) onUpdate(this.user);
 					});
 					Lookup.update(this.user.toJson(), console.error);

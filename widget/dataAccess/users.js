@@ -33,8 +33,8 @@ class Users {
 	static getByUserId(userId, callback) {
 		const searchOptions = {
 			filter: {
-				"$json.userId": {
-					"$eq": userId
+				'$json.userId': {
+					$eq: userId
 				},
 				'_buildfire.index.string1': userId
 			}
@@ -51,15 +51,19 @@ class Users {
 	 * @param {Function} callback callback for handling response
 	 */
 	static add(userData, callback) {
-		buildfire.appData.insert(userData, this.tag, (error, record) => {
-			if (error) return callback(error);
+		this.getByUserId(userData.userId, (err, userObj) => {
+			if (!err && userObj) return console.error(userObj);
 
-			callback(null, record);
+			buildfire.appData.insert(userData, this.tag, (error, record) => {
+				if (error) return callback(error);
 
-			Lookup.add(userData, error => {
-				if (error) return console.error('error adding user to lookup directory');
+				callback(null, record);
 
-				Analytics.trackAction(Analytics.events.USER_JOINED.key);
+				Lookup.add(userData, error => {
+					if (error) return console.error('error adding user to lookup directory');
+
+					Analytics.trackAction(Analytics.events.USER_JOINED.key);
+				});
 			});
 		});
 	}
@@ -70,15 +74,18 @@ class Users {
 	 * @param {Function} callback callback for handling response
 	 */
 	static update(userData, callback) {
-
+		console.error('UPDATING USER:', userData);
 		const searchOptions = {
-			"$json.userId": {
-				"$eq": userData.userId
+			'$json.userId': {
+				$eq: userData.userId
 			},
 			'_buildfire.index.string1': userData.userId
 		};
 
-		buildfire.appData.searchAndUpdate(searchOptions, userData, this.tag, callback);
+		buildfire.appData.searchAndUpdate(searchOptions, userData, this.tag, (error, result) => {
+			console.error(error, result);
+			callback(error, result);
+		});
 	}
 
 	/**

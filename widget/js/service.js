@@ -27,6 +27,13 @@ class Service {
 		});
 
 		this.init();
+
+		window.onbeforeunload = () => {
+			if (this.directoryUI && this.directoryUI.autoUpdater) {
+				clearInterval(this.directoryUI.autoUpdater);
+				this.directoryUI.autoUpdater = null;
+			}
+		};
 	}
 
 	init() {

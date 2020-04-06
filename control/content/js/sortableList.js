@@ -31,6 +31,8 @@
 				this.injectItemElements(badges[i], this.badges.length - 1, row);
 				this.element.appendChild(row);
 			}
+
+			this.onUpdate();
 		}
 	}
 
@@ -93,7 +95,7 @@
 		tagCount.innerHTML = item.tagCount;
 		tagCount.classList.add('tag-count');
 		editTagCount.setAttribute('type', 'number');
-		editTagCount.setAttribute('min', '0');
+		editTagCount.setAttribute('min', '1');
 		editTagCount.setAttribute('max', '999');
 		editTagCount.value = item.tagCount;
 		editTagCount.classList = 'tag-count edit';
@@ -197,7 +199,6 @@
 				var tmp = me.badges.splice(oldIndex, 1)[0];
 				me.badges.splice(newIndex, 0, tmp);
 				me.reIndexRows();
-				debugger;
 				me.onOrderChange(tmp, oldIndex, newIndex);
 			},
 			onStart: function(evt) {
@@ -209,8 +210,10 @@
 	reIndexRows() {
 		let i = 0;
 		this.element.childNodes.forEach(e => {
-			e.setAttribute('arrayIndex', i);
-			i++;
+			if (e.setAttribute) {
+				e.setAttribute('arrayIndex', i);
+				i++;
+			}
 		});
 	}
 
@@ -245,5 +248,9 @@
 	// This will be triggered when you delete an item
 	onItemClick(item, index, divRow) {
 		console.error('please handle onItemClick', item);
+	}
+
+	onUpdate() {
+
 	}
 }

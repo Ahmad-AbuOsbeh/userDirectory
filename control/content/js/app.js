@@ -22,7 +22,7 @@
 			imageUrl: '',
 			name: '',
 			tag: '',
-			tagCount: 0,
+			tagCount: 1,
 			rank: 0
 		};
 
@@ -47,7 +47,7 @@
 				imageUrl: '',
 				name: '',
 				tag: '',
-				tagCount: 0,
+				tagCount: 1,
 				rank: 0
 			};
 		};

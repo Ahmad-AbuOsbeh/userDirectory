@@ -7,7 +7,7 @@ class Entry {
 		this.key = userId;
 		this.title = displayName || email;
 		this.description = email;
-		this.keywords = `${firstName}, ${lastName}`;
+		this.keywords = `${firstName}, ${lastName}, ${email}`;
 		this.imageUrl = buildfire.auth.getUserPictureUrl({ userId });
 		this.data = { userId };
 
@@ -18,9 +18,6 @@ class Entry {
 }
 
 class Lookup {
-	constructor() {
-		
-	}
 	static get tag() {
 		return '$$userDirectory';
 	}

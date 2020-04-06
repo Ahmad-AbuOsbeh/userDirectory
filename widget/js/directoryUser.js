@@ -19,7 +19,7 @@ class DirectoryUser {
 			badges: this.badges,
 			_buildfire: {
 				index: {
-					text: `${this.firstName} ${this.lastName} ${this.displayName}`,
+					text: `${this.firstName || ''} ${this.lastName || ''} ${this.displayName || ''} ${this.email || ''}`,
 					string1: `${this.userId}`,
 					array1: badgeIds
 				}

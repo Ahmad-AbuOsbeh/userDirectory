@@ -17,7 +17,7 @@ class Widget {
 			autoEnlistAll: false,
 			autoEnlistTags: [],
 			actionItem: null,
-			badgePushNotifications: false
+			badgePushNotifications: false,
 		};
 
 		this.init();
@@ -29,8 +29,9 @@ class Widget {
 
 		buildfire.auth.onLogin(() => location.reload());
 		buildfire.auth.onLogout(() => location.reload());
+		buildfire.datastore.onUpdate(() => location.reload());
 
-		buildfire.messaging.onReceivedMessage = msg => {
+		buildfire.messaging.onReceivedMessage = (msg) => {
 			switch (msg.cmd) {
 				case 'userAdded': {
 					this.search();
@@ -74,7 +75,7 @@ class Widget {
 			this.searchBar.setDropdownItems([
 				{
 					text: this.strings.get('other.openProfile'),
-					action: () => buildfire.auth.openProfile()
+					action: () => buildfire.auth.openProfile(),
 				},
 				{
 					text: this.strings.get('other.leaveDirectory'),
@@ -83,8 +84,8 @@ class Widget {
 							this.searchBar.shouldShowAddButton(true);
 							this.search();
 						});
-					}
-				}
+					},
+				},
 			]);
 
 			this.search();
@@ -103,7 +104,7 @@ class Widget {
 			});
 		};
 
-		this.searchBar.onFavoritesButtonClicked = value => {
+		this.searchBar.onFavoritesButtonClicked = (value) => {
 			// this.favoritesFilter = value;
 			this.directoryUI.directory.filterFavorites = value;
 			this.search();
@@ -149,25 +150,25 @@ class Widget {
 			listItems: [
 				{
 					text: 'Inappropriate Profile Image',
-					value: 'profileImage'
+					value: 'profileImage',
 				},
 				{
 					text: 'Harrassment',
-					value: 'harrassment'
+					value: 'harrassment',
 				},
 				{
 					text: 'Spamming',
-					value: 'spam'
+					value: 'spam',
 				},
 				{
 					text: 'Fraud',
-					value: 'fraud'
-				}
+					value: 'fraud',
+				},
 			],
 			confirmButton: {
 				text: 'Send',
-				value: 'send'
-			}
+				value: 'send',
+			},
 		};
 
 		const callback = (error, result) => {
@@ -204,11 +205,11 @@ class Widget {
 				</div>
 
 				<div class="user-info-holder ellipsis">
-					<h4 class="user-title ellipsis">${displayName || email}</h4>
-					<p class="user-subtitle ellipsis">${!displayName ? '' : email }</p>
+					<h4 class="user-title bodyTextTheme ellipsis">${displayName || email}</h4>
+					<p class="user-subtitle ellipsis">${!displayName ? '' : email}</p>
 				</div>
 			`,
-			tabs: []
+			tabs: [],
 		};
 
 		if (this.user && item.data.userId === this.user._id) {
@@ -218,14 +219,14 @@ class Widget {
 					{
 						id: 'openProfile',
 						icon: 'glyphicon glyphicon-circle-arrow-right',
-						text: this.strings.get('other.openProfile')
+						text: this.strings.get('other.openProfile'),
 					},
 					{
 						id: 'leaveDirectory',
 						icon: 'glyphicon glyphicon-remove-circle',
-						text: this.strings.get('other.leaveDirectory')
-					}
-				]
+						text: this.strings.get('other.leaveDirectory'),
+					},
+				],
 			});
 		} else {
 			options.tabs.push({
@@ -234,46 +235,44 @@ class Widget {
 					{
 						id: 'action',
 						icon: 'glyphicon glyphicon-circle-arrow-right',
-						text: actionItem ? actionItem.title : this.strings.get('other.messageUser')
+						text: actionItem ? actionItem.title : this.strings.get('other.messageUser'),
 					},
 					{
 						id: 'favorite',
 						icon: data.isFavorite ? 'icon icon-star' : 'icon icon-star-empty',
-						text: data.isFavorite ? this.strings.get('other.removeFromFavorites') : this.strings.get('other.addToFavorites')
+						text: data.isFavorite ? this.strings.get('other.removeFromFavorites') : this.strings.get('other.addToFavorites'),
 					},
 					{
 						id: 'report',
 						icon: 'glyphicon glyphicon-warning-sign',
-						text: this.strings.get('other.reportUser')
-					}
-				]
+						text: this.strings.get('other.reportUser'),
+					},
+				],
 			});
 		}
 
 		options.tabs.push({
 			text: `<span class="glyphicon glyphicon-tags"></span>`,
 			content: `
-			<div class="badges-grid">
 				${
 					badges.length
 						? badges
-								.map(badge => {
+								.map((badge) => {
 									return `
-										<div class="grid-item">
-											<div class="user-badge">
-												<img src="${badge.imageUrl}" alt="">
+										<div class="badges-grid">
+											<div class="grid-item">
+												<div class="user-badge">
+													<img src="${badge.imageUrl}" alt="">
+												</div>
+												<h5>${badge.name}</h5>
+												<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>
 											</div>
-											<h5>${badge.name}</h5>
-											<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>
 										</div>
-										`;
+									`;
 								})
 								.join(' ')
-						: `
-						<div class="empty-state-text"><span>no badges yet!</span></div>
-					`
+						: `<div class="empty-state-text"><span>no badges yet!</span></div>`
 				}
-			</div>
 			<style>
 				.empty-state-text{
 					text-transform: capitalize;
@@ -339,7 +338,7 @@ class Widget {
 					}
 				}
 			</style>
-			`
+			`,
 		});
 
 		const callback = (error, result) => {
@@ -404,7 +403,7 @@ class Widget {
 	}
 
 	getUser() {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			this.user = null;
 
 			buildfire.auth.getCurrentUser((error, user) => {
@@ -417,9 +416,9 @@ class Widget {
 	}
 
 	getSettings() {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			Settings.get()
-				.then(settings => {
+				.then((settings) => {
 					this.settings = settings;
 					resolve();
 				})
@@ -428,7 +427,7 @@ class Widget {
 	}
 
 	getStrings() {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			this.strings
 				.init()
 				.then(resolve)
@@ -437,7 +436,7 @@ class Widget {
 	}
 
 	markFavorites(favorites) {
-		this.listView.items.forEach(item => {
+		this.listView.items.forEach((item) => {
 			if (typeof item.isFavorite !== 'undefined') return;
 
 			item.isFavorite = (favorites || []).indexOf(item.data.userId) > -1;
@@ -447,7 +446,7 @@ class Widget {
 
 	search(index = 0) {
 		if (index == 0) {
-			this.listView.container.onscroll = e => {
+			this.listView.container.onscroll = (e) => {
 				const { scrollTop, clientHeight, scrollHeight } = this.listView.container;
 
 				if (!this.inProgress && scrollTop + clientHeight > scrollHeight * 0.8) {

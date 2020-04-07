@@ -4,9 +4,9 @@ const stringsConfig = {
 		labels: {
 			title: {
 				title: 'Title',
-				placeholder: 'User Directory',
+				placeholder: 'Join User Directory',
 				maxLength: 60,
-				defaultValue: 'User Directory'
+				defaultValue: 'Join User Directory'
 			},
 			message: {
 				title: 'Message',
@@ -33,15 +33,15 @@ const stringsConfig = {
 		labels: {
 			title: {
 				title: 'Title',
-				placeholder: 'User Directory',
+				placeholder: 'Leave User Directory',
 				maxLength: 60,
-				defaultValue: 'User Directory'
+				defaultValue: 'Leave User Directory'
 			},
 			message: {
 				title: 'Message',
-				placeholder: 'Do you wish leave the User Directory',
+				placeholder: 'Do you wish leave the User Directory?',
 				maxLength: 100,
-				defaultValue: 'Do you wish leave the User Directory'
+				defaultValue: 'Do you wish leave the User Directory?'
 			},
 			cancelButton: {
 				title: 'Cancel Button',
@@ -84,10 +84,10 @@ const stringsConfig = {
 				defaultValue: 'Message User'
 			},
 			openProfile: {
-				title: 'Open Profile',
-				placeholder: 'Open Profile',
+				title: 'Open My Profile',
+				placeholder: 'Open My Profile',
 				maxLength: 100,
-				defaultValue: 'Open Profile'
+				defaultValue: 'Open My Profile'
 			},
 			addToFavorites: {
 				title: 'Add to favorites',

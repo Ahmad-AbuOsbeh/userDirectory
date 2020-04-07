@@ -30,6 +30,13 @@ class SearchBar {
 				this.dropdown.classList.remove('show');
 			} else {
 				this.dropdown.classList.add('show');
+				setTimeout(() => {
+					document.addEventListener('click', e => {
+						if (e.target !== this.dropdown) {
+							this.dropdown.classList.remove('show');
+						}
+					}, { once: true });
+				}, 100);
 			}
 		};
 

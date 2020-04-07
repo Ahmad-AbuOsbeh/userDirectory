@@ -81,6 +81,8 @@ class DirectoryUI {
 					});
 				}
 
+				localStorage.setItem('DEBUG', JSON.stringify({ autoEnlistTags, userTags }));
+
 				if (autoEnlistTags && userTags) {
 					if (autoEnlistTags.some(tag => userTags.indexOf(tag) > -1)) {
 						return this.directory.addUser(e => {
@@ -117,7 +119,8 @@ class DirectoryUI {
 				}
 			});
 
-		}, 3e5); // 5 min
+		}, 10000); // 5 min
+	// }, 3e5); // 5 min
 	}
 
 	handleAction(user) {

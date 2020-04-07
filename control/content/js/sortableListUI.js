@@ -16,8 +16,13 @@ const badgeListUI = {
 		Badges.get((err, badges) => {
 			
 			this.badges = badges;
-			if (this.badges.length == 0) this.container.innerHTML = 'No badges have been added yet.';
-			else this.container.innerHTML = '';
+			if (this.badges.length == 0) {
+				this.container.innerHTML = '';
+				const emptyState = document.createElement('p');
+				emptyState.className = 'badgeList-empty-state';
+				emptyState.innerHTML = 'No badges have been added yet.';
+				this.container.appendChild(emptyState);
+			} else this.container.innerHTML = '';
 
 			badgeListUI.render(this.badges);
 		});
@@ -56,7 +61,17 @@ const badgeListUI = {
 		};
 
 		this.badgeList.onUpdate = () => {
-			if (this.badgeList.badges.length == 0) this.container.innerHTML = 'No badges have been added yet.';
+			if (this.badgeList.badges.length == 0) {
+				const emptyState = document.createElement('p');
+				emptyState.className = 'badgeList-empty-state';
+				emptyState.innerHTML = 'No badges have been added yet.';
+				this.container.appendChild(emptyState);
+			} else {
+				const emptyState = this.container.querySelectorAll('.badgeList-empty-state')[0];
+				if (emptyState) {
+					this.container.removeChild(emptyState);
+				}
+			}
 		};
 	},
 	/**

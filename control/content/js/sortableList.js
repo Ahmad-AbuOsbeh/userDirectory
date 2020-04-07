@@ -253,6 +253,7 @@
 				i++;
 			}
 		});
+		this.onUpdate();
 	}
 
 	// get item index from the DOM sortable elements

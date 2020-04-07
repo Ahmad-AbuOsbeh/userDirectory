@@ -270,11 +270,21 @@ class Widget {
 								})
 								.join(' ')
 						: `
-						<div>no badges yet!</div>
+						<div class="empty-state-text"><span>no badges yet!</span></div>
 					`
 				}
 			</div>
 			<style>
+				.empty-state-text{
+					text-transform: capitalize;
+					text-align: center;
+					font-size: 14px;
+					padding: 24px;
+					opacity: .7;
+					min-height: 80px;
+					display: flex;
+					align-items:center;
+				}
 				.badges-grid{
 					display: grid;
 					grid-template-columns: repeat(3, 1fr);

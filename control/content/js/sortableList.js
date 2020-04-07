@@ -97,6 +97,11 @@
 		editTagCount.setAttribute('type', 'number');
 		editTagCount.setAttribute('min', '1');
 		editTagCount.setAttribute('max', '999');
+		editTagCount.addEventListener('keydown', e => {
+			if (['.', '-'].indexOf(e.key) > -1) {
+				return e.preventDefault();
+			}
+		});
 		editTagCount.value = item.tagCount;
 		editTagCount.classList = 'tag-count edit';
 
@@ -106,13 +111,46 @@
 		cancel.classList = 'btn btn-cancel edit';
 		cancel.onclick = () => {
 			editTag.value = item.tag;
+			editTag.classList.remove('has-error');
 			editTitle.value = item.name;
-			editTagCount = item.tagCount;
+			editTitle.classList.remove('has-error');
+			editTagCount.value = item.tagCount;
+			editTagCount.classList.remove('has-error');
 			divRow.classList.remove('edit');
 		};
 		save.innerHTML = 'Save';
 		save.classList = 'btn btn-success edit';
 		save.onclick = () => {
+			let hasError = false;
+
+			if (!editImg.src) {
+				editImg.classList.add('has-error');
+				hasError = true;
+			} else {
+				editImg.classList.remove('has-error');
+			}
+			if (!editTitle.value) {
+				editTitle.classList.add('has-error');
+				hasError = true;
+			} else {
+				editTitle.classList.remove('has-error');
+			}
+			if (!editTag.value) {
+				editTag.classList.add('has-error');
+				hasError = true;
+			} else {
+				editTag.classList.remove('has-error');
+			}
+			if (!editTagCount.value || editTagCount.value < 1) {
+				editTagCount.classList.add('has-error');
+				hasError = true;
+			} else {
+				editTagCount.classList.remove('has-error');
+			}
+			if (hasError) {
+				return;
+			}
+
 			img.src = editImg.src;
 			title.innerHTML = editTitle.value;
 			tag.innerHTML = editTag.value;

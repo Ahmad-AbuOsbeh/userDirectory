@@ -26,7 +26,7 @@ class DirectoryUI {
 			let badgesHTML = '';
 
 			badges.sort((a, b) => a.rank - b.rank);
-			badges.forEach(badge => {
+			badges.forEach((badge) => {
 				badgesHTML += `
 					<div class="badge">
 						<img src="${buildfire.imageLib.cropImage(badge.imageUrl, { size: 'xxs', aspect: '1:1' })}" />
@@ -44,7 +44,7 @@ class DirectoryUI {
 				userId,
 				badges,
 				isFavorite,
-				action
+				action,
 			});
 		});
 
@@ -63,10 +63,9 @@ class DirectoryUI {
 		const { appId } = buildfire.getContext();
 		const { autoEnlistTags, autoEnlistAll } = this.settings;
 
-		const userTags = this.user.tags && this.user.tags[appId] ? this.user.tags[appId].map(tag => tag.tagName) : [];
+		const userTags = this.user.tags && this.user.tags[appId] ? this.user.tags[appId].map((tag) => tag.tagName) : [];
 
 		buildfire.auth.getCurrentUser((e, user) => {
-
 			if (user._id !== this.user._id) {
 				return;
 			}
@@ -75,7 +74,7 @@ class DirectoryUI {
 				if (userObj) return this.directory.updateUser(userObj);
 
 				if (autoEnlistAll) {
-					return this.directory.addUser(e => {
+					return this.directory.addUser((e) => {
 						if (e) return console.error(e);
 						callback();
 					});
@@ -84,17 +83,17 @@ class DirectoryUI {
 				localStorage.setItem('DEBUG', JSON.stringify({ autoEnlistTags, userTags }));
 
 				if (autoEnlistTags && userTags) {
-					if (autoEnlistTags.some(tag => userTags.indexOf(tag) > -1)) {
-						return this.directory.addUser(e => {
+					if (autoEnlistTags.some((tag) => userTags.indexOf(tag) > -1)) {
+						return this.directory.addUser((e) => {
 							if (e) return console.error(e);
 							callback();
 						});
 					}
 				}
 
-				this._showDialog('join', value => {
+				this._showDialog('join', (value) => {
 					if (value) {
-						this.directory.addUser(e => {
+						this.directory.addUser((e) => {
 							if (e) return console.error(e);
 							callback();
 						});
@@ -113,20 +112,22 @@ class DirectoryUI {
 		this.autoUpdater = setInterval(() => {
 			this.directory.checkUser((error, userObj) => {
 				if (!error && userObj) {
-					this.directory.updateUser(userObj, usr => {
+					this.directory.updateUser(userObj, (usr) => {
 						buildfire.messaging.sendMessageToWidget({ cmd: 'userUpdated', data: usr });
 					});
 				}
 			});
-
 		}, 10000); // 5 min
-	// }, 3e5); // 5 min
+		// }, 3e5); // 5 min
 	}
 
 	handleAction(user) {
 		const { actionItem } = this.settings;
 
 		if (actionItem) {
+			if (!actionItem.queryString) {
+				actionItem.queryString = `&dld=${JSON.stringify(user)}`;
+			}
 			return buildfire.actionItems.execute(actionItem, console.error);
 		}
 
@@ -145,9 +146,9 @@ class DirectoryUI {
 	}
 
 	leaveDirectory(callback) {
-		this._showDialog('leave', value => {
+		this._showDialog('leave', (value) => {
 			if (value) {
-				this.directory.removeUser(e => {
+				this.directory.removeUser((e) => {
 					if (e) return console.error(e);
 					callback();
 				});
@@ -169,12 +170,21 @@ class DirectoryUI {
 			showDismissButton: true,
 			action: {
 				handler: JSON.stringify(() => {}),
-				title: confirmButtonText
+				title: confirmButtonText,
 			},
 			richContent: `
-				<img src="undefined" style="display:none" onerror="document.getElementsByClassName('dismiss-button')[0].innerHTML = '${cancelButtonText}'"></img>
-				<style>.rich-content { display: none }</style>
-			`
+				<img src="undefined" style="display:none" onerror="
+					(() => {
+						document.getElementsByClassName('dismiss-button')[0].innerHTML = '${cancelButtonText}';
+						document.getElementsByClassName('action-button')[0].classList.add('${type === 'leave' ? 'text-danger' : ''}');
+					})()
+				"></img>
+				<style>
+					.rich-content {
+						display: none;
+					}
+				</style>
+			`,
 		};
 
 		const handleResponse = (error, result) => {

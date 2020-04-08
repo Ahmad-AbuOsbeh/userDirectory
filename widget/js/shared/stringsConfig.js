@@ -10,9 +10,9 @@ const stringsConfig = {
 			},
 			message: {
 				title: 'Message',
-				placeholder: 'Do you wish to be added to the User Directory',
+				placeholder: 'Do you wish to join the User Directory?',
 				maxLength: 100,
-				defaultValue: 'Do you wish to be added to the User Directory'
+				defaultValue: 'Do you wish to join the User Directory?'
 			},
 			cancelButton: {
 				title: 'Cancel Button',
@@ -22,9 +22,9 @@ const stringsConfig = {
 			},
 			confirmButton: {
 				title: 'Confirm Button',
-				placeholder: 'Yes',
+				placeholder: 'Join',
 				maxLength: 10,
-				defaultValue: 'Yes'
+				defaultValue: 'Join'
 			}
 		}
 	},
@@ -51,9 +51,9 @@ const stringsConfig = {
 			},
 			confirmButton: {
 				title: 'Confirm Button',
-				placeholder: 'Yes',
+				placeholder: 'Leave',
 				maxLength: 10,
-				defaultValue: 'Yes'
+				defaultValue: 'Leave'
 			}
 		}
 	},
@@ -85,9 +85,9 @@ const stringsConfig = {
 			},
 			openProfile: {
 				title: 'Open My Profile',
-				placeholder: 'Open My Profile',
+				placeholder: 'Open my profile',
 				maxLength: 100,
-				defaultValue: 'Open My Profile'
+				defaultValue: 'Open my profile'
 			},
 			addToFavorites: {
 				title: 'Add to favorites',

@@ -4,6 +4,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<script src="../../../../scripts/buildfire.min.js"></script>
+		<link rel="stylesheet" href="css/language.css">
 		<link href="../../../../styles/helper.css" rel="stylesheet" />
 		<link href="../../../../styles/siteIcons.css" rel="stylesheet" />
 		<link rel="stylesheet" href="../assets/base.css">
@@ -46,11 +47,12 @@
 		<script src="../../../../scripts/tinymce/tinymce.min.js"></script>
 	</head>
 	<body>
-
-		<div id="stringsContainer" class="hidden">
-			loading...
+		<div class="fixed-bottom">
+			<div id="stringsContainer" class="hidden">
+				loading...
+			</div>
+			<a id="saveButton" class="btn btn-success pull-right hidden" onclick="save()">Save</a>
 		</div>
-		<a id="saveButton" class="btn btn-success pull-right hidden" onclick="save()">Save</a>
 
 		<script>
 			let strings;

@@ -15,7 +15,7 @@ class Widget {
 		this.timer = null;
 		this.settings = {
 			autoEnlistAll: false,
-			autoEnlistTags: [],
+			tagFilter: [],
 			actionItem: null,
 			badgePushNotifications: false,
 		};
@@ -36,12 +36,14 @@ class Widget {
 				case 'userAdded': {
 					this.search();
 					this.searchBar.shouldShowAddButton(false);
+					this.searchBar.shouldShowOptionsButton(true);
 					break;
 				}
 				case 'userUpdated': {
 					this.directoryUI.directory.badges = [];
 					this.search();
 					this.searchBar.shouldShowAddButton(false);
+					this.searchBar.shouldShowOptionsButton(true);
 					break;
 				}
 				case 'refresh': {
@@ -64,12 +66,21 @@ class Widget {
 			this.directoryUI = new DirectoryUI(this.user, this.strings, this.settings);
 
 			if (this.user) {
-				this.directoryUI.directory.checkUser((err, userObj) => {
-					if (err) return console.error(err);
-					this.searchBar.shouldShowAddButton(typeof userObj !== 'object');
+				this.directoryUI.hasAccess((error, hasAccess) => {
+					if (error || !hasAccess) {
+						this.searchBar.shouldShowAddButton(false);
+						this.searchBar.shouldShowOptionsButton(false);
+						return;
+					}
+					this.directoryUI.directory.checkUser((err, userObj) => {
+						if (err) return console.error(err);
+						this.searchBar.shouldShowAddButton(typeof userObj !== 'object');
+						this.searchBar.shouldShowOptionsButton(typeof userObj == 'object');
+					});
 				});
 			} else {
 				this.searchBar.shouldShowAddButton(true);
+				this.searchBar.shouldShowOptionsButton(false);
 			}
 
 			this.searchBar.setDropdownItems([
@@ -82,6 +93,7 @@ class Widget {
 					action: () => {
 						this.directoryUI.leaveDirectory(() => {
 							this.searchBar.shouldShowAddButton(true);
+							this.searchBar.shouldShowOptionsButton(false);
 							this.search();
 						});
 					},
@@ -100,6 +112,7 @@ class Widget {
 
 			this.directoryUI.promptUser(true, () => {
 				this.searchBar.shouldShowAddButton(false);
+				this.searchBar.shouldShowOptionsButton(true);
 				this.search();
 			});
 		};
@@ -355,6 +368,7 @@ class Widget {
 				case 'leaveDirectory': {
 					this.directoryUI.leaveDirectory(() => {
 						this.searchBar.shouldShowAddButton(true);
+						this.searchBar.shouldShowOptionsButton(false);
 						this.search();
 					});
 					buildfire.components.drawer.closeDrawer();

@@ -51,15 +51,15 @@
 			</div>
 
 			<div class="margin-bottom-thirty">
-				<p class="info">We are not liable for any compliance issues</p>
+				<p class="info" ng-if="data.autoEnlistAll">We assume no liability for any privacy compliance issues. Consult your local laws and regulations.</p>
 			</div>
 
 			<div class="input-row">
-				<p class="label-container margin-bottom-zero">Auto enlist all users with the following tags</p>
+				<p class="label-container margin-bottom-zero">Only allow users with the following tags</p>
 
 				<div class="tags input-container">
 					<ul class="tag-list">
-						<li class="tag-item" ng-repeat="tag in data.autoEnlistTags">
+						<li class="tag-item" ng-repeat="tag in data.tagFilter">
 							<span>{{ tag }}</span>
 							<a class="remove-button" ng-click="removeTag(tag)"><span class="icon icon-cross2"></span></a>
 						</li>

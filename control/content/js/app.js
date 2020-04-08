@@ -8,7 +8,7 @@
 	const directoryContentCtrl = $scope => {
 		$scope.data = {
 			autoEnlistAll: false,
-			autoEnlistTags: [],
+			tagFilter: [],
 			actionItem: null,
 			badgePushNotifications: false
 		};
@@ -53,14 +53,14 @@
 		};
 
 		$scope.applyTag = () => {
-			$scope.data.autoEnlistTags.push($scope.tagName);
+			$scope.data.tagFilter.push($scope.tagName);
 			$scope.tagName = '';
 
 			if (!$scope.$$phase) $scope.$apply();
 		};
 
 		$scope.removeTag = tag => {
-			$scope.data.autoEnlistTags = $scope.data.autoEnlistTags.filter(tagName => tagName !== tag);
+			$scope.data.tagFilter = $scope.data.tagFilter.filter(tagName => tagName !== tag);
 
 			if (!$scope.$$phase) $scope.$apply();
 		};
@@ -82,10 +82,10 @@
 
 		Settings.get()
 			.then(data => {
-				const { autoEnlistAll, autoEnlistTags, actionItem, badgePushNotifications } = data;
+				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications } = data;
 
 				$scope.data.autoEnlistAll = autoEnlistAll || false;
-				$scope.data.autoEnlistTags = autoEnlistTags || [];
+				$scope.data.tagFilter = tagFilter || [];
 				$scope.data.actionItem = actionItem || null;
 				$scope.data.badgePushNotifications = badgePushNotifications || null;
 

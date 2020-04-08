@@ -3,8 +3,8 @@ class Service {
 		this.strings = new buildfire.services.Strings('en-us', stringsConfig);
 		this.settings = {
 			autoEnlistAll: false,
-			autoEnlistTags: [],
-			actionItem: null
+			tagFilter: [],
+			actionItem: null,
 		};
 		this.user = null;
 		this.DirectoryUI = null;
@@ -44,20 +44,18 @@ class Service {
 
 		Promise.all([this.getUser(), this.getSettings(), this.getStrings()]).then(() => {
 			if (this.user) {
-				setTimeout(() => {
-					this.directoryUI = new DirectoryUI(this.user, this.strings, this.settings);
-					this.directoryUI.promptUser(false, () => {
-						buildfire.messaging.sendMessageToWidget({ cmd: 'userAdded' });
-					});
-	
-					this.directoryUI.autoUpdateUser();
-				}, 5000);
+				this.directoryUI = new DirectoryUI(this.user, this.strings, this.settings);
+				this.directoryUI.promptUser(false, () => {
+					buildfire.messaging.sendMessageToWidget({ cmd: 'userAdded' });
+				});
+
+				this.directoryUI.autoUpdateUser();
 			}
 		});
 	}
 
 	getUser() {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			this.user = null;
 			buildfire.auth.getCurrentUser((error, user) => {
 				if (error) console.error(error);
@@ -69,9 +67,9 @@ class Service {
 	}
 
 	getSettings() {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			Settings.get()
-				.then(settings => {
+				.then((settings) => {
 					this.settings = settings;
 					resolve();
 				})
@@ -80,7 +78,7 @@ class Service {
 	}
 
 	getStrings() {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			this.strings
 				.init()
 				.then(resolve)

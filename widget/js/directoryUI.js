@@ -51,6 +51,27 @@ class DirectoryUI {
 		return results;
 	}
 
+	hasAccess(callback) {
+		const { tagFilter } = this.settings;
+
+		if (!tagFilter || !tagFilter.length) {
+			return callback(null, true);
+		}
+
+		buildfire.auth.getCurrentUser((error, user = {}) => {
+			if (error) return callback(error, null);
+
+			const { appId } = buildfire.getContext();
+
+			const userTags = user.tags && user.tags[appId] ? user.tags[appId].map((tag) => tag.tagName) : [];
+
+			return callback(
+				null,
+				tagFilter.some((tag) => userTags.indexOf(tag) > -1)
+			);
+		});
+	}
+
 	promptUser(force, callback) {
 		if (!this.user) return buildfire.auth.login();
 
@@ -60,15 +81,11 @@ class DirectoryUI {
 			return;
 		}
 
-		const { appId } = buildfire.getContext();
-		const { autoEnlistTags, autoEnlistAll } = this.settings;
+		const { autoEnlistAll } = this.settings;
 
-		const userTags = this.user.tags && this.user.tags[appId] ? this.user.tags[appId].map((tag) => tag.tagName) : [];
+		this.hasAccess((err, hasAccess) => {
+			if (err || !hasAccess) return;
 
-		buildfire.auth.getCurrentUser((e, user) => {
-			if (user._id !== this.user._id) {
-				return;
-			}
 			this.directory.checkUser((error, userObj) => {
 				if (error) return console.error(error);
 				if (userObj) return this.directory.updateUser(userObj);
@@ -78,17 +95,6 @@ class DirectoryUI {
 						if (e) return console.error(e);
 						callback();
 					});
-				}
-
-				localStorage.setItem('DEBUG', JSON.stringify({ autoEnlistTags, userTags }));
-
-				if (autoEnlistTags && userTags) {
-					if (autoEnlistTags.some((tag) => userTags.indexOf(tag) > -1)) {
-						return this.directory.addUser((e) => {
-							if (e) return console.error(e);
-							callback();
-						});
-					}
 				}
 
 				this._showDialog('join', (value) => {

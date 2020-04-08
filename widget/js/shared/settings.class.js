@@ -21,7 +21,7 @@ class Settings {
 
 	constructor(dbObj = { data: {} }) {
 		this.autoEnlistAll = dbObj.data.autoEnlistAll || false;
-		this.autoEnlistTags = dbObj.data.autoEnlistTags || [];
+		this.tagFilter = dbObj.data.tagFilter || [];
 		this.actionItem = dbObj.data.actionItem || null;
 		this.badgePushNotifications = dbObj.data.badgePushNotifications || null;
 	}
@@ -29,7 +29,7 @@ class Settings {
 	toRawData() {
 		return {
 			autoEnlistAll: this.autoEnlistAll,
-			autoEnlistTags: this.autoEnlistTags,
+			tagFilter: this.tagFilter,
 			actionItem: this.actionItem,
 			badgePushNotifications: this.badgePushNotifications
 		};

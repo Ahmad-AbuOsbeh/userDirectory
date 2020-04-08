@@ -250,22 +250,20 @@
 
 			function createReportCard(report) {
 				return `
-        <div class="mdc-layout-grid__cell--span-3">
+        <div class="mdc-layout-grid__cell">
           <h4>Reported By</h4>
           <span>${report.user.email}</span>
         </div>
-        <div class="mdc-layout-grid__cell--span-3">
+        <div class="mdc-layout-grid__cell">
           <h4>Reported On</h4>
           <span>${new Date(report.reportedOn).toDateString()}</span>
         </div>
-        <div class="mdc-layout-grid__cell--span-3">
+        <div class="mdc-layout-grid__cell">
           <h4>Report Reason</h4>
           <span>${report.reason}</span>
         </div>
-        <div class="mdc-layout-grid__cell--span-2">
-          <h4 class="margin-bottom-eight">Mark As Resolved</h4>
-					<button class="mdc-icon-button material-icons text-center" name="approve">check</button>
-          <!-- <button class="mdc-icon-button material-icons" name="delete">delete</button> -->
+				<div class="mdc-layout-grid__cell align-end">
+					<button class="btn btn-primary" name="approve">Mark As Resolved</button>
         </div>`;
 			}
 		</script>

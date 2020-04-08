@@ -24,6 +24,30 @@
 	background-color: #000;
 	margin-bottom: 0.875rem;
 }
+.btn.btn-primary{
+	display: inline-block;
+	margin-bottom: 0;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	padding: 6px 12px;
+	font-size: 13px;
+	line-height: 20px;
+	font-weight: 300;
+	border-radius: 4px;
+	transition: all .35s;
+	color: #fff;
+	background-color: #09a3ee;
+
+}
+.btn.btn-primary:hover{
+	background-color: #0089d1;
+}
+.align-end{
+	align-self: end;
+}
 
 .container {
   margin: 1rem 0;

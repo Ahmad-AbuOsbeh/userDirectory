@@ -205,8 +205,8 @@ class Widget {
 				</div>
 
 				<div class="user-info-holder ellipsis">
-					<h4 class="user-title bodyTextTheme ellipsis">${displayName || email}</h4>
-					<p class="user-subtitle ellipsis">${!displayName ? '' : email}</p>
+					<h4 class="user-title whiteTheme ellipsis">${displayName || email}</h4>
+					<p class="user-subtitle whiteTheme ellipsis">${!displayName ? '' : email}</p>
 				</div>
 			`,
 			tabs: [],

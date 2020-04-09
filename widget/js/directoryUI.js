@@ -123,8 +123,7 @@ class DirectoryUI {
 					});
 				}
 			});
-		}, 10000); // 5 min
-		// }, 3e5); // 5 min
+		}, 3e5); // 5 min
 	}
 
 	handleAction(user) {

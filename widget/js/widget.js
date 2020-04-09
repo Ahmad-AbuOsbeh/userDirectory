@@ -187,7 +187,7 @@ class Widget {
 		const callback = (error, result) => {
 			if (error) return console.error(error);
 
-			if (result.canceled || !result.selected[0]) return;
+			if (result.cancelled || !result.selected[0]) return;
 
 			Reports.reportUser(userId, this.user._id, result.selected[0].value, (error, result) => {
 				let text = 'User reported';

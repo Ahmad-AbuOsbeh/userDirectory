@@ -17,6 +17,18 @@ p {
 h4, h5, h6 {
 margin-bottom: .5em;    
 }
+.fixed-bottom{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+#stringsContainer {
+    max-height: calc(100vh - 82px);
+    overflow-y: auto;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
 .title {
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	-webkit-font-smoothing: antialiased !important;

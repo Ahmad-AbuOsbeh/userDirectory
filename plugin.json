@@ -22,5 +22,7 @@
     "service":"service.html"
 },
   "features" : [],
-  "languages" : ["en"]
+  "languages" : ["en"],
+  "media": [{"type" : "image" , "path" : "resources/image.png"},
+    {"type" : "image" , "path" : "resources/marketplacegif.gif"}]
 }

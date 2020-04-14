@@ -6,6 +6,9 @@ class DirectoryUser {
 		this.email = user.email;
 		this.userId = user._id || user.userId;
 		this.badges = user.badges || [];
+		
+		const { appId } = buildfire.getContext();
+		this.tags = user.tags ? user.tags[appId] : [];
 	}
 
 	toJson() {
@@ -17,6 +20,9 @@ class DirectoryUser {
 			email: this.email,
 			userId: this.userId,
 			badges: this.badges,
+			badgeCount: this.badges.length,
+			tags: this.tags,
+			tagCount: this.tags.length,
 			_buildfire: {
 				index: {
 					text: `${this.firstName || ''} ${this.lastName || ''} ${this.displayName || ''} ${this.email || ''}`,

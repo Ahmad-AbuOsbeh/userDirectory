@@ -15,9 +15,10 @@ class Widget {
 		this.timer = null;
 		this.settings = {
 			autoEnlistAll: false,
-			autoEnlistTags: [],
+			tagFilter: [],
 			actionItem: null,
 			badgePushNotifications: false,
+			ranking: 'ALPHA_ASC',
 		};
 
 		this.init();
@@ -36,12 +37,14 @@ class Widget {
 				case 'userAdded': {
 					this.search();
 					this.searchBar.shouldShowAddButton(false);
+					this.searchBar.shouldShowOptionsButton(true);
 					break;
 				}
 				case 'userUpdated': {
 					this.directoryUI.directory.badges = [];
 					this.search();
 					this.searchBar.shouldShowAddButton(false);
+					this.searchBar.shouldShowOptionsButton(true);
 					break;
 				}
 				case 'refresh': {
@@ -64,12 +67,21 @@ class Widget {
 			this.directoryUI = new DirectoryUI(this.user, this.strings, this.settings);
 
 			if (this.user) {
-				this.directoryUI.directory.checkUser((err, userObj) => {
-					if (err) return console.error(err);
-					this.searchBar.shouldShowAddButton(typeof userObj !== 'object');
+				this.directoryUI.hasAccess((error, hasAccess) => {
+					if (error || !hasAccess) {
+						this.searchBar.shouldShowAddButton(false);
+						this.searchBar.shouldShowOptionsButton(false);
+						return;
+					}
+					this.directoryUI.directory.checkUser((err, userObj) => {
+						if (err) return console.error(err);
+						this.searchBar.shouldShowAddButton(typeof userObj !== 'object');
+						this.searchBar.shouldShowOptionsButton(typeof userObj == 'object');
+					});
 				});
 			} else {
 				this.searchBar.shouldShowAddButton(true);
+				this.searchBar.shouldShowOptionsButton(false);
 			}
 
 			this.searchBar.setDropdownItems([
@@ -82,6 +94,7 @@ class Widget {
 					action: () => {
 						this.directoryUI.leaveDirectory(() => {
 							this.searchBar.shouldShowAddButton(true);
+							this.searchBar.shouldShowOptionsButton(false);
 							this.search();
 						});
 					},
@@ -100,6 +113,7 @@ class Widget {
 
 			this.directoryUI.promptUser(true, () => {
 				this.searchBar.shouldShowAddButton(false);
+				this.searchBar.shouldShowOptionsButton(true);
 				this.search();
 			});
 		};
@@ -174,7 +188,7 @@ class Widget {
 		const callback = (error, result) => {
 			if (error) return console.error(error);
 
-			if (result.canceled || !result.selected[0]) return;
+			if (result.cancelled || !result.selected[0]) return;
 
 			Reports.reportUser(userId, this.user._id, result.selected[0].value, (error, result) => {
 				let text = 'User reported';
@@ -206,7 +220,7 @@ class Widget {
 
 				<div class="user-info-holder ellipsis">
 					<h4 class="user-title whiteTheme ellipsis">${displayName || email}</h4>
-					<p class="user-subtitle whiteTheme ellipsis">${!displayName ? '' : email}</p>
+					<p class="user-subtitle ellipsis">${!displayName ? '' : email}</p>
 				</div>
 			`,
 			tabs: [],
@@ -254,12 +268,13 @@ class Widget {
 		options.tabs.push({
 			text: `<span class="glyphicon glyphicon-tags"></span>`,
 			content: `
+			<div class="badges-grid">
+
 				${
 					badges.length
 						? badges
 								.map((badge) => {
 									return `
-										<div class="badges-grid">
 											<div class="grid-item">
 												<div class="user-badge">
 													<img src="${badge.imageUrl}" alt="">
@@ -267,12 +282,13 @@ class Widget {
 												<h5>${badge.name}</h5>
 												<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>
 											</div>
-										</div>
 									`;
 								})
 								.join(' ')
 						: `<div class="empty-state-text"><span>no badges yet!</span></div>`
 				}
+				</div>
+
 			<style>
 				.empty-state-text{
 					text-transform: capitalize;
@@ -348,21 +364,26 @@ class Widget {
 
 			switch (id) {
 				case 'openProfile': {
-					buildfire.auth.openProfile();
 					buildfire.components.drawer.closeDrawer();
+					setTimeout(() => {
+						buildfire.auth.openProfile();
+					}, 100);
 					break;
 				}
 				case 'leaveDirectory': {
 					this.directoryUI.leaveDirectory(() => {
 						this.searchBar.shouldShowAddButton(true);
+						this.searchBar.shouldShowOptionsButton(false);
 						this.search();
 					});
 					buildfire.components.drawer.closeDrawer();
 					break;
 				}
 				case 'action': {
-					this.directoryUI.handleAction(data);
 					buildfire.components.drawer.closeDrawer();
+					setTimeout(() => {
+						this.directoryUI.handleAction(data);
+					}, 100);
 					break;
 				}
 				case 'favorite': {

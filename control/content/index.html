@@ -24,7 +24,6 @@
 		<script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
 
 		<!-- build:bundleDataJSFiles  -->
-		<script src="../../widget/data/user.js"></script>
 		<script src="../../widget/dataAccess/users.js"></script>
 		<script src="../../widget/dataAccess/badges.js"></script>
 		<!-- endbuild -->
@@ -51,15 +50,15 @@
 			</div>
 
 			<div class="margin-bottom-thirty">
-				<p class="info">User emails will be displayed on the directory. We have no liability or other responsibility for any privacy compliance issues.</p>
+				<p class="info" ng-if="data.autoEnlistAll">We assume no liability for any privacy compliance issues. Consult your local laws and regulations.</p>
 			</div>
 
 			<div class="input-row">
-				<p class="label-container margin-bottom-zero">Auto enlist all users with the following tags</p>
+				<p class="label-container margin-bottom-zero">Only allow users with the following tags</p>
 
 				<div class="tags input-container">
 					<ul class="tag-list">
-						<li class="tag-item" ng-repeat="tag in data.autoEnlistTags">
+						<li class="tag-item" ng-repeat="tag in data.tagFilter">
 							<span>{{ tag }}</span>
 							<a class="remove-button" ng-click="removeTag(tag)"><span class="icon icon-cross2"></span></a>
 						</li>
@@ -72,7 +71,7 @@
 			</div>
 
 			<h1 class="title margin-bottom-thirty">User Action</h1>
-			<p class="label-container tooltip-container">Action Item <span class="tip btn-info-icon btn-primary"><span class="cp-tooltip">Tooltip Content</span></span></p>
+			<p class="label-container tooltip-container">Action Item <span class="tip btn-info-icon btn-primary"><span class="cp-tooltip">User Data is deeplinked when navigating to a plugin.</span></span></p>
 			<div class="single-action-item">
 				<div class="action-info"  ng-if="!data.actionItem">
 					<div>
@@ -137,6 +136,13 @@
 				<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
 				<label for="pushNotifications" ></label>
 			</div>
+
+			<h1 class="title">Ranking</h1>
+
+			<select ng-model="data.ranking">
+				<option ng-selected="data.ranking === rank.value" ng-repeat="rank in rankingOptions" ng-value="rank.value">{{ rank.label }}</option>
+			</select>
+
 		</div>
 		<script>
 			document.getElementById('badgeTagCount').addEventListener('keydown', e => {

@@ -166,7 +166,7 @@
 				id: item.id
 			};
 
-			Badges.update(badgeData, console.error);
+			Badges.update(badgeData, console.log);
 		};
 
 		if (item.imageUrl) {

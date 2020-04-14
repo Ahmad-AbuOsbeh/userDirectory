@@ -13,9 +13,9 @@ class SearchBar {
 		this.favorites = ui.create('span', this.container, null, ['favorites', 'search-bar__icon', 'icon', 'glyphicon' , 'glyphicon-star-empty']);
 		this.favorites.onclick = () => this.filterFavorites();
 
-		this.add = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'glyphicon' , 'glyphicon-plus']);
+		this.add = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'glyphicon' , 'glyphicon-plus', 'hidden']);
 
-		this.options = ui.create('div', this.container, null, ['btn-group']);
+		this.options = ui.create('div', this.container, null, ['btn-group', 'hidden']);
 
 		const btn = ui.create('div', this.options, '<span class="icon glyphicon glyphicon-option-vertical"></span>', ['dropdown-toggle']);
 
@@ -61,10 +61,20 @@ class SearchBar {
 	shouldShowAddButton(value) {
 		if (value) {
 			this.add.classList.remove('hidden');
-			this.options.classList.add('hidden');
+			// this.options.classList.add('hidden');
 		} else {
 			this.add.classList.add('hidden');
+			// this.options.classList.remove('hidden');
+		}
+	}
+
+	shouldShowOptionsButton(value) {
+		if (value) {
+			// this.add.classList.remove('hidden');
 			this.options.classList.remove('hidden');
+		} else {
+			// this.add.classList.add('hidden');
+			this.options.classList.add('hidden');
 		}
 	}
 

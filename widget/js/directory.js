@@ -96,7 +96,8 @@ class Directory {
 		const _search = () => {
 			this.getFavorites(() => {
 				this.getBadges(() => {
-					Users.search({ userIds, pageIndex, pageSize }, (error, results) => {
+					const { ranking } = this.settings;
+					Users.search({ userIds, pageIndex, pageSize, ranking }, (error, results) => {
 						if (error) return callback(error, null);
 
 						results = results.map(result => {
@@ -217,7 +218,7 @@ class Directory {
 					const updateQueue = ['displayName', 'email', 'firstName', 'lastName'];
 
 					if (this.user.userId !== user._id) {
-						return console.error('fail!!!', this.user, user);
+						return;
 					}
 
 					updateQueue.forEach(key => {
@@ -226,6 +227,21 @@ class Directory {
 							hasUpdate = true;
 						}
 					});
+
+					const { appId } = buildfire.getContext();
+					const userTags = user.tags ? user.tags[appId] : [];
+
+					if (userTags.length !== userObj.data.tags.length) {
+						this.user.tags = userTags;
+						hasUpdate = true;
+					} else if (userTags.length) {
+						userTags.forEach(tag => {
+							if (!userObj.data.tags.some(t => t.tagName === tag.tagName)) {
+								this.user.tags = userTags;
+								hasUpdate = true;
+							}
+						});
+					}
 
 					if (!hasUpdate) return;
 
@@ -258,7 +274,7 @@ class Directory {
 						}
 						if (onUpdate) onUpdate(this.user);
 					});
-					Lookup.update(this.user.toJson(), console.error);
+					Lookup.update(this.user.toJson(), console.log);
 				});
 
 				function renderSingleBadge(badge) {
@@ -304,8 +320,6 @@ class Directory {
 		`;
 
 		const options = {
-			// language settings here
-			// check exclude user
 			title: `${displayName || email} has earned ${badges.length > 1 ? 'new badges!' : 'a new badge!'}`,
 			text: `${displayName || email} has earned ${badges.length > 1 ? 'new badges!' : 'a new badge!'}`,
 			inAppMessage,

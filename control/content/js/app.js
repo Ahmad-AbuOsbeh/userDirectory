@@ -10,7 +10,8 @@
 			autoEnlistAll: false,
 			tagFilter: [],
 			actionItem: null,
-			badgePushNotifications: false
+			badgePushNotifications: false,
+			ranking: 'ALPHA_ASC'
 		};
 
 		$scope.badgeListUI = badgeListUI;
@@ -52,6 +53,8 @@
 			};
 		};
 
+		$scope.rankingOptions = Users.rankings;
+
 		$scope.applyTag = () => {
 			$scope.data.tagFilter.push($scope.tagName);
 			$scope.tagName = '';
@@ -82,12 +85,13 @@
 
 		Settings.get()
 			.then(data => {
-				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications } = data;
+				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking } = data;
 
 				$scope.data.autoEnlistAll = autoEnlistAll || false;
 				$scope.data.tagFilter = tagFilter || [];
 				$scope.data.actionItem = actionItem || null;
 				$scope.data.badgePushNotifications = badgePushNotifications || null;
+				$scope.data.ranking = ranking || 'ALPHA_ASC';
 
 				if (!$scope.$$phase) $scope.$apply();
 
@@ -95,7 +99,7 @@
 			})
 			.catch(console.error);
 
-		$scope.save = obj => {
+		$scope.save = () => {
 			const { data } = $scope;
 
 			new Settings({ data })

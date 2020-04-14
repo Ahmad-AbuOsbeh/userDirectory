@@ -24,7 +24,6 @@
 		<script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
 
 		<!-- build:bundleDataJSFiles  -->
-		<script src="../../widget/data/user.js"></script>
 		<script src="../../widget/dataAccess/users.js"></script>
 		<script src="../../widget/dataAccess/badges.js"></script>
 		<!-- endbuild -->
@@ -137,6 +136,13 @@
 				<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
 				<label for="pushNotifications" ></label>
 			</div>
+
+			<h1 class="title">Ranking</h1>
+
+			<select ng-model="data.ranking">
+				<option ng-selected="data.ranking === rank.value" ng-repeat="rank in rankingOptions" ng-value="rank.value">{{ rank.label }}</option>
+			</select>
+
 		</div>
 		<script>
 			document.getElementById('badgeTagCount').addEventListener('keydown', e => {

@@ -3,22 +3,59 @@ class Users {
 		return '$$userDirectory';
 	}
 
+	static get rankings() {
+		return {
+			ALPHA_ASC: {
+				value: 'ALPHA_ASC',
+				label: 'Alphabetical Ascending',
+				sort: { firstName: 1, lastName: 1 },
+			},
+			ALPHA_DEC: {
+				value: 'ALPHA_DEC',
+				label: 'Alphabetical Descending',
+				sort: { firstName: -1, lastName: -1 },
+			},
+			BADGE_COUNT: {
+				value: 'BADGE_COUNT',
+				label: 'Badge Count',
+				sort: { badgeCount: -1 },
+			},
+			TAG_COUNT: {
+				value: 'TAG_COUNT',
+				label: 'Tag Count',
+				sort: { tagCount: -1 },
+			},
+			JOIN_DATE: {
+				value: 'JOIN_DATE',
+				label: 'Join Date',
+				sort: { joinDate: 1 },
+			},
+		};
+	}
+
 	/**
 	 * Returns sections
 	 * @param {Function} callback callback for handling response
 	 */
 	static search(options, callback) {
-		const { userIds, pageIndex, pageSize } = options;
+		const { userIds, pageIndex, pageSize, ranking } = options;
+
+
 
 		var searchOptions = {
 			sort: { firstName: 1, lastName: 1 },
 			page: pageIndex,
-			pageSize
+			pageSize,
 		};
+
+		if (ranking) {
+			const { sort } = this.rankings[ranking];
+			searchOptions.sort = sort;
+		}
 
 		if (userIds) {
 			searchOptions.filter = {
-				'_buildfire.index.string1': { $in: userIds }
+				'_buildfire.index.string1': { $in: userIds },
 			};
 		}
 
@@ -34,10 +71,10 @@ class Users {
 		const searchOptions = {
 			filter: {
 				'$json.userId': {
-					$eq: userId
+					$eq: userId,
 				},
-				'_buildfire.index.string1': userId
-			}
+				'_buildfire.index.string1': userId,
+			},
 		};
 
 		buildfire.appData.search(searchOptions, this.tag, (error, results) => {
@@ -54,12 +91,14 @@ class Users {
 		this.getByUserId(userData.userId, (err, userObj) => {
 			if (!err && userObj) return console.error(userObj);
 
+			userData.joinDate = Date.now();
+
 			buildfire.appData.insert(userData, this.tag, (error, record) => {
 				if (error) return callback(error);
 
 				callback(null, record);
 
-				Lookup.add(userData, error => {
+				Lookup.add(userData, (error) => {
 					if (error) return console.error('error adding user to lookup directory');
 
 					Analytics.trackAction(Analytics.events.USER_JOINED.key);
@@ -74,12 +113,11 @@ class Users {
 	 * @param {Function} callback callback for handling response
 	 */
 	static update(userData, callback) {
-		console.error('UPDATING USER:', userData);
 		const searchOptions = {
 			'$json.userId': {
-				$eq: userData.userId
+				$eq: userData.userId,
 			},
-			'_buildfire.index.string1': userData.userId
+			'_buildfire.index.string1': userData.userId,
 		};
 
 		buildfire.appData.searchAndUpdate(searchOptions, userData, this.tag, (error, result) => {
@@ -119,7 +157,7 @@ class Users {
 
 	static _clear() {
 		this.search({}, (e, users) => {
-			users.forEach(usr => buildfire.appData.delete(usr.id, this.tag, console.error));
+			users.forEach((usr) => buildfire.appData.delete(usr.id, this.tag, console.error));
 		});
 	}
 }

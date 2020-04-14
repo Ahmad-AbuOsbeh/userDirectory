@@ -133,7 +133,7 @@ class DirectoryUI {
 			if (!actionItem.queryString) {
 				actionItem.queryString = `&dld=${JSON.stringify(user)}`;
 			}
-			return buildfire.actionItems.execute(actionItem, console.error);
+			return buildfire.actionItems.execute(actionItem, () => {});
 		}
 
 		this.openPrivateMessage(user);
@@ -178,12 +178,6 @@ class DirectoryUI {
 				title: confirmButtonText,
 			},
 			richContent: `
-				<img src="undefined" style="display:none" onerror="
-					(() => {
-						document.getElementsByClassName('dismiss-button')[0].innerHTML = '${cancelButtonText}';
-						document.getElementsByClassName('action-button')[0].classList.add('${type === 'leave' ? 'text-danger' : ''}');
-					})()
-				"></img>
 				<style>
 					.rich-content {
 						display: none;

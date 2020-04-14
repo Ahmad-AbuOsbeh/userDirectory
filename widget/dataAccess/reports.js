@@ -83,7 +83,7 @@ class Reports {
 		buildfire.appData.search(searchOptions, this.tag, callback);
 	}
 
-	static reportUser(userId, reportedBy, reason, callback = console.error) {
+	static reportUser(userId, reportedBy, reason, callback = console.log) {
 		if (!userId || !reportedBy || !reason) {
 			return callback('Invalid parameters', null);
 		}
@@ -105,7 +105,7 @@ class Reports {
 		});
 	}
 
-	static resolveReport(userId, reportId, callback = console.error) {
+	static resolveReport(userId, reportId, callback = console.log) {
 		if (!userId || !reportId) {
 			return callback('Invalid parameters', null);
 		}

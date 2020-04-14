@@ -56,7 +56,7 @@ const badgeListUI = {
 		this.badgeList.onOrderChange = (item, oldIndex, newIndex) => {
 			badgeListUI.badgeList.badges.forEach((badge, index) => {
 				badgeListUI.badgeList.badges[index].rank = index;
-				Badges.update(badgeListUI.badgeList.badges[index], console.error);
+				Badges.update(badgeListUI.badgeList.badges[index], console.log);
 			});
 		};
 

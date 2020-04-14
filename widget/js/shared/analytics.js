@@ -42,7 +42,7 @@ class Analytics {
 			{
 				silentNotification
       },
-      console.error
+      console.log
 		);
 	}
 

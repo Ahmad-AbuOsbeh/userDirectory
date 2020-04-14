@@ -24,6 +24,7 @@ class Settings {
 		this.tagFilter = dbObj.data.tagFilter || [];
 		this.actionItem = dbObj.data.actionItem || null;
 		this.badgePushNotifications = dbObj.data.badgePushNotifications || null;
+		this.ranking = dbObj.data.ranking || 'ALPHA_ASC';
 	}
 
 	toRawData() {
@@ -31,7 +32,8 @@ class Settings {
 			autoEnlistAll: this.autoEnlistAll,
 			tagFilter: this.tagFilter,
 			actionItem: this.actionItem,
-			badgePushNotifications: this.badgePushNotifications
+			badgePushNotifications: this.badgePushNotifications,
+			ranking: this.ranking
 		};
 	}
 

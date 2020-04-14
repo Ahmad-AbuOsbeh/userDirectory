@@ -18,6 +18,7 @@ class Widget {
 			tagFilter: [],
 			actionItem: null,
 			badgePushNotifications: false,
+			ranking: 'ALPHA_ASC',
 		};
 
 		this.init();
@@ -267,12 +268,13 @@ class Widget {
 		options.tabs.push({
 			text: `<span class="glyphicon glyphicon-tags"></span>`,
 			content: `
+			<div class="badges-grid">
+
 				${
 					badges.length
 						? badges
 								.map((badge) => {
 									return `
-										<div class="badges-grid">
 											<div class="grid-item">
 												<div class="user-badge">
 													<img src="${badge.imageUrl}" alt="">
@@ -280,12 +282,13 @@ class Widget {
 												<h5>${badge.name}</h5>
 												<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>
 											</div>
-										</div>
 									`;
 								})
 								.join(' ')
 						: `<div class="empty-state-text"><span>no badges yet!</span></div>`
 				}
+				</div>
+
 			<style>
 				.empty-state-text{
 					text-transform: capitalize;
@@ -361,8 +364,10 @@ class Widget {
 
 			switch (id) {
 				case 'openProfile': {
-					buildfire.auth.openProfile();
 					buildfire.components.drawer.closeDrawer();
+					setTimeout(() => {
+						buildfire.auth.openProfile();
+					}, 100);
 					break;
 				}
 				case 'leaveDirectory': {
@@ -375,8 +380,10 @@ class Widget {
 					break;
 				}
 				case 'action': {
-					this.directoryUI.handleAction(data);
 					buildfire.components.drawer.closeDrawer();
+					setTimeout(() => {
+						this.directoryUI.handleAction(data);
+					}, 100);
 					break;
 				}
 				case 'favorite': {

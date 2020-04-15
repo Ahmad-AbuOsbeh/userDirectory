@@ -489,3 +489,28 @@ p.info::before{
 .d-item input, .d-item button {
     display: none;
 } */
+
+.select-container{
+    display: flex;
+    position: relative;
+}
+.select-container::after{
+    content: "\e60f";
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+select{
+    background: #fff;
+    -webkit-appearance:none;
+    border: 1px solid #ddd;
+}

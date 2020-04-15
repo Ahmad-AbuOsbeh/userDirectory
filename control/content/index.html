@@ -131,17 +131,25 @@
 
 			<h1 class="title">New Badge Push Notifications</h1>
 
-			<p class="pull-left">Send a push notification to directory members when someone receives a new badge</p>
-			<div class="button-switch pull-right">
-				<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
-				<label for="pushNotifications" ></label>
+			<div class="margin-bottom-twenty clearfix">
+				<p class="pull-left">Send a push notification to directory members when someone receives a new badge</p>
+				<div class="button-switch pull-right">
+					<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
+					<label for="pushNotifications" ></label>
+				</div>
 			</div>
 
-			<h1 class="title">Ranking</h1>
+			<h1 class="title">User Sorting</h1>
 
-			<select ng-model="data.ranking">
-				<option ng-selected="data.ranking === rank.value" ng-repeat="rank in rankingOptions" ng-value="rank.value">{{ rank.label }}</option>
-			</select>
+			<div class="input-row">
+				<p class="label-container">Sort users by:</p>
+				<div class="select-container flex-auto">
+					<select class="flex-auto" ng-model="data.ranking">
+						<option ng-selected="data.ranking === rank.value" ng-repeat="rank in rankingOptions" ng-value="rank.value">{{ rank.label }}</option>
+					</select>
+				</div>
+			</div>
+			
 
 		</div>
 		<script>

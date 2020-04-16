@@ -1,5 +1,6 @@
 class DirectoryUser {
 	constructor(user) {
+		this.isActive = typeof user.isActive !== 'undefined' ? user.isActive : true;
 		this.displayName = user.displayName;
 		this.firstName = user.firstName;
 		this.lastName = user.lastName;
@@ -14,9 +15,13 @@ class DirectoryUser {
 	toJson() {
 		const badgeIds = this.badges.map(badge => badge.id);
 		return {
+			isActive: this.isActive,
 			displayName: this.displayName,
+			dName: this.displayName ? this.displayName.toLowerCase() : '',
 			firstName: this.firstName,
+			fName: this.firstName ? this.firstName.toLowerCase() : '',
 			lastName: this.lastName,
+			lName: this.lastName ? this.lastName.toLowerCase() : '',
 			email: this.email,
 			userId: this.userId,
 			badges: this.badges,

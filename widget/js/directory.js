@@ -79,9 +79,9 @@ class Directory {
 	}
 
 	getBadges(callback) {
-		if (this.badges && this.badges.length) {
-			return callback(null, this.badges);
-		}
+		// if (this.badges && this.badges.length) {
+		// 	return callback(null, this.badges);
+		// }
 		Badges.get((error, badges) => {
 			if (error) return callback(error, null);
 
@@ -92,10 +92,12 @@ class Directory {
 
 	search(searchText, pageIndex, pageSize, callback) {
 		let userIds = null;
-		this.badges = [];
+		// this.badges = [];
 		const _search = () => {
 			this.getFavorites(() => {
-				this.getBadges(() => {
+				this.getBadges((err, badges) => {
+					if (err) console.error(err);
+
 					const { ranking } = this.settings;
 					Users.search({ userIds, pageIndex, pageSize, ranking }, (error, results) => {
 						if (error) return callback(error, null);
@@ -105,7 +107,9 @@ class Directory {
 								result.data.isFavorite = this.favoritesList.indexOf(result.data.userId) > -1;
 							}
 							if (result.data.badges.length) {
-								const badges = [];
+								if (!this.badges.length) {
+									debugger;
+								}
 								result.data.badges = result.data.badges.filter(badge => {
 									return this.badges.find(b => b.id === badge.id);
 								});
@@ -181,7 +185,7 @@ class Directory {
 			Badges.computeUserBadges(user, (err, badgeIds) => {
 				if (err) return console.error(err);
 
-				this.badges = [];
+				// this.badges = [];
 
 				this.getBadges(() => {
 					let hasUpdate = false;
@@ -222,7 +226,7 @@ class Directory {
 					}
 
 					updateQueue.forEach(key => {
-						if (this.user[key] !== user[key]) {
+						if (userObj.data[key] !== user[key]) {
 							this.user[key] = user[key];
 							hasUpdate = true;
 						}

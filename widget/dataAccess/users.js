@@ -8,27 +8,27 @@ class Users {
 			ALPHA_ASC: {
 				value: 'ALPHA_ASC',
 				label: 'Alphabetical Ascending',
-				sort: { firstName: 1, lastName: 1 },
+				sort: { dName: 1 },
 			},
 			ALPHA_DEC: {
 				value: 'ALPHA_DEC',
 				label: 'Alphabetical Descending',
-				sort: { firstName: -1, lastName: -1 },
+				sort: { dName: -1 },
 			},
 			BADGE_COUNT: {
 				value: 'BADGE_COUNT',
 				label: 'Badge Count',
-				sort: { badgeCount: -1 },
+				sort: { badgeCount: -1, dName: 1 },
 			},
 			TAG_COUNT: {
 				value: 'TAG_COUNT',
 				label: 'Tag Count',
-				sort: { tagCount: -1 },
+				sort: { tagCount: -1, dName: 1 },
 			},
 			JOIN_DATE: {
 				value: 'JOIN_DATE',
 				label: 'Join Date',
-				sort: { joinDate: 1 },
+				sort: { joinDate: 1, displayName: 1 },
 			},
 		};
 	}
@@ -39,8 +39,6 @@ class Users {
 	 */
 	static search(options, callback) {
 		const { userIds, pageIndex, pageSize, ranking } = options;
-
-
 
 		var searchOptions = {
 			sort: { firstName: 1, lastName: 1 },

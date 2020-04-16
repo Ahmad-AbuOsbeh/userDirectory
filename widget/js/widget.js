@@ -77,6 +77,12 @@ class Widget {
 						if (err) return console.error(err);
 						this.searchBar.shouldShowAddButton(typeof userObj !== 'object');
 						this.searchBar.shouldShowOptionsButton(typeof userObj == 'object');
+
+						if (userObj) {
+							this.directoryUI.directory.updateUser(userObj, () => {
+								this.search();
+							});
+						}
 					});
 				});
 			} else {
@@ -372,9 +378,16 @@ class Widget {
 				}
 				case 'leaveDirectory': {
 					this.directoryUI.leaveDirectory(() => {
-						this.searchBar.shouldShowAddButton(true);
-						this.searchBar.shouldShowOptionsButton(false);
-						this.search();
+						this.directoryUI.hasAccess((error, hasAccess) => {
+							if (error || !hasAccess) {
+								this.searchBar.shouldShowAddButton(false);
+								this.searchBar.shouldShowOptionsButton(false);
+							} else {
+								this.searchBar.shouldShowAddButton(true);
+								this.searchBar.shouldShowOptionsButton(false);
+							}
+							this.search();
+						});
 					});
 					buildfire.components.drawer.closeDrawer();
 					break;

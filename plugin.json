@@ -1,28 +1,31 @@
 {
-  "author":"Daniel Hindi"
-,"pluginName":"User Directory Beta"
-,"pluginDescription":"Easy way to search and chat with users"
-,"supportEmail":"<enter your support email here>"
-,"control":{
-  "content":{
-    "enabled":true
-  }
-, "design":{
-    "enabled":false
-  }
-, "settings":{
-    "enabled":false
-  }
-, "customTabs": [
-    { "title": "Language", "url": "/strings/index.html" },
-    { "title": "Abuse", "url": "/abuse/index.html" }
-  ]
-}
-,"widget":{
-    "service":"service.html"
-},
-  "features" : [],
-  "languages" : ["en"],
-  "media": [{"type" : "image" , "path" : "resources/image.png"},
-    {"type" : "image" , "path" : "resources/marketplacegif.gif"}]
+	"author": "Daniel Hindi",
+	"pluginName": "User Directory Beta",
+	"pluginDescription": "The User Directory plugin provides an easy way to search and chat with users. Leverage our User Tagging system to customize your user experience and Gamify your app with Badges.",
+	"supportEmail": "support@buildfire.com",
+	"singleton": true,
+	"control": {
+		"content": {
+			"enabled": true
+		},
+		"design": {
+			"enabled": false
+		},
+		"settings": {
+			"enabled": false
+		},
+		"customTabs": [
+			{ "title": "Language", "url": "/strings/index.html" },
+			{ "title": "Abuse", "url": "/abuse/index.html" }
+		]
+	},
+	"widget": {
+		"service": "service.html"
+	},
+	"features": [],
+	"languages": ["en"],
+	"media": [
+		{ "type": "image", "path": "image.png" },
+		{ "type": "image", "path": "marketplacegif.gif" }
+	]
 }

@@ -77,10 +77,6 @@ class DirectoryUI {
 
 		const { _id } = this.user || {};
 
-		if (!force && localStorage.getItem(`$$userDirectoryPrompt-${_id}`)) {
-			return;
-		}
-
 		const { autoEnlistAll } = this.settings;
 
 		this.hasAccess((err, hasAccess) => {
@@ -89,6 +85,10 @@ class DirectoryUI {
 			this.directory.checkUser((error, userObj) => {
 				if (error) return console.error(error);
 				if (userObj) return this.directory.updateUser(userObj);
+
+				if (!force && localStorage.getItem(`$$userDirectoryPrompt-${_id}`)) {
+					return;
+				}
 
 				if (autoEnlistAll) {
 					return this.directory.addUser((e) => {
@@ -126,13 +126,29 @@ class DirectoryUI {
 		}, 3e5); // 5 min
 	}
 
-	handleAction(user) {
+	handleAction(user = {}) {
 		const { actionItem } = this.settings;
 
 		if (actionItem) {
 			if (!actionItem.queryString) {
 				actionItem.queryString = `&dld=${JSON.stringify(user)}`;
+			} else {
+				const params = ['userId', 'email', 'displayName', 'firstName', 'lastName' ];
+
+				const currentUser = this.directory.user || {};
+		
+				params.forEach(param => {
+					if (actionItem.queryString.indexOf(`targetUser.${param}`)) {
+
+						actionItem.queryString = actionItem.queryString.replace(`{{${param}}}`, user[param]);
+					}
+					if (actionItem.queryString.indexOf(`currentUser.${param}`)) {
+						actionItem.queryString = actionItem.queryString.replace(`{{${param}}}`, currentUser[param]);
+					}
+				});
+				debugger
 			}
+
 			return buildfire.actionItems.execute(actionItem, () => {});
 		}
 

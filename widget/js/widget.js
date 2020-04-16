@@ -75,8 +75,8 @@ class Widget {
 					}
 					this.directoryUI.directory.checkUser((err, userObj) => {
 						if (err) return console.error(err);
-						this.searchBar.shouldShowAddButton(typeof userObj !== 'object');
-						this.searchBar.shouldShowOptionsButton(typeof userObj == 'object');
+						this.searchBar.shouldShowAddButton(typeof userObj !== 'object' || !userObj.data.isActive);
+						this.searchBar.shouldShowOptionsButton(typeof userObj == 'object' && userObj.data.isActive);
 
 						if (userObj) {
 							this.directoryUI.directory.updateUser(userObj, () => {

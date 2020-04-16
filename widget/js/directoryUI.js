@@ -84,7 +84,7 @@ class DirectoryUI {
 
 			this.directory.checkUser((error, userObj) => {
 				if (error) return console.error(error);
-				if (userObj) return this.directory.updateUser(userObj);
+				if (userObj && userObj.data && userObj.data.isActive) return this.directory.updateUser(userObj);
 
 				if (!force && localStorage.getItem(`$$userDirectoryPrompt-${_id}`)) {
 					return;
@@ -146,7 +146,6 @@ class DirectoryUI {
 						actionItem.queryString = actionItem.queryString.replace(`{{${param}}}`, currentUser[param]);
 					}
 				});
-				debugger
 			}
 
 			return buildfire.actionItems.execute(actionItem, () => {});

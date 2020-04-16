@@ -28,7 +28,7 @@ class Users {
 			JOIN_DATE: {
 				value: 'JOIN_DATE',
 				label: 'Join Date',
-				sort: { joinDate: 1, displayName: 1 },
+				sort: { joinDate: 1, dName: 1 },
 			},
 		};
 	}
@@ -44,6 +44,7 @@ class Users {
 			sort: { firstName: 1, lastName: 1 },
 			page: pageIndex,
 			pageSize,
+			filter: { '$json.isActive': true },
 		};
 
 		if (ranking) {
@@ -52,9 +53,7 @@ class Users {
 		}
 
 		if (userIds) {
-			searchOptions.filter = {
-				'_buildfire.index.string1': { $in: userIds },
-			};
+			searchOptions.filter['_buildfire.index.string1'] = { $in: userIds };
 		}
 
 		buildfire.appData.search(searchOptions, this.tag, callback);
@@ -87,7 +86,11 @@ class Users {
 	 */
 	static add(userData, callback) {
 		this.getByUserId(userData.userId, (err, userObj) => {
-			if (!err && userObj) return console.error(userObj);
+			if (!err && userObj) {
+				userObj.data.isActive = true;
+				buildfire.appData.update(userObj.id, userObj.data, this.tag, callback);
+				return;
+			}
 
 			userData.joinDate = Date.now();
 
@@ -131,7 +134,9 @@ class Users {
 	 */
 	static delete(userId, callback) {
 		this.getByUserId(userId, (error, obj) => {
-			buildfire.appData.delete(obj.id, this.tag, callback);
+			obj.data.isActive = false;
+			buildfire.appData.update(obj.id, obj.data, this.tag, callback);
+			// buildfire.appData.delete(obj.id, this.tag, callback);
 
 			Analytics.trackAction(Analytics.events.USER_LEFT.key);
 		});

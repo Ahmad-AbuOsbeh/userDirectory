@@ -233,7 +233,7 @@ class Directory {
 					});
 
 					const { appId } = buildfire.getContext();
-					const userTags = user.tags ? user.tags[appId] : [];
+					const userTags = user.tags && user.tags[appId] ? user.tags[appId] : [];
 
 					if (userTags.length !== userObj.data.tags.length) {
 						this.user.tags = userTags;

@@ -9,7 +9,7 @@ class DirectoryUser {
 		this.badges = user.badges || [];
 		
 		const { appId } = buildfire.getContext();
-		this.tags = user.tags ? user.tags[appId] : [];
+		this.tags = user.tags && user.tags[appId] ? user.tags[appId] : [];
 	}
 
 	toJson() {

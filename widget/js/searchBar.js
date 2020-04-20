@@ -23,7 +23,7 @@ class SearchBar {
 		btn.setAttribute('aria-haspopup', 'true');
 		btn.setAttribute('aria-expanded', 'false');
 
-		this.dropdown = ui.create('ul', this.options, null, ['dropdown-menu']);
+		this.dropdown = ui.create('ul', this.options, null, ['dropdown-menu', 'backgroundColorTheme']);
 
 		btn.onclick = () => {
 			if (this.dropdown.classList.contains('show')) {

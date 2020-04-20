@@ -34,10 +34,16 @@ class DirectoryUI {
 				`;
 			});
 
+			let subtitle = email;
+
+			if (email.indexOf('facebook') > -1 || email.indexOf('twitter') > -1) {
+				subtitle = '';
+			}
+
 			results.push({
 				id: row.id,
 				title: displayName,
-				subtitle: email,
+				subtitle,
 				description: badgesHTML,
 				imageUrl,
 				data,

@@ -35,7 +35,6 @@ class Widget {
 		buildfire.messaging.onReceivedMessage = (msg) => {
 			switch (msg.cmd) {
 				case 'userAdded': {
-					debugger
 					this.search();
 					this.searchBar.shouldShowAddButton(false);
 					this.searchBar.shouldShowOptionsButton(true);

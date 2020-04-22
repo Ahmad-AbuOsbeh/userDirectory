@@ -19,6 +19,8 @@
 
 		$scope.tagName = '';
 
+		$scope.tooltip = "The following properties are available from the user: userId, email, displayName, firstName, lastName. Example: {{userId}} will resolve to the user's id.";
+
 		$scope.badge = {
 			imageUrl: '',
 			name: '',

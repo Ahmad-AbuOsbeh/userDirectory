@@ -53,7 +53,7 @@ class Directory {
 
 			if (result.nModified && result.status === 'updated') {
 				buildfire.components.toast.showToastMessage({ text: this.strings.get('infoMessages.removed') });
-				this.favoritesList = this.favoritesList.filter(userId => userId !== userData.userId);
+				this.favoritesList = this.favoritesList.filter((userId) => userId !== userData.userId);
 			}
 
 			callback(null, this.favoritesList);
@@ -92,7 +92,6 @@ class Directory {
 
 	search(searchText, pageIndex, pageSize, callback) {
 		let userIds = null;
-		// this.badges = [];
 		const _search = () => {
 			this.getFavorites(() => {
 				this.getBadges((err, badges) => {
@@ -102,7 +101,7 @@ class Directory {
 					Users.search({ userIds, pageIndex, pageSize, ranking }, (error, results) => {
 						if (error) return callback(error, null);
 
-						results = results.map(result => {
+						results = results.map((result) => {
 							if (this.user) {
 								result.data.isFavorite = this.favoritesList.indexOf(result.data.userId) > -1;
 							}
@@ -110,13 +109,14 @@ class Directory {
 								if (!this.badges.length) {
 									debugger;
 								}
-								result.data.badges = result.data.badges.filter(badge => {
-									return this.badges.find(b => b.id === badge.id);
+								result.data.badges = result.data.badges.filter((badge) => {
+									return this.badges.find((b) => b.id === badge.id);
 								});
-								result.data.badges = result.data.badges.map(badge => {
+								result.data.badges = result.data.badges.map((badge) => {
 									// return({ ...badge, ...this.badges.find(b => b.id === badge.id) });
-									const b = this.badges.find(b => b.id === badge.id);
+									const b = JSON.parse(JSON.stringify(this.badges.find((b) => b.id === badge.id)));
 									b.earned = badge.earned;
+									b.appliedCount = badge.appliedCount;
 									return b;
 								});
 							}
@@ -124,7 +124,7 @@ class Directory {
 								return result;
 							}
 							result.data.action = {
-								icon: result.data.isFavorite ? 'icon glyphicon glyphicon-star btn-primary' : 'icon glyphicon glyphicon-star-empty'
+								icon: result.data.isFavorite ? 'icon glyphicon glyphicon-star btn-primary' : 'icon glyphicon glyphicon-star-empty',
 							};
 							return result;
 						});
@@ -140,7 +140,7 @@ class Directory {
 				userIds = ids;
 
 				if (this.filterFavorites) {
-					userIds = userIds.filter(id => this.favoritesList.indexOf(id) > -1);
+					userIds = userIds.filter((id) => this.favoritesList.indexOf(id) > -1);
 				}
 
 				_search();
@@ -177,40 +177,65 @@ class Directory {
 	}
 
 	updateUser(userObj, onUpdate) {
+		if (userObj.data.isActive === false) return console.error('avoid update');
+
 		if (!this.user) return;
 
 		buildfire.auth.getCurrentUser((error, user) => {
 			if (error) return console.error(error);
 
-			Badges.computeUserBadges(user, (err, badgeIds) => {
+			Badges.computeUserBadges(user, (err, userBadges) => {
 				if (err) return console.error(err);
-
-				// this.badges = [];
 
 				this.getBadges(() => {
 					let hasUpdate = false;
 
-					this.user.badges = userObj.data.badges.filter(b => badgeIds.indexOf(b.id) > -1);
+					this.user.badges = userObj.data.badges.filter((b) => userBadges.find((badge) => badge.id === b.id));
 
 					if (this.user.badges.length !== userObj.data.badges.length) {
 						hasUpdate = true;
 					} else {
-						this.user.badges = this.user.badges.filter(b => {
-							const match = this.badges.find(badge => badge.id === b.id);
-							
+						this.user.badges = this.user.badges.filter((b) => {
+							const match = this.badges.find((badge) => badge.id === b.id);
+
 							if (!match) hasUpdate = true;
 
-							return this.badges.find(badge => badge.id === b.id);
+							return this.badges.find((badge) => badge.id === b.id);
 						});
 					}
 
 					let newBadges = [];
 
-					badgeIds.forEach(badgeId => {
-						if (!userObj.data.badges.some(badge => badge.id === badgeId)) {
+					userBadges.forEach((userBadge) => {
+						const index = userObj.data.badges.findIndex((badge) => badge.id === userBadge.id);
+						const match = userObj.data.badges[index];
+
+						if (match && match.appliedCount === userBadge.appliedCount) {
+							return;
+						}
+
+						if (match && match.appliedCount > userBadge.appliedCount) {
+							match.appliedCount = userBadge.appliedCount;
+							hasUpdate = true;
+							return;
+						}
+
+						if (match && match.appliedCount < userBadge.appliedCount) {
+							match.appliedCount = userBadge.appliedCount;
+							userObj.data.badges[index] = match;
+							hasUpdate = true;
+							newBadges.push({
+								id: userBadge.id,
+								earned: Date.now(),
+								appliedCount: userBadge.appliedCount,
+							});
+						}
+						
+						if (!match) {
 							const newBadge = {
-								id: badgeId,
-								earned: Date.now()
+								id: userBadge.id,
+								earned: Date.now(),
+								appliedCount: userBadge.appliedCount,
 							};
 
 							this.user.badges.push(newBadge);
@@ -225,7 +250,7 @@ class Directory {
 						return;
 					}
 
-					updateQueue.forEach(key => {
+					updateQueue.forEach((key) => {
 						if (userObj.data[key] !== user[key]) {
 							this.user[key] = user[key];
 							hasUpdate = true;
@@ -235,12 +260,12 @@ class Directory {
 					const { appId } = buildfire.getContext();
 					const userTags = user.tags && user.tags[appId] ? user.tags[appId] : [];
 
-					if (userTags.length !== userObj.data.tags.length) {
+					if (userTags.length !== (userObj.data.tags || []).length) {
 						this.user.tags = userTags;
 						hasUpdate = true;
 					} else if (userTags.length) {
-						userTags.forEach(tag => {
-							if (!userObj.data.tags.some(t => t.tagName === tag.tagName)) {
+						userTags.forEach((tag) => {
+							if (!userObj.data.tags.some((t) => t.tagName === tag.tagName)) {
 								this.user.tags = userTags;
 								hasUpdate = true;
 							}
@@ -255,16 +280,15 @@ class Directory {
 						}
 						if (res && res.status === 'updated' && res.nModified === 1) {
 							if (newBadges.length) {
-
-								const badges = newBadges.map(badge => {
-									const b = this.badges.find(b => b.id === badge.id);
+								const badges = newBadges.map((badge) => {
+									const b = this.badges.find((b) => b.id === badge.id);
 									b.earned = badge.earned;
 									return b;
 								});
 								if (this.settings.badgePushNotifications) {
 									this.sendNewBadgePN(userObj, badges);
 								}
-		
+
 								const richContent = `
 								<div class="center-content active-user">
 								<h4 class="title text-center">New Badge${badges.length > 1 ? 's' : ''} Received!</h4>
@@ -272,7 +296,7 @@ class Directory {
 								</div>
 								${this.getModalStyles()}
 								`;
-		
+
 								buildfire.components.popup.display({ richContent }, console.error);
 							}
 						}
@@ -331,8 +355,8 @@ class Directory {
 			queryString: userId,
 			actionItem: {
 				action: 'linkToApp',
-				instanceId
-			}
+				instanceId,
+			},
 		};
 
 		// date format!!!
@@ -347,7 +371,7 @@ class Directory {
 		return `
 			<div class="badges-grid">
 			${badges
-				.map(badge => {
+				.map((badge) => {
 					return `
 					<div class="grid-item">
 						<div class="user-badge">
@@ -487,8 +511,8 @@ class Directory {
 	}
 
 	_insertDummyData() {
-		const users = dummyData.getRandomNames(users => {
-			users.forEach(user => {
+		const users = dummyData.getRandomNames((users) => {
+			users.forEach((user) => {
 				Users.add(new DirectoryUser(user).toJson(), console.error);
 			});
 		});

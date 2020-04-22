@@ -14,6 +14,20 @@ class DirectoryUser {
 
 	toJson() {
 		const badgeIds = this.badges.map(badge => badge.id);
+		let badgeCount = 0;
+		this.badges.forEach(badge => {
+			if (typeof badge.appliedCount !== 'number') {
+				badge.appliedCount = 1;
+			}
+			badgeCount += badge.appliedCount;
+		});
+		let tagCount = 0;
+		this.tags.forEach(tag => {
+			if (typeof tag.appliedCount !== 'number') {
+				tag.appliedCount = 1;
+			}
+			tagCount += tag.appliedCount;
+		});
 		return {
 			isActive: this.isActive,
 			displayName: this.displayName,
@@ -25,9 +39,9 @@ class DirectoryUser {
 			email: this.email,
 			userId: this.userId,
 			badges: this.badges,
-			badgeCount: this.badges.length,
+			badgeCount,
 			tags: this.tags,
-			tagCount: this.tags.length,
+			tagCount,
 			_buildfire: {
 				index: {
 					text: `${this.firstName || ''} ${this.lastName || ''} ${this.displayName || ''} ${this.email || ''}`,

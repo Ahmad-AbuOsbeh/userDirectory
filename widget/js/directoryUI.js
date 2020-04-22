@@ -24,7 +24,6 @@ class DirectoryUI {
 			let imageUrl = buildfire.auth.getUserPictureUrl({ email });
 
 			let badgesHTML = '';
-
 			badges.sort((a, b) => a.rank - b.rank);
 			badges.forEach((badge) => {
 				badgesHTML += `
@@ -40,9 +39,20 @@ class DirectoryUI {
 				subtitle = '';
 			}
 
+			let title = displayName;
+
+			if (this.settings.ranking && ['BADGE_COUNT', 'TAG_COUNT'].indexOf(this.settings.ranking) > -1) {
+				title = (`
+					<div class="listViewItemTitle-ranked">
+						<h2 class="listViewItemTitle-ranked__rank">#${i + 1}</h2>
+						<h5 class="listViewItemTitle-ranked__title">${displayName}</h5>
+					</div>
+				`);
+			}
+
 			results.push({
 				id: row.id,
-				title: displayName,
+				title,
 				subtitle,
 				description: badgesHTML,
 				imageUrl,
@@ -90,7 +100,10 @@ class DirectoryUI {
 
 			this.directory.checkUser((error, userObj) => {
 				if (error) return console.error(error);
-				if (userObj && userObj.data && userObj.data.isActive) return this.directory.updateUser(userObj);
+				if (userObj && userObj.data && userObj.data.isActive)
+					return this.directory.updateUser(userObj, () => {
+						buildfire.messaging.sendMessageToWidget({ cmd: 'userUpdated' });
+					});
 
 				if (!force && localStorage.getItem(`$$userDirectoryPrompt-${_id}`)) {
 					return;
@@ -129,6 +142,7 @@ class DirectoryUI {
 					});
 				}
 			});
+			// }, 30000); // 5 min
 		}, 3e5); // 5 min
 	}
 
@@ -139,18 +153,12 @@ class DirectoryUI {
 			if (!actionItem.queryString) {
 				actionItem.queryString = `&dld=${JSON.stringify(user)}`;
 			} else {
-				const params = ['userId', 'email', 'displayName', 'firstName', 'lastName' ];
+				const params = ['userId', 'email', 'displayName', 'firstName', 'lastName'];
 
-				const currentUser = this.directory.user || {};
-		
-				params.forEach(param => {
-					if (actionItem.queryString.indexOf(`targetUser.${param}`)) {
+				// const currentUser = this.directory.user || {};
 
-						actionItem.queryString = actionItem.queryString.replace(`{{${param}}}`, user[param]);
-					}
-					if (actionItem.queryString.indexOf(`currentUser.${param}`)) {
-						actionItem.queryString = actionItem.queryString.replace(`{{${param}}}`, currentUser[param]);
-					}
+				params.forEach((param) => {
+					actionItem.queryString = actionItem.queryString.replace(`{{${param}}}`, user[param]);
 				});
 			}
 

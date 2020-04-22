@@ -35,6 +35,7 @@ class Widget {
 		buildfire.messaging.onReceivedMessage = (msg) => {
 			switch (msg.cmd) {
 				case 'userAdded': {
+					debugger
 					this.search();
 					this.searchBar.shouldShowAddButton(false);
 					this.searchBar.shouldShowOptionsButton(true);
@@ -79,9 +80,11 @@ class Widget {
 						this.searchBar.shouldShowOptionsButton(typeof userObj == 'object' && userObj.data.isActive);
 
 						if (userObj) {
-							this.directoryUI.directory.updateUser(userObj, () => {
-								this.search();
-							});
+							// setTimeout(() => {
+							// 	this.directoryUI.directory.updateUser(userObj, () => {
+							// 		this.search();
+							// 	});
+							// }, 60000);
 						}
 					});
 				});
@@ -284,6 +287,7 @@ class Widget {
 											<div class="grid-item">
 												<div class="user-badge">
 													<img src="${badge.imageUrl}" alt="">
+													${badge.appliedCount ? `<span class="badge-count successBackgroundTheme">${badge.appliedCount}</span>` : ''}
 												</div>
 												<h5>${badge.name}</h5>
 												<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>

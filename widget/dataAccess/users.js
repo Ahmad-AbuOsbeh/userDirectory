@@ -18,12 +18,12 @@ class Users {
 			BADGE_COUNT: {
 				value: 'BADGE_COUNT',
 				label: 'Badge Count',
-				sort: { badgeCount: -1, dName: 1 },
+				sort: { badgeCount: -1, joinDate: 1 },
 			},
 			TAG_COUNT: {
 				value: 'TAG_COUNT',
 				label: 'Tag Count',
-				sort: { tagCount: -1, dName: 1 },
+				sort: { tagCount: -1, joinDate: 1 },
 			},
 			JOIN_DATE: {
 				value: 'JOIN_DATE',

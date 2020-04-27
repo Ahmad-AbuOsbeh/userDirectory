@@ -88,6 +88,9 @@ class Users {
 		this.getByUserId(userData.userId, (err, userObj) => {
 			if (!err && userObj) {
 				userObj.data.isActive = true;
+				if (!userData.joinDate) {
+					userData.joinDate = Date.now();
+				}
 				buildfire.appData.update(userObj.id, userObj.data, this.tag, callback);
 				return;
 			}
@@ -114,17 +117,24 @@ class Users {
 	 * @param {Function} callback callback for handling response
 	 */
 	static update(userData, callback) {
-		const searchOptions = {
-			'$json.userId': {
-				$eq: userData.userId,
-			},
-			'_buildfire.index.string1': userData.userId,
-		};
+		this.getByUserId(userData.userId, (err, userObj) => {
+			if (err) callback(err, null);
 
-		buildfire.appData.searchAndUpdate(searchOptions, userData, this.tag, (error, result) => {
-			console.error(error, result);
-			callback(error, result);
+			userData.joinDate = userObj.data.joinDate;
+
+			buildfire.appData.update(userObj.id, userData, this.tag, callback);
 		});
+		// const searchOptions = {
+		// 	'$json.userId': {
+		// 		$eq: userData.userId,
+		// 	},
+		// 	'_buildfire.index.string1': userData.userId,
+		// };
+
+		// buildfire.appData.searchAndUpdate(searchOptions, userData, this.tag, (error, result) => {
+		// 	console.error(error, result);
+		// 	callback(error, result);
+		// });
 	}
 
 	/**
@@ -159,8 +169,10 @@ class Users {
 	}
 
 	static _clear() {
-		this.search({}, (e, users) => {
-			users.forEach((usr) => buildfire.appData.delete(usr.id, this.tag, console.error));
+		buildfire.appData.search({}, this.tag, (e, results) => {
+			results.forEach((result) => {
+				buildfire.appData.delete(result.id, this.tag, console.error);
+			});
 		});
 	}
 }

@@ -59,6 +59,7 @@ class Widget {
 	}
 
 	init() {
+		buildfire.appearance.titlebar.show();
 		Promise.all([this.getUser(), this.getSettings(), this.getStrings()]).then(() => {
 			this.strings.inject();
 
@@ -408,7 +409,7 @@ class Widget {
 							if (!error) {
 								data.isFavorite = false;
 								item.data.isFavorite = false;
-								item.action.icon = 'icon icon-star-empty';
+								item.action.icon = 'icon glyphicon glyphicon-star-empty';
 								item.update();
 							}
 						});
@@ -417,7 +418,7 @@ class Widget {
 							if (!error) {
 								data.isFavorite = true;
 								item.data.isFavorite = true;
-								item.action.icon = 'icon icon-star btn-primary';
+								item.action.icon = 'icon glyphicon glyphicon-star btn-primary';
 								item.update();
 							}
 						});

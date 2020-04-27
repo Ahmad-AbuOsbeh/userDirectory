@@ -7,6 +7,7 @@ class DirectoryUser {
 		this.email = user.email;
 		this.userId = user._id || user.userId;
 		this.badges = user.badges || [];
+		this.joinDate = user.joinDate || null;
 		
 		const { appId } = buildfire.getContext();
 		this.tags = user.tags && user.tags[appId] ? user.tags[appId] : [];
@@ -42,6 +43,7 @@ class DirectoryUser {
 			badgeCount,
 			tags: this.tags,
 			tagCount,
+			joinDate: this.joinDate,
 			_buildfire: {
 				index: {
 					text: `${this.firstName || ''} ${this.lastName || ''} ${this.displayName || ''} ${this.email || ''}`,

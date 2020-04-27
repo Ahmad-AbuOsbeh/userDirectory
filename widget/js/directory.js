@@ -230,7 +230,7 @@ class Directory {
 								appliedCount: userBadge.appliedCount,
 							});
 						}
-						
+
 						if (!match) {
 							const newBadge = {
 								id: userBadge.id,
@@ -278,18 +278,17 @@ class Directory {
 						if (e) {
 							return buildfire.components.toast.showToastMessage({ text: 'user not updated' });
 						}
-						if (res && res.status === 'updated' && res.nModified === 1) {
-							if (newBadges.length) {
-								const badges = newBadges.map((badge) => {
-									const b = this.badges.find((b) => b.id === badge.id);
-									b.earned = badge.earned;
-									return b;
-								});
-								if (this.settings.badgePushNotifications) {
-									this.sendNewBadgePN(userObj, badges);
-								}
+						if (newBadges.length) {
+							const badges = newBadges.map((badge) => {
+								const b = this.badges.find((b) => b.id === badge.id);
+								b.earned = badge.earned;
+								return b;
+							});
+							if (this.settings.badgePushNotifications) {
+								this.sendNewBadgePN(userObj, badges);
+							}
 
-								const richContent = `
+							const richContent = `
 								<div class="center-content active-user">
 								<h4 class="title text-center">New Badge${badges.length > 1 ? 's' : ''} Received!</h4>
 								${badges.length > 1 ? this.renderMultipleBadges(badges) : renderSingleBadge(badges[0])}
@@ -297,8 +296,7 @@ class Directory {
 								${this.getModalStyles()}
 								`;
 
-								buildfire.components.popup.display({ richContent }, console.error);
-							}
+							buildfire.components.popup.display({ richContent }, console.error);
 						}
 						if (onUpdate) onUpdate(this.user);
 					});
@@ -353,6 +351,7 @@ class Directory {
 			inAppMessage,
 			groupName: '$$userDirectory',
 			queryString: userId,
+			at: Date.now() + 5000,
 			actionItem: {
 				action: 'linkToApp',
 				instanceId,

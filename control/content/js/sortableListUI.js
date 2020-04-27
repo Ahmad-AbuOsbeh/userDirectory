@@ -57,6 +57,7 @@ const badgeListUI = {
 			badgeListUI.badgeList.badges.forEach((badge, index) => {
 				badgeListUI.badgeList.badges[index].rank = index;
 				Badges.update(badgeListUI.badgeList.badges[index], console.log);
+				buildfire.messaging.sendMessageToWidget({ cmd: 'refresh' });
 			});
 		};
 
@@ -72,6 +73,7 @@ const badgeListUI = {
 					this.container.removeChild(emptyState);
 				}
 			}
+			buildfire.messaging.sendMessageToWidget({ cmd: 'refresh' });
 		};
 	},
 	/**

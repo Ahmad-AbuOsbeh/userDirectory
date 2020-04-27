@@ -111,7 +111,10 @@
 		};
 
 		function startWatch() {
-			$scope.$watch('data', $scope.save, true);
+			$scope.$watch('data', (newObj, oldObj) => {
+				if (angular.equals(newObj, oldObj)) return;
+				$scope.save();
+			}, true);
 		}
 	};
 

@@ -134,7 +134,7 @@ class DirectoryUI {
 			this.autoUpdater = null;
 		}
 
-		this.autoUpdater = setInterval(() => {
+		const update = () => {
 			this.directory.checkUser((error, userObj) => {
 				if (!error && userObj) {
 					this.directory.updateUser(userObj, (usr) => {
@@ -142,8 +142,17 @@ class DirectoryUI {
 					});
 				}
 			});
-			// }, 30000); // 5 min
+		};
+
+		this.autoUpdater = setInterval(() => {
+			update();
 		}, 3e5); // 5 min
+
+		buildfire.auth.onUpdate && buildfire.auth.onUpdate(event => {
+			update();
+		}, true);
+
+
 	}
 
 	handleAction(user = {}) {

@@ -167,6 +167,7 @@
 			};
 
 			Badges.update(badgeData, console.log);
+			buildfire.messaging.sendMessageToWidget({ cmd: 'refresh' });
 		};
 
 		if (item.imageUrl) {

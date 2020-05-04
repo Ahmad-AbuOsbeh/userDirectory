@@ -38,6 +38,7 @@ class Widget {
 					this.search();
 					this.searchBar.shouldShowAddButton(false);
 					this.searchBar.shouldShowOptionsButton(true);
+					buildfire.appearance.titlebar.show();
 					break;
 				}
 				case 'userUpdated': {
@@ -45,10 +46,31 @@ class Widget {
 					this.search();
 					this.searchBar.shouldShowAddButton(false);
 					this.searchBar.shouldShowOptionsButton(true);
+					buildfire.appearance.titlebar.show();
 					break;
 				}
 				case 'refresh': {
 					this.init();
+					buildfire.appearance.titlebar.show();
+					break;
+				}
+				case 'badgeUpdate': {
+					this.init();
+					this.directoryUI.hasAccess((error, hasAccess) => {
+						if (error || !hasAccess) {
+							return;
+						}
+						this.directoryUI.directory.checkUser((err, userObj) => {
+							if (err) return console.error(err);
+	
+							if (userObj) {
+								this.directoryUI.directory.updateUser(userObj, () => {
+									this.search();
+								});
+							}
+						});
+					});
+					buildfire.appearance.titlebar.show();
 					break;
 				}
 				default: {
@@ -483,6 +505,7 @@ class Widget {
 	}
 
 	search(index = 0) {
+		buildfire.appearance.titlebar.show();
 		if (index == 0) {
 			this.listView.container.onscroll = (e) => {
 				const { scrollTop, clientHeight, scrollHeight } = this.listView.container;

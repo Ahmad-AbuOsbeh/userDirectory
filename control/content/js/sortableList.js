@@ -167,7 +167,7 @@
 			};
 
 			Badges.update(badgeData, console.log);
-			buildfire.messaging.sendMessageToWidget({ cmd: 'refresh' });
+			buildfire.messaging.sendMessageToWidget({ cmd: 'badgeUpdate' });
 		};
 
 		if (item.imageUrl) {

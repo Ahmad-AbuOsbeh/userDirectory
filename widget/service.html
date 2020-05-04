@@ -1,24 +1,34 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<meta name="buildfire" content="disableTheme,disableFastClick" />
+		<script src="../../../scripts/buildfire.js"></script>
+		<script src="../../../scripts/buildfire/components/popup/popup.js"></script>
+		<script src="../../../scripts/buildfire/components/toast/toast.js"></script>
+		<script src="../../../scripts/buildfire/services/searchEngine/searchEngine.js"></script>
+		<script src="../../../scripts/buildfire/services/notifications/pushNotifications.js"></script>
 
-<head>
-    <meta name="buildfire" content="disableTheme,disableFastClick">
-    <script src="../../../scripts/buildfire.js"></script>
+		<!-- build:bundleDataJSFiles -->
+		<script src="dataAccess/badges.js"></script>
+		<script src="dataAccess/users.js"></script>
+		<script src="dataAccess/lookup.js"></script>
+		<!-- endbuild -->
 
-    <script src="js/directory.js"></script>
-    <script src="js/directoryUser.js"></script>
-    <script src="js/directoryUI.js"></script>
+		<!-- build:bundleSharedJSFiles -->
+		<script src="js/shared/settings.class.js"></script>
+		<script src="js/shared/strings.js"></script>
+		<script src="js/shared/stringsConfig.js"></script>
+		<!-- endbuild -->
 
-    <script>
+		<!-- build:bundleJSFiles -->
+		<script src="js/directoryUser.js"></script>
+		<script src="js/directory.js"></script>
+		<script src="js/directoryUI.js"></script>
+		<script src="js/service.js"></script>
+		<!-- endbuild -->
 
-
-		directoryUI.promptUser(true);
-
-
-    </script>
-
-
-
-</head>
-
+		<script>
+			const service = new Service();
+		</script>
+	</head>
 </html>

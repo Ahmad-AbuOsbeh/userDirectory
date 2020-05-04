@@ -1,30 +1,163 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="../assets/base.css">
+		<link href="../../../../styles/helper.css" rel="stylesheet" />
+		<link href="../../../../styles/siteIcons.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../assets/base.css" />
+		<link rel="stylesheet" href="../assets/linearicons/cpIcons.css" />
+		<!-- build:bundleCSSFiles -->
+		<link rel="stylesheet" href="css/content.css" />
+		<link rel="stylesheet" href="sortableList.css" />
+		<!-- endbuild -->
 
-    <!-- build:bundleControlBFMinJS  -->
-    <script src="../../../../scripts/buildfire.js"></script>
-    <!-- endbuild -->
+		<!-- build:bundleControlBFMinJS  -->
+		<!-- endbuild -->
+		<script src="../../../../scripts/buildfire.js"></script>
+		<script src="../../../../scripts/sortable.min.js"></script>
+		<script src="../../../../scripts/buildfire/components/actionItems/sortableList.js"></script>
 
-     <!-- build:bundleDataJSFiles  -->
-     <script src="../../data/section.js"></script>
-     <script src="../../dataAccess/sections.js"></script>
-     <!-- End of Scripts -->
+		<script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+		<script src="../../../../scripts/angular/angular.min.js"></script>
+		<script src="../../../../scripts/angular/angular-route.min.js"></script>
+		<script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
 
+		<!-- build:bundleDataJSFiles  -->
+		<script src="../../widget/dataAccess/users.js"></script>
+		<script src="../../widget/dataAccess/badges.js"></script>
+		<!-- endbuild -->
 
-</head>
-<body>
-    <h3 class="section__title">StarterKit Sample Pages</h3>
-    <ul>
-        <li onclick="location='samples/sortableList/sortableList.html'" >Draggable List</li>
-        <li onclick="location='samples/subPage/index.html'" >Sub Screen</li>
-        <li onclick="location='samples/searchTable/searchTable.html'" >Search Table</li>
-    </ul>
-<script>
-    //location = "samples/sortableList/sortableList.html";
-</script>
-</body>
+		<!-- build:bundleSharedJSFiles  -->
+		<script src="../../widget/js/shared/settings.class.js"></script>
+		<script src="../../widget/js/shared/analytics.js"></script>
+		<!-- endbuild -->
+
+		<!-- build:bundleJSFiles  -->
+		<script src="js/app.js"></script>
+		<script src="js/sortableList.js"></script>
+		<script src="js/sortableListUI.js"></script>
+		<!-- endbuild -->
+	</head>
+	<body ng-app="directoryContent">
+		<div ng-controller="directoryContentCtrl">
+			<div class="input-row">
+				<p class="label-container">Auto enlist all users</p>
+				<div class="button-switch margin-left-auto">
+					<input id="enlistUsers" type="checkbox" ng-model="data.autoEnlistAll" />
+					<label for="enlistUsers"></label>
+				</div>
+			</div>
+
+			<div class="margin-bottom-thirty">
+				<p class="info" ng-if="data.autoEnlistAll">We assume no liability for any privacy compliance issues. Consult your local laws and regulations.</p>
+			</div>
+
+			<div class="input-row">
+				<p class="label-container margin-bottom-zero">Only allow users with the following tags</p>
+
+				<div class="tags input-container">
+					<ul class="tag-list">
+						<li class="tag-item" ng-repeat="tag in data.tagFilter">
+							<span>{{ tag }}</span>
+							<a class="remove-button" ng-click="removeTag(tag)"><span class="icon icon-cross2"></span></a>
+						</li>
+					</ul>
+					<form ng-submit="applyTag()">
+						<input class="input" type="text" ng-model="tagName" placeholder="Add a tag" />
+					</form>
+					<span class="input" style="visibility: hidden; width: auto; white-space: pre; display: none;">Add a tag</span>
+				</div>
+			</div>
+
+			<h1 class="title margin-bottom-thirty">User Action</h1>
+			<p class="label-container tooltip-container">Action Item <span class="tip btn-info-icon btn-primary"><span class="cp-tooltip">{{tooltip}}</span></span></p>
+			<div class="single-action-item">
+				<div class="action-info"  ng-if="!data.actionItem">
+					<div>
+						<p class="margin-right-twenty caption">Action Title:</p>
+						<p class="bold strong">Message User</p>
+					</div>
+					<div>
+						<p class="margin-right-twenty caption">Action Type:</p>
+						<p class="bold strong">messageUser</p>
+					</div>
+				</div>
+				<div class="action-info" ng-if="data.actionItem">
+					<div>
+						<p class="margin-right-twenty caption">Action Title:</p>
+						<p class="bold strong">{{ data.actionItem.title }}</p>
+					</div>
+					<div>
+						<p class="margin-right-twenty caption">Action Type:</p>
+						<p class="bold strong">{{ data.actionItem.action }}</p>
+					</div>
+				</div>
+				<div class="actions-container margin-left-auto">
+					<button class="btn btn-primary" ng-click="editAction()">Edit Action</button>
+					<button class="btn btn-danger" ng-click="editAction(true)" ng-disabled="!data.actionItem">Reset</button>
+				</div>
+			</div>
+				
+
+			<h1 class="title margin-bottom-thirty">Badges</h1>
+			<p class="info margin-bottom-twenty">To make your badges look good on the app, make sure to submit 80 x 80px images. The badges will be displayed at a minimum of 18 x 18px.</p>
+			
+			<form name="newBadge" ng-submit="addBadge(newBadge.$valid)" class="badges-input-group" novalidate>
+				<div>
+					<label>Icon</label>	
+					<button name="badgeImage" class="btn btn-default new-badge-image" ng-click="pickImage($event)" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.imageUrl.$invalid}">
+						<input name="imageUrl" ng-hide="true" ng-model="badge.imageUrl" id="imgSrc" required></input>
+						<img ng-if="badge.imageUrl" ng-src="{{ badge.imageUrl | cropImg }}" />
+						<span ng-if="!badge.imageUrl" class="icon icon-plus"></span>
+					</button>
+				</div>
+				<div class="badge-name">
+					<label for="">Badge Name</label>
+					<input name="badgeName" type="text" ng-model="badge.name" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.badgeName.$invalid}" required />
+				</div>
+				<div class="tag-name">
+					<label for="">Tag</label>
+					<input name="badgeTag" type="text" ng-model="badge.tag" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.badgeTag.$invalid}" required />
+				</div>
+				<div class="tag-count">
+					<label for="">Tag Count</label>
+					<input name="badgeTagCount" id="badgeTagCount" min="1" max="999" type="number" ng-model="badge.tagCount" />
+				</div>
+				<button ng-click="newBadge.$valid ? newBadge.$hasSubmit = false : newBadge.$hasSubmit = true" type="submit" class="btn btn-success"><span class="icon icon-plus"></span> Add</button>
+			</form>
+
+			<div id="badges"></div>
+
+			<h1 class="title">New Badge Push Notifications</h1>
+
+			<div class="margin-bottom-twenty clearfix">
+				<p class="pull-left">Send a push notification to directory members when someone receives a new badge</p>
+				<div class="button-switch pull-right">
+					<input id="pushNotifications" type="checkbox" ng-model="data.badgePushNotifications" />
+					<label for="pushNotifications" ></label>
+				</div>
+			</div>
+
+			<h1 class="title">User Sorting</h1>
+
+			<div class="input-row">
+				<p class="label-container">Sort users by:</p>
+				<div class="select-container flex-auto">
+					<select class="flex-auto" ng-model="data.ranking">
+						<option ng-selected="data.ranking === rank.value" ng-repeat="rank in rankingOptions" ng-value="rank.value">{{ rank.label }}</option>
+					</select>
+				</div>
+			</div>
+			
+
+		</div>
+		<script>
+			document.getElementById('badgeTagCount').addEventListener('keydown', e => {
+			if (['.', '-'].indexOf(e.key) > -1) {
+				return e.preventDefault();
+			}
+		});
+		</script>
+	</body>
 </html>

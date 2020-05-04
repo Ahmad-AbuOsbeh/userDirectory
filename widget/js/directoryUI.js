@@ -1,91 +1,239 @@
-let directoryUI = {
-    search(criteria, index, size, callback) {
+class DirectoryUI {
+	constructor(user, strings, settings) {
+		this.user = user;
+		this.directory = new Directory(user, strings, settings);
+		this.strings = strings || new buildfire.services.Strings('en-us', stringsConfig);
+		this.settings = settings;
+	}
 
-        directory.search(criteria, index, size, (err, res) => {
-            if(err) return callback(err);
+	search(searchText, pageIndex, pageSize, callback) {
+		this.directory.search(searchText, pageIndex, pageSize, (error, results) => {
+			if (error) return callback(error, []);
 
-            let results = [];
+			callback(null, this.handleResults(results));
+		});
+	}
 
-            res.forEach((row,i) => {
+	handleResults(data) {
+		let results = [];
 
-                //buildfire.appData.delete(row.id,"userDirectory",e=>{});
-                //return;
+		data.forEach((row, i) => {
+			const { data } = row;
+			const { displayName, email, userId, badges, isFavorite, action } = data;
 
-                let dUser=row.data;
+			let imageUrl = buildfire.auth.getUserPictureUrl({ email });
+
+			let badgesHTML = '';
+			badges.sort((a, b) => a.rank - b.rank);
+			badges.forEach((badge) => {
+				badgesHTML += `
+					<div class="badge">
+						<img src="${buildfire.imageLib.cropImage(badge.imageUrl, { size: 'xxs', aspect: '1:1' })}" />
+					</div>
+				`;
+			});
+
+			let subtitle = email;
+
+			if (email.indexOf('facebook') > -1 || email.indexOf('twitter') > -1) {
+				subtitle = '';
+			}
+
+			let title = displayName;
+
+			if (this.settings.ranking && ['BADGE_COUNT', 'TAG_COUNT'].indexOf(this.settings.ranking) > -1) {
+				title = (`
+					<div class="listViewItemTitle-ranked">
+						<h2 class="listViewItemTitle-ranked__rank">#${i + 1}</h2>
+						<h5 class="listViewItemTitle-ranked__title">${displayName}</h5>
+					</div>
+				`);
+			}
+
+			results.push({
+				id: row.id,
+				title,
+				subtitle,
+				description: badgesHTML,
+				imageUrl,
+				data,
+				userId,
+				badges,
+				isFavorite,
+				action,
+			});
+		});
+
+		return results;
+	}
+
+	hasAccess(callback) {
+		const { tagFilter } = this.settings;
+
+		if (!tagFilter || !tagFilter.length) {
+			return callback(null, true);
+		}
+
+		buildfire.auth.getCurrentUser((error, user = {}) => {
+			if (error) return callback(error, null);
+
+			const { appId } = buildfire.getContext();
+
+			const userTags = user.tags && user.tags[appId] ? user.tags[appId].map((tag) => tag.tagName) : [];
+
+			return callback(
+				null,
+				tagFilter.some((tag) => userTags.indexOf(tag) > -1)
+			);
+		});
+	}
+
+	promptUser(force, callback) {
+		if (!this.user) return buildfire.auth.login();
+
+		const { _id } = this.user || {};
+
+		const { autoEnlistAll } = this.settings;
+
+		this.hasAccess((err, hasAccess) => {
+			if (err || !hasAccess) return;
+
+			this.directory.checkUser((error, userObj) => {
+				if (error) return console.error(error);
+				if (userObj && userObj.data && userObj.data.isActive)
+					return this.directory.updateUser(userObj, () => {
+						buildfire.messaging.sendMessageToWidget({ cmd: 'userUpdated' });
+					});
+
+				if (!force && localStorage.getItem(`$$userDirectoryPrompt-${_id}`)) {
+					return;
+				}
+
+				if (autoEnlistAll) {
+					return this.directory.addUser((e) => {
+						if (e) return console.error(e);
+						callback();
+					});
+				}
+
+				this._showDialog('join', (value) => {
+					if (value) {
+						this.directory.addUser((e) => {
+							if (e) return console.error(e);
+							callback();
+						});
+					}
+				});
+			});
+		});
+	}
+
+	autoUpdateUser() {
+		if (this.autoUpdater) {
+			clearInterval(this.autoUpdater);
+			this.autoUpdater = null;
+		}
+
+		const update = () => {
+			this.directory.checkUser((error, userObj) => {
+				if (!error && userObj) {
+					this.directory.updateUser(userObj, (usr) => {
+						buildfire.messaging.sendMessageToWidget({ cmd: 'userUpdated', data: usr });
+					});
+				}
+			});
+		};
+
+		this.autoUpdater = setInterval(() => {
+			update();
+		}, 3e5); // 5 min
+
+		buildfire.auth.onUpdate && buildfire.auth.onUpdate(event => {
+			update();
+		}, true);
 
 
+	}
 
-                let imageUrl = buildfire.auth.getUserPictureUrl({ email:dUser.email});
-                imageUrl = buildfire.imageLib.cropImage(imageUrl,{width:64,height:64});
+	handleAction(user = {}) {
+		const { actionItem } = this.settings;
 
+		if (actionItem) {
+			if (!actionItem.queryString) {
+				actionItem.queryString = `&dld=${JSON.stringify(user)}`;
+			} else {
+				const params = ['userId', 'email', 'displayName', 'firstName', 'lastName'];
 
+				// const currentUser = this.directory.user || {};
 
-                results.push({
-                    title: dUser.displayName + ( (index* size) + i)
-                    , imageUrl:  imageUrl
-                    , description: dUser.email
-                    , badges: [{
-                        key: "btnBadge"
-                        , class: "toolbarBadge"
-                        , text: "<b>9</b>4"
-                    }]
-                    , data: dUser
-                });
-            });
+				params.forEach((param) => {
+					actionItem.queryString = actionItem.queryString.replace(`{{${param}}}`, user[param]);
+				});
+			}
 
-            if(callback) callback(null,results);
+			return buildfire.actionItems.execute(actionItem, () => {});
+		}
 
-        });
+		this.openPrivateMessage(user);
+	}
 
+	openPrivateMessage(targetUser) {
+		if (!this.user) return buildfire.auth.login();
 
-    },
+		const userIds = [this.user._id, targetUser.userId];
+		userIds.sort();
 
-    promptUser:(withCheck)=> {
+		const queryString = `wid=${userIds[0]}|${userIds[1]}&wTitle=${encodeURIComponent(`${this.user.displayName} | ${targetUser.displayName}`)}`;
 
-        if(withCheck) {
-            if (localStorage.getItem("$$userDirectoryPrompt") == "true") {
-                return;
-            }
-        }
+		buildfire.navigation.navigateToSocialWall({ queryString });
+	}
 
-        function login(callback) {
-            buildfire.auth.getCurrentUser((err, user) => {
-                if (!user) {
-                    buildfire.auth.login({ allowCancel: true }, (err, user) => {
-                        if (!user)
-                            callback();
-                        else
-                            callback(null, user);
-                    });
-                }
-                else
-                    callback(null, user);
-            });
+	leaveDirectory(callback) {
+		this._showDialog('leave', (value) => {
+			if (value) {
+				this.directory.removeUser((e) => {
+					if (e) return console.error(e);
+					callback();
+				});
+			}
+		});
+	}
 
-        };
+	_showDialog(type = 'join', callback) {
+		if (typeof this.strings == 'undefined') return;
 
+		const title = this.strings.get(`${type}Dialog.title`);
+		const subtitle = this.strings.get(`${type}Dialog.message`);
+		const cancelButtonText = this.strings.get(`${type}Dialog.cancelButton`);
+		const confirmButtonText = this.strings.get(`${type}Dialog.confirmButton`);
 
-        buildfire.notifications.showDialog({
-            title: "User Directory"
-            , message: "Would you like to join our user directory?"
-            , buttons: [{ text: 'No', key: 'no', type: 'default' }, { text: 'Yes', key: 'yes', type: 'success' }]
-        }, function (e, data) {
-            if (e) return console.error(e);
-            if (data && data.selectedButton && data.selectedButton.key == "yes") {
+		const dialogOptions = {
+			title,
+			subtitle,
+			showDismissButton: true,
+			action: {
+				handler: JSON.stringify(() => {}),
+				title: confirmButtonText,
+			},
+			richContent: `
+				<style>
+					.rich-content {
+						display: none;
+					}
+				</style>
+			`,
+		};
 
-                login((err, user) => {
-                    if (user) {
-                        // save to database
-                        let dUser = new directoryUser(user);
-                        directory.addUser(dUser, (e) => {
-                            if (e) console.error(e);
-                        });
-                    }
-                });
-            };
-            localStorage.setItem("$$userDirectoryPrompt", "true")
-        });
-    }
+		const handleResponse = (error, result) => {
+			if (error) return console.error(error);
 
+			const { _id } = this.user || {};
+			if (result && result.buttonType) {
+				callback(result.buttonType === 'action');
+				localStorage.setItem(`$$userDirectoryPrompt-${_id}`, 'true');
+			}
+		};
 
-};
+		buildfire.components.popup.display(dialogOptions, handleResponse);
+	}
+}

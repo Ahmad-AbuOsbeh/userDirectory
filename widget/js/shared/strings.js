@@ -116,7 +116,7 @@ buildfire.services.Strings = class{
 					reject(e);
 				}
 				else
-					resolve();
+					resolve(t._data);
 			});
 		});
 	}
@@ -133,7 +133,7 @@ buildfire.services.Strings = class{
 					e.innerHTML=v;
 			}
 			else if (e.nodeName =="INPUT")
-				e.value=v;
+				e.placeholder=v;
 			else
 				e.innerHTML=v;
 		});

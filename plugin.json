@@ -1,6 +1,6 @@
 {
 	"author": "Daniel Hindi",
-	"pluginName": "User Directory",
+	"pluginName": "User Directory Beta",
 	"pluginDescription": "The User Directory plugin provides an easy way to search and chat with users. Leverage our User Tagging system to customize your user experience and Gamify your app with Badges.",
 	"supportEmail": "support@buildfire.com",
 	"singleton": true,
@@ -25,7 +25,7 @@
 	"features": [],
 	"languages": ["en"],
 	"media": [
-		{ "type": "image", "path": "image.png" },
-		{ "type": "image", "path": "marketplacegif.gif" }
+		{ "type": "image-resource", "path": "image.png" },
+		{ "type": "image-resource", "path": "marketplacegif.gif" }
 	]
 }

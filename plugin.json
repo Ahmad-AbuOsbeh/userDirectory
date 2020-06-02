@@ -1,7 +1,7 @@
 {
 	"author": "BuildFire",
 	"pluginName": "User Directory",
-	"pluginDescription": "The User Directory plugin provides an easy way to search and chat with users. Leverage our User Tagging system to customize your user experience and Gamify your app with Badges.",
+	"pluginDescription": "The User Directory feature provides an easy way to search and chat with users. Leverage our User Tagging system to customize your user experience and Gamify your app with Badges.",
 	"supportEmail": "support@buildfire.com",
 	"singleton": true,
 	"control": {

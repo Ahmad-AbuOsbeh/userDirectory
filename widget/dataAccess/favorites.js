@@ -14,9 +14,7 @@ class Favorites {
 
 		const options = {
 			filter: {
-				'_buildfire.index.string1': {
-					$regex: this.user.userId
-				}
+				'_buildfire.index.string1': this.user.userId
 			}
 		};
 		buildfire.appData.search(options, this.tag, (error, results) => {
@@ -53,9 +51,7 @@ class Favorites {
 		// if (!this.checkUser()) return;
 
 		const options = {
-			'_buildfire.index.string1': {
-				$regex: this.user.userId
-			}
+			'_buildfire.index.string1': this.user.userId
 		};
 
 		const update = {
@@ -76,9 +72,7 @@ class Favorites {
 		// if (!this.checkUser()) return;
 
 		const options = {
-			'_buildfire.index.string1': {
-				$regex: this.user.userId
-			}
+			'_buildfire.index.string1': this.user.userId
 		};
 
 		const update = {

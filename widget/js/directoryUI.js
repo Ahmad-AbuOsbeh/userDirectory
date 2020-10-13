@@ -21,7 +21,7 @@ class DirectoryUI {
 			const { data } = row;
 			const { displayName, email, userId, badges, isFavorite, action } = data;
 
-			let imageUrl = buildfire.auth.getUserPictureUrl({ email });
+			let imageUrl = buildfire.auth.getUserPictureUrl({ userId });
 
 			let badgesHTML = '';
 			badges.sort((a, b) => a.rank - b.rank);
@@ -35,7 +35,7 @@ class DirectoryUI {
 
 			let subtitle = email;
 
-			if (email.indexOf('facebook') > -1 || email.indexOf('twitter') > -1) {
+			if ((email && email.length > 0)  && (email.indexOf('facebook') > -1 || email.indexOf('twitter') > -1)) {
 				subtitle = '';
 			}
 
@@ -183,7 +183,7 @@ class DirectoryUI {
 		const userIds = [this.user._id, targetUser.userId];
 		userIds.sort();
 
-		const queryString = `wid=${userIds[0]}|${userIds[1]}&wTitle=${encodeURIComponent(`${this.user.displayName} | ${targetUser.displayName}`)}`;
+		const queryString = `wid=${userIds[0]}|${userIds[1]}&wTitle=${encodeURIComponent(`${this.user.displayName} | ${targetUser.displayName}`)}&sendPNTo=${JSON.stringify(userIds)}`;
 
 		buildfire.navigation.navigateToSocialWall({ queryString });
 	}

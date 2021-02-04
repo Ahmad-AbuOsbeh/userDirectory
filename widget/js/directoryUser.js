@@ -3,7 +3,8 @@ class DirectoryUser {
 		this.isActive = typeof user.isActive !== 'undefined' ? user.isActive : true;
 		this.displayName = user.displayName;
 		this.firstName = user.firstName;
-		this.lastName = user.lastName;
+    this.lastName = user.lastName;
+    this.phoneNumber = user && user.userProfile && user.userProfile.tel ? user.userProfile.tel : null;
 		this.email = user.email;
 		this.userId = user._id || user.userId;
 		this.badges = user.badges || [];
@@ -35,7 +36,8 @@ class DirectoryUser {
 			dName: this.displayName ? this.displayName.toLowerCase() : '',
 			firstName: this.firstName,
 			fName: this.firstName ? this.firstName.toLowerCase() : '',
-			lastName: this.lastName,
+      lastName: this.lastName,
+      phoneNumber: this.phoneNumber,
 			lName: this.lastName ? this.lastName.toLowerCase() : '',
 			email: this.email,
 			userId: this.userId,

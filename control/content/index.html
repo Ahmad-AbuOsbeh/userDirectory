@@ -29,7 +29,8 @@
 		<!-- endbuild -->
 
 		<!-- build:bundleSharedJSFiles  -->
-		<script src="../../widget/js/shared/settings.class.js"></script>
+    <script src="../../widget/js/shared/settings.class.js"></script>
+    <script src="../../widget/js/shared/keys.js"></script>
 		<script src="../../widget/js/shared/analytics.js"></script>
 		<!-- endbuild -->
 
@@ -148,8 +149,18 @@
 						<option ng-selected="data.ranking === rank.value" ng-repeat="rank in rankingOptions" ng-value="rank.value">{{ rank.label }}</option>
 					</select>
 				</div>
+      </div>
+      
+      <h1 class="title">Users Subtitle Appearance</h1>
+
+			<div class="input-row">
+				<p class="label-container">Set appearance:</p>
+				<div class="select-container flex-auto">
+					<select class="flex-auto" ng-model="data.userSubtitleShowMode">
+						<option ng-selected="data.userSubtitleShowMode === option.key" ng-repeat="option in userSubtitleShowModeOptions" ng-value="option.key">{{ option.title }}</option>
+					</select>
+				</div>
 			</div>
-			
 
 		</div>
 		<script>

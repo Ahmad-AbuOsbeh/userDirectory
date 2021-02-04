@@ -11,8 +11,9 @@
 			tagFilter: [],
 			actionItem: null,
 			badgePushNotifications: false,
-			ranking: 'ALPHA_ASC'
-		};
+      ranking: 'ALPHA_ASC',
+      userSubtitleShowMode: Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key
+    };
 
 		$scope.badgeListUI = badgeListUI;
 		$scope.badgeListUI.init('badges');
@@ -55,7 +56,9 @@
 			};
 		};
 
-		$scope.rankingOptions = Users.rankings;
+    $scope.rankingOptions = Users.rankings;
+    
+    $scope.userSubtitleShowModeOptions = [...Object.values(Keys.userSubtitleShowModeKeys)];
 
 		$scope.applyTag = () => {
 			$scope.data.tagFilter.push($scope.tagName);
@@ -87,13 +90,14 @@
 
 		Settings.get()
 			.then(data => {
-				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking } = data;
+				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode } = data;
 
 				$scope.data.autoEnlistAll = autoEnlistAll || false;
 				$scope.data.tagFilter = tagFilter || [];
 				$scope.data.actionItem = actionItem || null;
 				$scope.data.badgePushNotifications = badgePushNotifications || null;
-				$scope.data.ranking = ranking || 'ALPHA_ASC';
+        $scope.data.ranking = ranking || 'ALPHA_ASC';
+        $scope.data.userSubtitleShowMode = userSubtitleShowMode || Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key;
 
 				if (!$scope.$$phase) $scope.$apply();
 
@@ -111,8 +115,7 @@
 		};
 
 		function startWatch() {
-			$scope.$watch('data', (newObj, oldObj) => {
-				if (angular.equals(newObj, oldObj)) return;
+			$scope.$watch('data', () => {
 				$scope.save();
 			}, true);
 		}

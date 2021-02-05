@@ -156,8 +156,7 @@
 			<div class="input-row">
 				<p class="label-container">Set appearance:</p>
 				<div class="select-container flex-auto">
-					<select class="flex-auto" ng-model="data.userSubtitleShowMode">
-						<option ng-selected="data.userSubtitleShowMode === option.key" ng-repeat="option in userSubtitleShowModeOptions" ng-value="option.key">{{ option.title }}</option>
+					<select class="flex-auto" ng-model="data.userSubtitleShowMode" ng-options="item.key as item.title for item in userSubtitleShowModeOptions">
 					</select>
 				</div>
 			</div>

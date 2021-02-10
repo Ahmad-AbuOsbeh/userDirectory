@@ -19,7 +19,7 @@ class DirectoryUI {
 
 		data.forEach((row, i) => {
 			const { data } = row;
-			const { displayName, email, userId, badges, isFavorite, action } = data;
+			const { displayName, email, userId, badges, isFavorite, action, phoneNumber } = data;
 
 			let imageUrl = buildfire.auth.getUserPictureUrl({ userId });
 
@@ -33,13 +33,28 @@ class DirectoryUI {
 				`;
 			});
 
-			let subtitle = email;
+      let subtitle = '';
 
-			if ((email && email.length > 0)  && (email.indexOf('facebook') > -1 || email.indexOf('twitter') > -1)) {
-				subtitle = '';
-			}
+      if (
+        (
+          !this.settings.userSubtitleShowMode || 
+          this.settings.userSubtitleShowMode === Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key
+        ) &&
+        (
+          email && 
+          email.length > 0 &&
+          email.indexOf('facebook') === -1 && 
+          email.indexOf('twitter') === -1
+        )
+      ) {
+        subtitle = email;
+      }
 
-			let title = displayName;
+      if (this.settings.userSubtitleShowMode === Keys.userSubtitleShowModeKeys.SHOW_PHONE_NUMBER.key && phoneNumber) {
+        subtitle = phoneNumber;
+      }
+
+			let title = displayName ? displayName : 'Someone';
 
 			if (this.settings.ranking && ['BADGE_COUNT', 'TAG_COUNT'].indexOf(this.settings.ranking) > -1) {
 				title = (`

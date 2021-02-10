@@ -24,7 +24,8 @@ class Settings {
 		this.tagFilter = dbObj.data.tagFilter || [];
 		this.actionItem = dbObj.data.actionItem || null;
 		this.badgePushNotifications = dbObj.data.badgePushNotifications || null;
-		this.ranking = dbObj.data.ranking || 'ALPHA_ASC';
+    this.ranking = dbObj.data.ranking || 'ALPHA_ASC';
+    this.userSubtitleShowMode = dbObj.data.userSubtitleShowMode || null;
 	}
 
 	toRawData() {
@@ -33,7 +34,8 @@ class Settings {
 			tagFilter: this.tagFilter,
 			actionItem: this.actionItem,
 			badgePushNotifications: this.badgePushNotifications,
-			ranking: this.ranking
+      ranking: this.ranking,
+      userSubtitleShowMode: this.userSubtitleShowMode
 		};
 	}
 

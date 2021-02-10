@@ -240,8 +240,29 @@ class Widget {
 	renderUserModal(item) {
 		if (!buildfire.components || !buildfire.components.drawer) return;
 		const { imageUrl, data } = item;
-		const { displayName, email, badges } = data;
-		const { actionItem } = this.settings;
+		const { displayName, email, badges, phoneNumber } = data;
+    const { actionItem, userSubtitleShowMode } = this.settings;
+    
+    let subtitle = '';
+
+      if (
+        (
+          !userSubtitleShowMode || 
+          userSubtitleShowMode === Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key
+        ) &&
+        (
+          email && 
+          email.length > 0 &&
+          email.indexOf('facebook') === -1 && 
+          email.indexOf('twitter') === -1
+        )
+      ) {
+        subtitle = email;
+      }
+
+      if (userSubtitleShowMode === Keys.userSubtitleShowModeKeys.SHOW_PHONE_NUMBER.key && phoneNumber) {
+        subtitle = phoneNumber;
+      }
 
 		const options = {
 			header: `
@@ -250,8 +271,8 @@ class Widget {
 				</div>
 
 				<div class="user-info-holder ellipsis">
-					<h4 class="user-title whiteTheme ellipsis">${displayName || email}</h4>
-					<p class="user-subtitle ellipsis">${!displayName ? '' : email}</p>
+					<h4 class="user-title whiteTheme ellipsis">${displayName ? displayName : 'Someone'}</h4>
+					<p class="user-subtitle ellipsis">${subtitle}</p>
 				</div>
 			`,
 			tabs: [],

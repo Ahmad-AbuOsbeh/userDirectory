@@ -90,7 +90,8 @@ class Users {
 				userObj.data.isActive = true;
 				if (!userData.joinDate) {
 					userData.joinDate = Date.now();
-				}
+        }
+        if (userData.phoneNumber) userObj.data.phoneNumber = userData.phoneNumber;
 				buildfire.appData.update(userObj.id, userObj.data, this.tag, callback);
 				return;
 			}

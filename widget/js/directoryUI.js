@@ -201,7 +201,7 @@ class DirectoryUI {
 		const queryString = `wid=${userIds[0]}${userIds[1]}`;
 
     const options = {
-      title: `${encodeURIComponent(`${this.user.displayName ? this.user.displayName : 'Someone'} | ${targetUser.displayName ? targetUser.displayName : 'Someone'}`)}`,
+      title: `${this.user.displayName ? this.user.displayName : 'Someone'} | ${targetUser.displayName ? targetUser.displayName : 'Someone'}`,
       pluginTypeOrder: this.settings.navigateToCwByDefault ? ['community', 'premium_social', 'social'] : ['premium_social', 'social', 'community'],
       queryString
     };

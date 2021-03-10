@@ -12,6 +12,8 @@ class Settings {
 					if (callback) callback(e);
 				} else {
 					let s = new Settings(obj);
+          // This way, we will keep old instances to use PSW navigate by default (so we don't break backward compatibility) and new instances to navigate to CW by default.
+          if (!Object.keys(obj.data).length) s.navigateToCwByDefault = true;
 					resolve(s);
 					if (callback) callback(null, s);
 				}
@@ -26,6 +28,7 @@ class Settings {
 		this.badgePushNotifications = dbObj.data.badgePushNotifications || null;
     this.ranking = dbObj.data.ranking || 'ALPHA_ASC';
     this.userSubtitleShowMode = dbObj.data.userSubtitleShowMode || null;
+    this.navigateToCwByDefault = dbObj.data.navigateToCwByDefault || false;
 	}
 
 	toRawData() {
@@ -35,7 +38,8 @@ class Settings {
 			actionItem: this.actionItem,
 			badgePushNotifications: this.badgePushNotifications,
       ranking: this.ranking,
-      userSubtitleShowMode: this.userSubtitleShowMode
+      userSubtitleShowMode: this.userSubtitleShowMode,
+      navigateToCwByDefault: this.navigateToCwByDefault
 		};
 	}
 

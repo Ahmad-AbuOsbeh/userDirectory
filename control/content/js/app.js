@@ -12,7 +12,8 @@
 			actionItem: null,
 			badgePushNotifications: false,
       ranking: 'ALPHA_ASC',
-      userSubtitleShowMode: Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key
+      userSubtitleShowMode: Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key,
+      navigateToCwByDefault: false
     };
 
 		$scope.badgeListUI = badgeListUI;
@@ -20,7 +21,7 @@
 
 		$scope.tagName = '';
 
-		$scope.tooltip = "The following properties are available from the user: userId, email, displayName, firstName, lastName. Example: {{userId}} will resolve to the user's id.";
+		$scope.tooltip = "The following properties are available from the user: userId, email, displayName, firstName, lastName. Example: {{userId}} will resolve to the user's id. If there is no action set (if default \"messageUser\" action is set) you will need the Community Wall plugin installed on your App in order to navigate user to 1 on 1 chat.";
 
 		$scope.badge = {
 			imageUrl: '',
@@ -90,7 +91,7 @@
 
 		Settings.get()
 			.then(data => {
-				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode } = data;
+				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault } = data;
 
 				$scope.data.autoEnlistAll = autoEnlistAll || false;
 				$scope.data.tagFilter = tagFilter || [];
@@ -98,6 +99,7 @@
 				$scope.data.badgePushNotifications = badgePushNotifications || null;
         $scope.data.ranking = ranking || 'ALPHA_ASC';
         $scope.data.userSubtitleShowMode = userSubtitleShowMode || Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key;
+        $scope.data.navigateToCwByDefault = navigateToCwByDefault || false;
 
 				if (!$scope.$$phase) $scope.$apply();
 

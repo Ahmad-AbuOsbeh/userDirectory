@@ -198,9 +198,15 @@ class DirectoryUI {
 		const userIds = [this.user._id, targetUser.userId];
 		userIds.sort();
 
-		const queryString = `wid=${userIds[0]}|${userIds[1]}&wTitle=${encodeURIComponent(`${this.user.displayName} | ${targetUser.displayName}`)}&sendPNTo=${JSON.stringify(userIds)}`;
+		const queryString = `wid=${userIds[0]}${userIds[1]}`;
 
-		buildfire.navigation.navigateToSocialWall({ queryString });
+    const options = {
+      title: `${this.user.displayName ? this.user.displayName : 'Someone'} | ${targetUser.displayName ? targetUser.displayName : 'Someone'}`,
+      pluginTypeOrder: this.settings.navigateToCwByDefault ? ['community', 'premium_social', 'social'] : ['premium_social', 'social', 'community'],
+      queryString
+    };
+
+		buildfire.navigation.navigateToSocialWall(options);
 	}
 
 	leaveDirectory(callback) {

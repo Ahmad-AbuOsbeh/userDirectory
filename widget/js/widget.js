@@ -274,6 +274,7 @@ class Widget {
 
 		const options = {
 			header: `
+			<div style="display: flex; align-items: center;">
 				<div class="avatar">
 					<img src="${image}" />
 				</div>
@@ -282,6 +283,7 @@ class Widget {
 					<h4 class="user-title whiteTheme ellipsis">${displayName ? displayName : 'Someone'}</h4>
 					<p class="user-subtitle ellipsis">${subtitle}</p>
 				</div>
+			</div>
 			`,
 			enableFilter:false,
 			tabs: [],
@@ -329,7 +331,7 @@ class Widget {
 		options.tabs.push({
 			text: `<span class="glyphicon glyphicon-tags"></span>`,
 			content: `
-			<div style="grid-template-columns: repeat(4, 1fr); display: grid; grid-column-gap: .75rem; grid-row-gap: 1.5rem; padding: 1rem .5rem; padding-bottom: calc(1rem + env(safe-area-inset-bottom));">
+			<div style="word-break: normal !important; grid-template-columns: repeat(4, 1fr); display: grid; grid-column-gap: .75rem; grid-row-gap: 1.5rem; padding: 1rem .5rem; padding-bottom: calc(1rem + env(safe-area-inset-bottom));">
 
 				${
 					badges.length

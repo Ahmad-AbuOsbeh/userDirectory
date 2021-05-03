@@ -162,7 +162,15 @@ class Widget {
 		this.listView.onItemClicked = (item, e) => {
 			if (!item.data.userId) return;
 
-			this.renderUserModal(item);
+			var img = new Image();
+			var self=this;
+			img.onload = function(){
+				self.renderUserModal(item,item.imageUrl);
+			};
+			img.onerror = function(){
+				self.renderUserModal(item,"https://app.buildfire.com/app/media/avatar.png");
+			};
+			img.src = item.imageUrl;
 		};
 
 		this.listView.onItemActionClicked = (item, e) => {
@@ -237,9 +245,9 @@ class Widget {
 		buildfire.input.showListDialog(options, callback);
 	}
 
-	renderUserModal(item) {
+	renderUserModal(item,image) {
 		if (!buildfire.components || !buildfire.components.drawer) return;
-		const { imageUrl, data } = item;
+		const { data } = item;
 		const { displayName, email, badges, phoneNumber } = data;
     const { actionItem, userSubtitleShowMode } = this.settings;
     
@@ -266,15 +274,18 @@ class Widget {
 
 		const options = {
 			header: `
+			<div style="display: flex; align-items: center;">
 				<div class="avatar">
-					<img src="${imageUrl}" onerror="this.src=window._appRoot+'media/avatar.png'" />
+					<img src="${image}" />
 				</div>
 
 				<div class="user-info-holder ellipsis">
 					<h4 class="user-title whiteTheme ellipsis">${displayName ? displayName : 'Someone'}</h4>
 					<p class="user-subtitle ellipsis">${subtitle}</p>
 				</div>
+			</div>
 			`,
+			enableFilter:false,
 			tabs: [],
 		};
 
@@ -320,93 +331,27 @@ class Widget {
 		options.tabs.push({
 			text: `<span class="glyphicon glyphicon-tags"></span>`,
 			content: `
-			<div class="badges-grid">
+			<div style="word-break: normal !important; grid-template-columns: repeat(4, 1fr); display: grid; grid-column-gap: .75rem; grid-row-gap: 1.5rem; padding: 1rem .5rem; padding-bottom: calc(1rem + env(safe-area-inset-bottom));">
 
 				${
 					badges.length
 						? badges
 								.map((badge) => {
 									return `
-											<div class="grid-item">
-												<div class="user-badge">
-													<img src="${badge.imageUrl}" alt="">
-													${badge.appliedCount ? `<span class="badge-count successBackgroundTheme">${badge.appliedCount}</span>` : ''}
+											<div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+												<div style="border-radius: .25rem; width: 4rem; height: 4rem; position: relative;">
+													<img style="border-radius: .25rem; width: 4rem; height: 4rem; object-fit: cover; overflow: hidden;" src="${badge.imageUrl}" alt="">
+													${badge.appliedCount ? `<span style="display: block; background-color: rgba(120, 120, 120, 0.5); color: #fff; border-radius: 1rem; position: absolute; top: -.75rem; right: calc(0% - .75rem); padding: .25rem .5rem; text-align: left;" class="successBackgroundTheme">${badge.appliedCount}</span>` : ''}
 												</div>
-												<h5>${badge.name}</h5>
-												<p class="caption">${new Date(badge.earned).toLocaleDateString()}</p>
+												<h5 style="margin: .75rem 0 .125rem 0; font-weight: bold; word-break: break;">${badge.name}</h5>
+												<p style="font-size: .75rem; opacity: .75; margin: 0;">${new Date(badge.earned).toLocaleDateString()}</p>
 											</div>
 									`;
 								})
 								.join(' ')
-						: `<div class="empty-state-text"><span>no badges yet!</span></div>`
+						: `<div style="text-transform: capitalize; text-align: center; font-size: 14px; padding: 24px; opacity: .7; min-height: 80px; display: flex; align-items:center;"><span>no badges yet!</span></div>`
 				}
 				</div>
-
-			<style>
-				.empty-state-text{
-					text-transform: capitalize;
-					text-align: center;
-					font-size: 14px;
-					padding: 24px;
-					opacity: .7;
-					min-height: 80px;
-					display: flex;
-					align-items:center;
-				}
-				.badges-grid{
-					display: grid;
-					grid-template-columns: repeat(3, 1fr);
-					grid-column-gap: .75rem;
-					grid-row-gap: 1.5rem;
-					padding: 1rem .5rem;
-					padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-				}
-				.badges-grid .grid-item{
-					display: flex;
-					flex-direction: column;
-					align-items: center;
-					text-align: center;
-				}
-				.badges-grid .user-badge{
-					border-radius: .25rem;
-					width: 4rem;
-					height: 4rem;
-					position: relative;
-				}
-				.badges-grid .grid-item h5{
-					margin: .75rem 0 .125rem 0;
-					font-weight: bold;
-					word-break: break;
-				}
-				.badges-grid .user-badge img{
-					border-radius: .25rem;
-					width: 4rem;
-					height: 4rem;
-					object-fit: cover;
-					overflow: hidden;
-				}
-				.user-badge .badge-count{
-					display: block;
-					background-color: rgba(120, 120, 120, 0.5);
-					color: #fff;
-					border-radius: 1rem;
-					position: absolute;
-					top: -.75rem;
-					right: calc(0% - .75rem);
-					padding: .25rem .5rem;
-					text-align: left;
-				}
-				.caption{
-					font-size: .75rem;
-					opacity: .75;
-					margin: 0;
-				}
-				@media(min-width: 700px){
-					.badges-grid{
-						grid-template-columns: repeat(4, 1fr);
-					}
-				}
-			</style>
 			`,
 		});
 

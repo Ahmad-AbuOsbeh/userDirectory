@@ -249,7 +249,7 @@ class Widget {
 		if (!buildfire.components || !buildfire.components.drawer) return;
 		const { data } = item;
 		const { displayName, email, badges, phoneNumber } = data;
-    const { actionItem, userSubtitleShowMode } = this.settings;
+    const { actionItem, userSubtitleShowMode, allowShowProfileComponent } = this.settings;
     
     let subtitle = '';
 
@@ -306,7 +306,7 @@ class Widget {
 				],
 			});
 		} else {
-			options.tabs.push({
+      const tabs = {
 				text: `<span class="glyphicon glyphicon-user"></span>`,
 				listItems: [
 					{
@@ -325,7 +325,16 @@ class Widget {
 						text: this.strings.get('other.reportUser'),
 					},
 				],
-			});
+			};
+
+      if (allowShowProfileComponent) {
+        tabs.listItems.splice(1, 0, {
+          id: 'viewProfile',
+          icon: '',
+          text: this.strings.get('other.viewProfile') ? this.strings.get('other.viewProfile') : 'View Profile',
+        });
+      }
+			options.tabs.push(tabs);
 		}
 
 		options.tabs.push({
@@ -419,6 +428,13 @@ class Widget {
 					buildfire.components.drawer.closeDrawer();
 					break;
 				}
+        case 'viewProfile': {
+          buildfire.components.drawer.closeDrawer();
+					setTimeout(() => {
+            buildfire.auth.openProfile(data.userId);
+					}, 100);
+          break;
+        }
 				default:
 					buildfire.components.drawer.closeDrawer();
 					break;

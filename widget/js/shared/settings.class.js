@@ -29,6 +29,7 @@ class Settings {
     this.ranking = dbObj.data.ranking || 'ALPHA_ASC';
     this.userSubtitleShowMode = dbObj.data.userSubtitleShowMode || null;
     this.navigateToCwByDefault = dbObj.data.navigateToCwByDefault || false;
+    this.allowShowProfileComponent = dbObj.data.allowShowProfileComponent || false;
 	}
 
 	toRawData() {
@@ -39,7 +40,8 @@ class Settings {
 			badgePushNotifications: this.badgePushNotifications,
       ranking: this.ranking,
       userSubtitleShowMode: this.userSubtitleShowMode,
-      navigateToCwByDefault: this.navigateToCwByDefault
+      navigateToCwByDefault: this.navigateToCwByDefault,
+      allowShowProfileComponent: this.allowShowProfileComponent
 		};
 	}
 

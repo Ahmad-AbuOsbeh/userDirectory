@@ -54,6 +54,14 @@
 				<p class="info" ng-if="data.autoEnlistAll">We assume no liability for any privacy compliance issues. Consult your local laws and regulations.</p>
 			</div>
 
+      <div class="input-row">
+				<p class="label-container">Show "View Profile" option</p>
+				<div class="button-switch margin-left-auto">
+					<input id="allowShowProfileComponent" type="checkbox" ng-model="data.allowShowProfileComponent" />
+					<label for="allowShowProfileComponent"></label>
+				</div>
+			</div>
+
 			<div class="input-row">
 				<p class="label-container margin-bottom-zero">Only allow users with the following tags</p>
 

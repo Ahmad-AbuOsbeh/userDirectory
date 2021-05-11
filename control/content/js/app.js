@@ -13,7 +13,8 @@
 			badgePushNotifications: false,
       ranking: 'ALPHA_ASC',
       userSubtitleShowMode: Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key,
-      navigateToCwByDefault: false
+      navigateToCwByDefault: false,
+      allowShowProfileComponent: false
     };
 
 		$scope.badgeListUI = badgeListUI;
@@ -91,7 +92,7 @@
 
 		Settings.get()
 			.then(data => {
-				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault } = data;
+				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault, allowShowProfileComponent } = data;
 
 				$scope.data.autoEnlistAll = autoEnlistAll || false;
 				$scope.data.tagFilter = tagFilter || [];
@@ -100,6 +101,7 @@
         $scope.data.ranking = ranking || 'ALPHA_ASC';
         $scope.data.userSubtitleShowMode = userSubtitleShowMode || Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key;
         $scope.data.navigateToCwByDefault = navigateToCwByDefault || false;
+        $scope.data.allowShowProfileComponent = allowShowProfileComponent || false;
 
 				if (!$scope.$$phase) $scope.$apply();
 

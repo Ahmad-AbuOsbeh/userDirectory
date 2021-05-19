@@ -125,6 +125,12 @@ const stringsConfig = {
 				maxLength: 100,
 				defaultValue: 'Favorites'
 			},
+      viewProfile: {
+				title: 'View Profile',
+				placeholder: 'View Profile',
+				maxLength: 100,
+				defaultValue: 'View Profile'
+			},
 		}
 	}
 };

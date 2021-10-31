@@ -351,7 +351,6 @@ class Directory {
 			inAppMessage,
 			groupName: '$$userDirectory',
 			queryString: userId,
-			at: Date.now() + 5000,
 			actionItem: {
 				action: 'linkToApp',
 				instanceId,

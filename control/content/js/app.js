@@ -2,7 +2,7 @@
 	'use strict';
 
 	Analytics.init();
-	
+
 	const app = angular.module('directoryContent', []);
 
 	const directoryContentCtrl = $scope => {
@@ -11,11 +11,11 @@
 			tagFilter: [],
 			actionItem: null,
 			badgePushNotifications: false,
-      ranking: 'ALPHA_ASC',
-      userSubtitleShowMode: Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key,
-      navigateToCwByDefault: false,
-      allowShowProfileComponent: false
-    };
+			ranking: 'ALPHA_ASC',
+			userSubtitleShowMode: Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key,
+			navigateToCwByDefault: false,
+			allowShowProfileComponent: false
+		};
 
 		$scope.badgeListUI = badgeListUI;
 		$scope.badgeListUI.init('badges');
@@ -35,7 +35,7 @@
 		$scope.pickImage = (e) => {
 			e.preventDefault();
 
-			buildfire.imageLib.showDialog({showIcons: false, multiSelection: false}, (error, result) => {
+			buildfire.imageLib.showDialog({ showIcons: false, multiSelection: false }, (error, result) => {
 				if (result && result.selectedFiles && result.selectedFiles.length) {
 					$scope.badge.imageUrl = result.selectedFiles[0];
 
@@ -58,9 +58,9 @@
 			};
 		};
 
-    $scope.rankingOptions = Users.rankings;
-    
-    $scope.userSubtitleShowModeOptions = [...Object.values(Keys.userSubtitleShowModeKeys)];
+		$scope.rankingOptions = Users.rankings;
+
+		$scope.userSubtitleShowModeOptions = [...Object.values(Keys.userSubtitleShowModeKeys)];
 
 		$scope.applyTag = () => {
 			$scope.data.tagFilter.push($scope.tagName);
@@ -90,18 +90,39 @@
 			});
 		};
 
+		buildfire.messaging.onReceivedMessage = (msg) => {
+			if (msg.cmd === 'finishSearchEngineUpdate') {
+				$scope.data.updatedSearchEngine = true;
+				$scope.save();
+				buildfire.dialog.alert({
+					title: 'Search Engine Update',
+					message: 'Congratulations! Search Engine succesfully updated.',
+				});
+			}
+		};
+
 		Settings.get()
 			.then(data => {
-				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault, allowShowProfileComponent } = data;
+				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault, allowShowProfileComponent, updatedSearchEngine } = data;
 
 				$scope.data.autoEnlistAll = autoEnlistAll || false;
 				$scope.data.tagFilter = tagFilter || [];
 				$scope.data.actionItem = actionItem || null;
 				$scope.data.badgePushNotifications = badgePushNotifications || null;
-        $scope.data.ranking = ranking || 'ALPHA_ASC';
-        $scope.data.userSubtitleShowMode = userSubtitleShowMode || Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key;
-        $scope.data.navigateToCwByDefault = navigateToCwByDefault || false;
-        $scope.data.allowShowProfileComponent = allowShowProfileComponent || false;
+				$scope.data.ranking = ranking || 'ALPHA_ASC';
+				$scope.data.userSubtitleShowMode = userSubtitleShowMode || Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key;
+				$scope.data.navigateToCwByDefault = navigateToCwByDefault || false;
+				$scope.data.allowShowProfileComponent = allowShowProfileComponent || false;
+				$scope.data.updatedSearchEngine = updatedSearchEngine || null;
+
+				if (!$scope.data.updatedSearchEngine) {
+					buildfire.dialog.alert({
+						title: 'Search Engine Update',
+						message: 'We are improving your search engine, please do not close your browser or leave the plugin until you see success dialog.',
+					});
+					buildfire.messaging.sendMessageToWidget({ cmd: 'startSearchEngineUpdate' });
+				}
+
 
 				if (!$scope.$$phase) $scope.$apply();
 
@@ -125,8 +146,8 @@
 		}
 	};
 
-	app.controller('directoryContentCtrl', ['$scope', directoryContentCtrl]).filter('cropImg', function() {
-		return function(url) {
+	app.controller('directoryContentCtrl', ['$scope', directoryContentCtrl]).filter('cropImg', function () {
+		return function (url) {
 			if (!url) return;
 			return buildfire.imageLib.cropImage(url, { size: 'xxs', aspect: '1:1' });
 		};

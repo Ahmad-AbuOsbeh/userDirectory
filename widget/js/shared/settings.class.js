@@ -12,8 +12,12 @@ class Settings {
 					if (callback) callback(e);
 				} else {
 					let s = new Settings(obj);
-          // This way, we will keep old instances to use PSW navigate by default (so we don't break backward compatibility) and new instances to navigate to CW by default.
-          if (!Object.keys(obj.data).length) s.navigateToCwByDefault = true;
+					// This way, we will keep old instances to use PSW navigate by default (so we don't break backward compatibility) and new instances to navigate to CW by default.
+					if (!Object.keys(obj.data).length) {
+						s.navigateToCwByDefault = true;
+						s.updatedSearchEngine = true;
+					}
+					
 					resolve(s);
 					if (callback) callback(null, s);
 				}
@@ -26,10 +30,11 @@ class Settings {
 		this.tagFilter = dbObj.data.tagFilter || [];
 		this.actionItem = dbObj.data.actionItem || null;
 		this.badgePushNotifications = dbObj.data.badgePushNotifications || null;
-    this.ranking = dbObj.data.ranking || 'ALPHA_ASC';
-    this.userSubtitleShowMode = dbObj.data.userSubtitleShowMode || null;
-    this.navigateToCwByDefault = dbObj.data.navigateToCwByDefault || false;
-    this.allowShowProfileComponent = dbObj.data.allowShowProfileComponent || false;
+		this.ranking = dbObj.data.ranking || 'ALPHA_ASC';
+		this.userSubtitleShowMode = dbObj.data.userSubtitleShowMode || null;
+		this.navigateToCwByDefault = dbObj.data.navigateToCwByDefault || false;
+		this.allowShowProfileComponent = dbObj.data.allowShowProfileComponent || false;
+		this.updatedSearchEngine = dbObj.data.updatedSearchEngine || null;
 	}
 
 	toRawData() {
@@ -38,10 +43,11 @@ class Settings {
 			tagFilter: this.tagFilter,
 			actionItem: this.actionItem,
 			badgePushNotifications: this.badgePushNotifications,
-      ranking: this.ranking,
-      userSubtitleShowMode: this.userSubtitleShowMode,
-      navigateToCwByDefault: this.navigateToCwByDefault,
-      allowShowProfileComponent: this.allowShowProfileComponent
+			ranking: this.ranking,
+			userSubtitleShowMode: this.userSubtitleShowMode,
+			navigateToCwByDefault: this.navigateToCwByDefault,
+			allowShowProfileComponent: this.allowShowProfileComponent,
+			updatedSearchEngine: this.updatedSearchEngine
 		};
 	}
 

@@ -41,7 +41,7 @@ class Users {
 		const { userIds, pageIndex, pageSize, ranking } = options;
 
 		var searchOptions = {
-			sort: { firstName: 1, lastName: 1 },
+			sort: { firstName: 1, lastName: 1, displayName: 1 },
 			page: pageIndex,
 			pageSize,
 			filter: { '$json.isActive': true },
@@ -125,17 +125,6 @@ class Users {
 
 			buildfire.appData.update(userObj.id, userData, this.tag, callback);
 		});
-		// const searchOptions = {
-		// 	'$json.userId': {
-		// 		$eq: userData.userId,
-		// 	},
-		// 	'_buildfire.index.string1': userData.userId,
-		// };
-
-		// buildfire.appData.searchAndUpdate(searchOptions, userData, this.tag, (error, result) => {
-		// 	console.error(error, result);
-		// 	callback(error, result);
-		// });
 	}
 
 	/**
@@ -147,8 +136,6 @@ class Users {
 		this.getByUserId(userId, (error, obj) => {
 			obj.data.isActive = false;
 			buildfire.appData.update(obj.id, obj.data, this.tag, callback);
-			// buildfire.appData.delete(obj.id, this.tag, callback);
-
 			Analytics.trackAction(Analytics.events.USER_LEFT.key);
 		});
 	}

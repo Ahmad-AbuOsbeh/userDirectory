@@ -7,7 +7,7 @@ class Entry {
 		this.key = userId;
 		this.title = displayName || email;
 		this.description = email;
-		this.keywords = `${firstName}, ${lastName}, ${email}`;
+		this.keywords = `${firstName}, ${lastName}, ${displayName}, ${email}`;
 		this.imageUrl = buildfire.auth.getUserPictureUrl({ userId });
 		this.data = { userId };
 
@@ -62,7 +62,6 @@ class Lookup {
 	static update(userData, callback) {
 
 		const entry = new Entry(userData);
-
 		buildfire.services.searchEngine.update(entry, callback);
 	}
 
@@ -84,7 +83,7 @@ class Lookup {
 		};
 
 		buildfire.services.searchEngine.search(searchOptions, (e, result) => {
-			result.hits.hits.forEach(hit => buildfire.services.searchEngine.delete({id: hit._id, tag: this.tag }), console.error);
+			result.hits.hits.forEach(hit => buildfire.services.searchEngine.delete({ id: hit._id, tag: this.tag }), console.error);
 		});
 	}
 }

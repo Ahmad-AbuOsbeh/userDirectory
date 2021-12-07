@@ -62,7 +62,7 @@ class Widget {
 						}
 						this.directoryUI.directory.checkUser((err, userObj) => {
 							if (err) return console.error(err);
-	
+
 							if (userObj) {
 								this.directoryUI.directory.updateUser(userObj, () => {
 									this.search();
@@ -73,6 +73,7 @@ class Widget {
 					buildfire.appearance.titlebar.show();
 					break;
 				}
+				case 'startSearchEngineUpdate': this.updateSearchEngine();
 				default: {
 					break;
 				}
@@ -136,6 +137,34 @@ class Widget {
 		});
 	}
 
+	updateSearchEngine() {
+		let page = 0, pageSize = 50, updatedArr = [];
+
+		const get = () => {
+			buildfire.appData.search({ recordCount: true, page, pageSize }, '$$userDirectory', (err, response) => {
+				if (response && response.result && response.result.length) {
+					response.result.map(el => updatedArr.push(el));
+				}
+				if (response.totalRecord === updatedArr.length) {
+					let updatedRecords = 0;
+					updatedArr.map(el => {
+						Lookup.update(new DirectoryUser(el.data).toJson(), (err, result) => {
+							updatedRecords++;
+							if (updatedRecords === updatedArr.length) {
+								buildfire.messaging.sendMessageToControl({ cmd: 'finishSearchEngineUpdate' });
+							}
+						});
+					});
+				} else {
+					page++;
+					get();
+				}
+			});
+		};
+
+		get();
+	}
+
 	initSearchBar() {
 		this.searchBar.onChange = () => this.debounce();
 
@@ -163,12 +192,12 @@ class Widget {
 			if (!item.data.userId) return;
 
 			var img = new Image();
-			var self=this;
-			img.onload = function(){
-				self.renderUserModal(item,item.imageUrl);
+			var self = this;
+			img.onload = function () {
+				self.renderUserModal(item, item.imageUrl);
 			};
-			img.onerror = function(){
-				self.renderUserModal(item,"https://app.buildfire.com/app/media/avatar.png");
+			img.onerror = function () {
+				self.renderUserModal(item, "https://app.buildfire.com/app/media/avatar.png");
 			};
 			img.src = item.imageUrl;
 		};
@@ -245,32 +274,32 @@ class Widget {
 		buildfire.input.showListDialog(options, callback);
 	}
 
-	renderUserModal(item,image) {
+	renderUserModal(item, image) {
 		if (!buildfire.components || !buildfire.components.drawer) return;
 		const { data } = item;
 		const { displayName, email, badges, phoneNumber } = data;
-    const { actionItem, userSubtitleShowMode, allowShowProfileComponent } = this.settings;
-    
-    let subtitle = '';
+		const { actionItem, userSubtitleShowMode, allowShowProfileComponent } = this.settings;
 
-      if (
-        (
-          !userSubtitleShowMode || 
-          userSubtitleShowMode === Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key
-        ) &&
-        (
-          email && 
-          email.length > 0 &&
-          email.indexOf('facebook') === -1 && 
-          email.indexOf('twitter') === -1
-        )
-      ) {
-        subtitle = email;
-      }
+		let subtitle = '';
 
-      if (userSubtitleShowMode === Keys.userSubtitleShowModeKeys.SHOW_PHONE_NUMBER.key && phoneNumber) {
-        subtitle = phoneNumber;
-      }
+		if (
+			(
+				!userSubtitleShowMode ||
+				userSubtitleShowMode === Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key
+			) &&
+			(
+				email &&
+				email.length > 0 &&
+				email.indexOf('facebook') === -1 &&
+				email.indexOf('twitter') === -1
+			)
+		) {
+			subtitle = email;
+		}
+
+		if (userSubtitleShowMode === Keys.userSubtitleShowModeKeys.SHOW_PHONE_NUMBER.key && phoneNumber) {
+			subtitle = phoneNumber;
+		}
 
 		const options = {
 			header: `
@@ -285,7 +314,7 @@ class Widget {
 				</div>
 			</div>
 			`,
-			enableFilter:false,
+			enableFilter: false,
 			tabs: [],
 		};
 
@@ -306,7 +335,7 @@ class Widget {
 				],
 			});
 		} else {
-      const tabs = {
+			const tabs = {
 				text: `<span class="glyphicon glyphicon-user"></span>`,
 				listItems: [
 					{
@@ -327,13 +356,13 @@ class Widget {
 				],
 			};
 
-      if (allowShowProfileComponent) {
-        tabs.listItems.splice(1, 0, {
-          id: 'viewProfile',
-          icon: '',
-          text: this.strings.get('other.viewProfile') ? this.strings.get('other.viewProfile') : 'View Profile',
-        });
-      }
+			if (allowShowProfileComponent) {
+				tabs.listItems.splice(1, 0, {
+					id: 'viewProfile',
+					icon: '',
+					text: this.strings.get('other.viewProfile') ? this.strings.get('other.viewProfile') : 'View Profile',
+				});
+			}
 			options.tabs.push(tabs);
 		}
 
@@ -342,11 +371,10 @@ class Widget {
 			content: `
 			<div style="word-break: normal !important; grid-template-columns: repeat(4, 1fr); display: grid; grid-column-gap: .75rem; grid-row-gap: 1.5rem; padding: 1rem .5rem; padding-bottom: calc(1rem + env(safe-area-inset-bottom));">
 
-				${
-					badges.length
-						? badges
-								.map((badge) => {
-									return `
+				${badges.length
+					? badges
+						.map((badge) => {
+							return `
 											<div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
 												<div style="border-radius: .25rem; width: 4rem; height: 4rem; position: relative;">
 													<img style="border-radius: .25rem; width: 4rem; height: 4rem; object-fit: cover; overflow: hidden;" src="${badge.imageUrl}" alt="">
@@ -356,9 +384,9 @@ class Widget {
 												<p style="font-size: .75rem; opacity: .75; margin: 0;">${new Date(badge.earned).toLocaleDateString()}</p>
 											</div>
 									`;
-								})
-								.join(' ')
-						: `<div style="text-transform: capitalize; text-align: center; font-size: 14px; padding: 24px; opacity: .7; min-height: 80px; display: flex; align-items:center;"><span>no badges yet!</span></div>`
+						})
+						.join(' ')
+					: `<div style="text-transform: capitalize; text-align: center; font-size: 14px; padding: 24px; opacity: .7; min-height: 80px; display: flex; align-items:center;"><span>no badges yet!</span></div>`
 				}
 				</div>
 			`,
@@ -428,13 +456,13 @@ class Widget {
 					buildfire.components.drawer.closeDrawer();
 					break;
 				}
-        case 'viewProfile': {
-          buildfire.components.drawer.closeDrawer();
+				case 'viewProfile': {
+					buildfire.components.drawer.closeDrawer();
 					setTimeout(() => {
-            buildfire.auth.openProfile(data.userId);
+						buildfire.auth.openProfile(data.userId);
 					}, 100);
-          break;
-        }
+					break;
+				}
 				default:
 					buildfire.components.drawer.closeDrawer();
 					break;

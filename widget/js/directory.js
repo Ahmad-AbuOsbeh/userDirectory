@@ -156,14 +156,44 @@ class Directory {
 		_search();
 	}
 
+	registerDeepLink(callback){
+		let id = this.user.userId;
+		let name = "";
+		if(this.user.displayName) name = this.user.displayName;
+		else if(this.user.firstName) name = this.user.firstName;
+		else name = this.user.email;
+		buildfire.deeplink.registerDeeplink(
+			{
+			  id: id,
+			  name: name,
+			  deeplinkData: { userId: id, name: name },
+			},
+			(err, result) => {
+			  if (err) return callback(err);
+			  return callback(null, result);
+			}
+		  );
+	}
+
+	unregisterDeepLink(id, callback){
+		buildfire.deeplink.unregisterDeeplink(id, (err, result) => {
+			if (err) return callback(err);
+			return callback(null, result);
+		  });
+	}
+
 	addUser(callback) {
 		if (!this.user) return;
 
 		buildfire.notifications.pushNotification.subscribe({ groupName: '$$userDirectory' }, console.log);
 
 		buildfire.components.toast.showToastMessage({ text: 'Joined Directory' });
+		this.registerDeepLink((err, succ) =>{
+			if(err) console.error(err);
+			else console.log("deeplink registered successfully", succ);
+			Users.add(this.user.toJson(), callback);
 
-		Users.add(this.user.toJson(), callback);
+		});
 	}
 
 	checkUser(callback) {
@@ -499,8 +529,20 @@ class Directory {
 		buildfire.notifications.pushNotification.unsubscribe({ groupName: '$$userDirectory' }, console.log);
 
 		buildfire.components.toast.showToastMessage({ text: 'Left Directory' });
-
-		Users.delete(this.user.userId, callback);
+		buildfire.deeplink.getAllDeeplinks(null, (err, r) =>{
+			let index = r.findIndex(c => c.data.deeplinkData.userId == this.user.userId);
+			if(index >= 0){
+				let id = r[index].data.deeplinkId;
+				this.unregisterDeepLink(id, (err, r) =>{
+					if(err) console.error(err);
+					else console.log("deeplink removed successfully");
+					Users.delete(this.user.userId, callback);
+				});
+			}
+			else{
+				Users.delete(this.user.userId, callback);
+			}
+		});
 	}
 
 	_clear() {

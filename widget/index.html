@@ -55,6 +55,16 @@
 		<script>
 			buildfire.appearance.titlebar.show();
 			const widget = new Widget();
+			buildfire.deeplink.getData((deeplinkData) => {
+				if (deeplinkData){
+					Users.getByUserId(deeplinkData.userId, (error, result) => {
+						if (error) return callback(error, false);
+						let item = result;
+						let userPictureUrl = buildfire.auth.getUserPictureUrl({userId: deeplinkData.userId});
+						widget.renderUserModal(item, userPictureUrl);
+					});
+				}
+			});
 		</script>
 	</body>
 </html>

@@ -90,15 +90,15 @@ class Directory {
 		});
 	}
 
-	search(searchText, pageIndex, pageSize, callback) {
+	search(searchText, filters, pageIndex, pageSize, callback) {
 		let userIds = null;
 		const _search = () => {
 			this.getFavorites(() => {
 				this.getBadges((err, badges) => {
 					if (err) console.error(err);
-
+					console.log("users", userIds);
 					const { ranking } = this.settings;
-					Users.search({ userIds, pageIndex, pageSize, ranking }, (error, results) => {
+					Users.search({ userIds, filters, pageIndex, pageSize, ranking }, (error, results) => {
 						if (error) return callback(error, null);
 
 						results = results.map((result) => {
@@ -191,8 +191,10 @@ class Directory {
 		this.registerDeepLink((err, succ) =>{
 			if(err) console.error(err);
 			else console.log("deeplink registered successfully", succ);
-			Users.add(this.user.toJson(), callback);
-
+			this.user.toJson(this.settings, (err, userJSON) => {
+				if (err) return callback(err);
+				Users.add(userJSON, callback);
+			});
 		});
 	}
 
@@ -289,6 +291,8 @@ class Directory {
 
 					const { appId } = buildfire.getContext();
 					const userTags = user.tags && user.tags[appId] ? user.tags[appId] : [];
+					console.log("user Tags", userTags);
+					console.log("userObj Tags", userObj.data.tags);
 
 					if (userTags.length !== (userObj.data.tags || []).length) {
 						this.user.tags = userTags;
@@ -304,33 +308,37 @@ class Directory {
 
 					if (!hasUpdate) return;
 
-					Users.update(this.user.toJson(), (e, res) => {
-						if (e) {
-							return buildfire.components.toast.showToastMessage({ text: 'user not updated' });
-						}
-						if (newBadges.length) {
-							const badges = newBadges.map((badge) => {
-								const b = this.badges.find((b) => b.id === badge.id);
-								b.earned = badge.earned;
-								return b;
+					this.user.toJson(this.settings, (err, userJSON) => {
+						if (userJSON) {
+							Users.update(userJSON, (e, res) => {
+								if (e) {
+									return buildfire.components.toast.showToastMessage({ text: 'user not updated' });
+								}
+								if (newBadges.length) {
+									const badges = newBadges.map((badge) => {
+										const b = this.badges.find((b) => b.id === badge.id);
+										b.earned = badge.earned;
+										return b;
+									});
+									if (this.settings.badgePushNotifications) {
+										this.sendNewBadgePN(userObj, badges);
+									}
+		
+									const richContent = `
+										<div class="center-content active-user">
+										<h4 class="title text-center">New Badge${badges.length > 1 ? 's' : ''} Received!</h4>
+										${badges.length > 1 ? this.renderMultipleBadges(badges) : renderSingleBadge(badges[0])}
+										</div>
+										${this.getModalStyles()}
+										`;
+		
+									buildfire.components.popup.display({ richContent }, console.error);
+								}
+								if (onUpdate) onUpdate(this.user);
 							});
-							if (this.settings.badgePushNotifications) {
-								this.sendNewBadgePN(userObj, badges);
-							}
-
-							const richContent = `
-								<div class="center-content active-user">
-								<h4 class="title text-center">New Badge${badges.length > 1 ? 's' : ''} Received!</h4>
-								${badges.length > 1 ? this.renderMultipleBadges(badges) : renderSingleBadge(badges[0])}
-								</div>
-								${this.getModalStyles()}
-								`;
-
-							buildfire.components.popup.display({ richContent }, console.error);
+							Lookup.update(userJSON, console.log);
 						}
-						if (onUpdate) onUpdate(this.user);
 					});
-					Lookup.update(this.user.toJson(), console.log);
 				});
 
 				function renderSingleBadge(badge) {

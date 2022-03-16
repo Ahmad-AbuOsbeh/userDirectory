@@ -12,6 +12,7 @@ class Service {
 		// buildfire.auth.onLogin(() => this.init());
 		// buildfire.auth.onLogout(() => this.init());
 		buildfire.auth.onLogin(() => {
+			console.log("logged in ud");
 			if (this.directoryUI && this.directoryUI.autoUpdater) {
 				clearInterval(this.directoryUI.autoUpdater);
 				this.directoryUI.autoUpdater = null;
@@ -26,9 +27,18 @@ class Service {
 			location.reload();
 		});
 
+		buildfire.auth.onUpdate(() => {
+			if (this.directoryUI && this.directoryUI.autoUpdater) {
+				clearInterval(this.directoryUI.autoUpdater);
+				this.directoryUI.autoUpdater = null;
+			}
+			location.reload();
+		});
+
 		this.init();
 
 		window.onbeforeunload = () => {
+			console.log("before window load");
 			if (this.directoryUI && this.directoryUI.autoUpdater) {
 				clearInterval(this.directoryUI.autoUpdater);
 				this.directoryUI.autoUpdater = null;
@@ -37,6 +47,7 @@ class Service {
 	}
 
 	init() {
+		console.log("service init");
 		if (this.directoryUI && this.directoryUI.autoUpdater) {
 			clearInterval(this.directoryUI.autoUpdater);
 			this.directoryUI.autoUpdater = null;
@@ -45,6 +56,7 @@ class Service {
 		Promise.all([this.getUser(), this.getSettings(), this.getStrings()]).then(() => {
 			if (this.user) {
 				this.directoryUI = new DirectoryUI(this.user, this.strings, this.settings);
+				console.log("prompting user");
 				this.directoryUI.promptUser(false, () => {
 					buildfire.messaging.sendMessageToWidget({ cmd: 'userAdded' });
 				});

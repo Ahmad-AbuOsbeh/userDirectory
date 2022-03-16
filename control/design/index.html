@@ -1,45 +1,84 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- build:bundleControlBFMinJS  -->
-    <script src="../../../../scripts/buildfire.js"></script>
-    <!-- endbuild -->
+  <!-- build:bundleControlBFMinJS  -->
+  <script src="../../../../scripts/buildfire.js"></script>
+  <!-- endbuild -->
 
-    <script src="../../../../scripts/buildfire/components/images/thumbnail.js"></script>
+  <script src="../../../../scripts/buildfire/components/images/thumbnail.js"></script>
 
-    <!-- build:bundleSharedJSFiles  -->
-    <script src="../../widget/js/shared/infoCard.class.js"></script>
-    <script src="../../widget/js/shared/settings.class.js"></script>
-    <!-- endbuild -->
+  <!-- build:bundleSharedJSFiles  -->
+  <script src="../../widget/js/shared/infoCard.class.js"></script>
+  <script src="../../widget/js/shared/settings.class.js"></script>
+  <!-- endbuild -->
 
-    <link rel="stylesheet" type="text/css" href="../../../../styles/helper.css">
+  <link rel="stylesheet" type="text/css" href="../../../../styles/helper.css">
 </head>
+
 <body>
-    <div id="bgImage"></div>
-    <script>
+  <div class="item row clearfix ng-scope">
+    <div class="labels col-md-3 padding-right-zero pull-left">
+      <span>List Layout</span>
+    </div>
+    <div class="main col-md-9 pull-right">
+      <div class="screens clearfix">
+        <div class="screen layouticon pull-left">
+          <a class="border-grey border-radius-three default-background-hover text-center">
+            <img id="activeImg" src="../../widget/images/list.png">
+          </a>
+        </div>
+        <div class="screen layoutgrid pull-right margin-left-zero border-grey border-radius-three"><a
+            class="layouticon border-grey border-radius-three default-background-hover text-center ng-scope"
+            onclick="changeLayout('list')">
+            <img src="../../widget/images/list.png">
+          </a><a class="layouticon border-grey border-radius-three default-background-hover text-center ng-scope"
+            onclick="changeLayout('grid')" data-number="2">
+            <img src="../../widget/images/grid.png">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
 
 
-		let settings,thumbnail;
-		Settings.get().then(s=>{
-			settings=s;
-			thumbnail = new buildfire.components.images.thumbnail("#bgImage",{imageUrl:s.bgImageUrl});
+    let settings, layout, activeLayoutImg;
+    Settings.get().then(s => {
+      settings = s;
+      if (s.layout) {
+        layout = s.layout;
+      } else {
+        layout = 'list';
+      }
 
-			thumbnail.onChange =url=>{
-				settings.bgImageUrl =url;
-				settings.save();
-				buildfire.messaging.sendMessageToWidget({cmd:"refresh"});
-			};
+      if (layout === 'grid') {
+        activeLayoutImg = "../../widget/images/grid.png";
+        activeImg.src = activeLayoutImg;
+      } else {
+        activeLayoutImg = "../../widget/images/list.png";
+        activeImg.src = activeLayoutImg;
+      }
+    });
 
-			thumbnail.onDelete=()=>{
-				settings.bgImageUrl ="";
-				settings.save();
-				buildfire.messaging.sendMessageToWidget({cmd:"refresh"});
-            };
-
-		});
-
-    </script>
+    changeLayout = newLayout => {
+      if (newLayout != layout) {
+        settings.layout = newLayout;
+        layout = newLayout;
+        if (settings.layout === 'grid') {
+          activeLayoutImg = "../../widget/images/grid.png";
+          activeImg.src = activeLayoutImg;
+        } else {
+          activeLayoutImg = "../../widget/images/list.png";
+          activeImg.src = activeLayoutImg;
+        }
+        settings.save();
+        buildfire.messaging.sendMessageToWidget({ cmd: "refresh" });
+      }
+    };
+  </script>
 </body>
+
 </html>

@@ -35,6 +35,8 @@ class Settings {
 		this.navigateToCwByDefault = dbObj.data.navigateToCwByDefault || false;
 		this.allowShowProfileComponent = dbObj.data.allowShowProfileComponent || false;
 		this.updatedSearchEngine = dbObj.data.updatedSearchEngine || null;
+		this.mapEnabled = dbObj.data.mapEnabled || false;
+		this.layout = dbObj.data.layout || 'list';
 	}
 
 	toRawData() {
@@ -47,7 +49,9 @@ class Settings {
 			userSubtitleShowMode: this.userSubtitleShowMode,
 			navigateToCwByDefault: this.navigateToCwByDefault,
 			allowShowProfileComponent: this.allowShowProfileComponent,
-			updatedSearchEngine: this.updatedSearchEngine
+			mapEnabled: this.mapEnabled,
+			updatedSearchEngine: this.updatedSearchEngine,
+			layout: this.layout
 		};
 	}
 

@@ -1,12 +1,12 @@
 class Widget {
 	constructor() {
-		this.listView = new buildfire.components.listView('listViewContainer', { enableAddButton: false, Title: '' });
+		this.usersView = new buildfire.components.gridView('listViewContainer', { enableAddButton: false, Title: '' });
 		this.strings = new buildfire.services.Strings('en-us', stringsConfig);
 		this.searchBar = new SearchBar('searchBar');
 		this.emptyState = document.getElementById('emptyState');
-
+		this.currentScreen = Keys.screenNameKeys.LIST.key;
 		this.directoryUI = null;
-
+		this.activeFilters = null;
 		this.user = null;
 		this.currentPageIndex = 0;
 		this.inProgress = false;
@@ -15,6 +15,7 @@ class Widget {
 		this.timer = null;
 		this.settings = {
 			autoEnlistAll: false,
+			mapEnabled: false,
 			tagFilter: [],
 			actionItem: null,
 			badgePushNotifications: false,
@@ -22,8 +23,8 @@ class Widget {
 		};
 
 		this.init();
+		// this.initMapSearchBar();
 		this.initSearchBar();
-		this.initListView();
 
 		// buildfire.auth.onLogin(() => this.init());
 		// buildfire.auth.onLogout(() => this.init());
@@ -79,61 +80,106 @@ class Widget {
 				}
 			}
 		};
+
+		buildfire.navigation.onBackButtonClick = () => {
+			switch (this.currentScreen) {
+				case Keys.screenNameKeys.LIST.key: {
+					buildfire.navigation.restoreBackButtonClick();
+					buildfire.navigation.goBack();
+					break;
+				}
+				case Keys.screenNameKeys.MAP.key: {
+					buildfire.navigation.restoreBackButtonClick();
+					buildfire.navigation.goBack();
+					break;
+				}
+				case Keys.screenNameKeys.MAPLIST.key: {
+					this.currentScreen = Keys.screenNameKeys.MAP.key;
+					gridViewContainer.classList.toggle("show");
+					googleMap.classList.remove("hide");
+					break;
+				}
+				default: {
+					buildfire.navigation.restoreBackButtonClick();
+					buildfire.navigation.goBack();
+					break;
+				}
+			}
+		};
 	}
 
 	init() {
 		buildfire.appearance.titlebar.show();
 		Promise.all([this.getUser(), this.getSettings(), this.getStrings()]).then(() => {
 			this.strings.inject();
-
+			if (this.settings && this.settings.layout) {
+				let cont = document.getElementById('listViewContainer');
+				if (this.settings.layout === 'grid') {
+					this.usersView = new buildfire.components.gridView('listViewContainer', { enableAddButton: false, Title: '' });
+					if (cont.classList.contains("listViewContainer")) {
+						cont.classList.remove("listViewContainer");
+					}
+				}
+				else {
+					this.usersView = new buildfire.components.listView('listViewContainer', { enableAddButton: false, Title: '' });
+					if (cont.classList.contains("gridViewContainer")) {
+						cont.classList.remove("gridViewContainer");
+					}
+				}
+			}
+			this.initListView();
 			this.isInitialized = true;
 
 			this.directoryUI = new DirectoryUI(this.user, this.strings, this.settings);
-
-			if (this.user) {
-				this.directoryUI.hasAccess((error, hasAccess) => {
-					if (error || !hasAccess) {
-						this.searchBar.shouldShowAddButton(false);
-						this.searchBar.shouldShowOptionsButton(false);
-						return;
-					}
-					this.directoryUI.directory.checkUser((err, userObj) => {
-						if (err) return console.error(err);
-						this.searchBar.shouldShowAddButton(typeof userObj !== 'object' || !userObj.data.isActive);
-						this.searchBar.shouldShowOptionsButton(typeof userObj == 'object' && userObj.data.isActive);
-
-						if (userObj) {
-							// setTimeout(() => {
-							// 	this.directoryUI.directory.updateUser(userObj, () => {
-							// 		this.search();
-							// 	});
-							// }, 60000);
-						}
-					});
-				});
-			} else {
-				this.searchBar.shouldShowAddButton(true);
-				this.searchBar.shouldShowOptionsButton(false);
+			if (this.settings.mapEnabled) {
+				this.initMapView();
 			}
-
-			this.searchBar.setDropdownItems([
-				{
-					text: this.strings.get('other.openProfile'),
-					action: () => buildfire.auth.openProfile(),
-				},
-				{
-					text: this.strings.get('other.leaveDirectory'),
-					action: () => {
-						this.directoryUI.leaveDirectory(() => {
-							this.searchBar.shouldShowAddButton(true);
+			else {
+				if (this.user) {
+					this.directoryUI.hasAccess((error, hasAccess) => {
+						if (error || !hasAccess) {
+							this.searchBar.shouldShowAddButton(false);
 							this.searchBar.shouldShowOptionsButton(false);
-							this.search();
-						});
-					},
-				},
-			]);
+							return;
+						}
+						this.directoryUI.directory.checkUser((err, userObj) => {
+							if (err) return console.error(err);
+							this.searchBar.shouldShowAddButton(typeof userObj !== 'object' || !userObj.data.isActive);
+							this.searchBar.shouldShowOptionsButton(typeof userObj == 'object' && userObj.data.isActive);
 
-			this.search();
+							if (userObj) {
+								// setTimeout(() => {
+								// 	this.directoryUI.directory.updateUser(userObj, () => {
+								// 		this.search();
+								// 	});
+								// }, 60000);
+							}
+						});
+					});
+				} else {
+					this.searchBar.shouldShowAddButton(true);
+					this.searchBar.shouldShowOptionsButton(false);
+				}
+
+				this.searchBar.setDropdownItems([
+					{
+						text: this.strings.get('other.openProfile'),
+						action: () => buildfire.auth.openProfile(),
+					},
+					{
+						text: this.strings.get('other.leaveDirectory'),
+						action: () => {
+							this.directoryUI.leaveDirectory(() => {
+								this.searchBar.shouldShowAddButton(true);
+								this.searchBar.shouldShowOptionsButton(false);
+								this.search();
+							});
+						},
+					},
+				]);
+
+				this.search();
+			}
 		});
 	}
 
@@ -188,7 +234,7 @@ class Widget {
 	}
 
 	initListView() {
-		this.listView.onItemClicked = (item, e) => {
+		this.usersView.onItemClicked = (item, e) => {
 			if (!item.data.userId) return;
 
 			var img = new Image();
@@ -202,7 +248,7 @@ class Widget {
 			img.src = item.imageUrl;
 		};
 
-		this.listView.onItemActionClicked = (item, e) => {
+		this.usersView.onItemActionClicked = (item, e) => {
 			if (!item.data.userId) return;
 			if (item.data.isFavorite) {
 				return this.directoryUI.directory.removeFavorite(item.data, (error, result) => {
@@ -223,6 +269,112 @@ class Widget {
 				});
 			}
 		};
+	}
+
+	initMapView() {
+		defaultView.style.display = 'none';
+		this.currentScreen = Keys.screenNameKeys.MAP.key;
+		this.mapController = new MapView(this.user, this.strings, this.settings, this.directoryUI, this);
+	}
+
+	initCityListView(cityName, users) {
+		mapSearchBar.innerHTML = "";
+		this.mapSearchBar = new SearchBar('mapSearchBar');
+		// this.initCitySearchBar();
+		this.strings.inject();
+		gridView.innerHTML = '';
+		if (this.cityListView) this.cityListView.clear();
+		if (this.settings && this.settings.layout) {
+			let cont = document.getElementById('mapListContent');
+			if (this.settings.layout === 'grid') {
+				this.cityListView = new buildfire.components.gridView('mapListContent', { enableAddButton: false, Title: '' });
+				if (cont.classList.contains("listViewContainer")) {
+					cont.classList.remove("listViewContainer");
+				}
+			}
+			else {
+				this.cityListView = new buildfire.components.listView('mapListContent', { enableAddButton: false, Title: '' });
+				if (cont.classList.contains("gridViewContainer")) {
+					cont.classList.remove("gridViewContainer");
+				}
+			}
+		}
+		this.cityUsers = users;
+		this.cityName = cityName;
+		this.noMore = false;
+		this.userSkip = 0;
+		let name = this.directoryUI.ui('p', gridView, cityName);
+		let userCount = users && users.length ? users.length : 0;
+		let count = this.directoryUI.ui('span', name, userCount, ['user-count']);
+		let limit = this.userSkip + 10;
+		if (users && users.length && this.userSkip + 10 > users.length) {
+			limit = users.length;
+			this.noMore = true;
+		}
+		this.cityUsers = this.directoryUI.handleResults(this.cityUsers);
+		let userSubset = this.cityUsers.slice(this.userSkip, limit);
+		this.cityListView.loadListViewItems(userSubset);
+		this.userSkip += 10;
+		this.cityListView.container.onscroll = (e) => {
+			const { scrollTop, clientHeight, scrollHeight } = this.cityListView.container;
+
+			if (scrollTop + clientHeight > scrollHeight * 0.8) {
+				this.debounce(this.appendCityUsers);
+			}
+		};
+
+		this.cityListView.onItemClicked = (item, e) => {
+			if (!item.data.userId) return;
+
+			var img = new Image();
+			var self = this;
+			img.onload = function () {
+				self.renderUserModal(item, item.imageUrl);
+			};
+			img.onerror = function () {
+				self.renderUserModal(item, "https://app.buildfire.com/app/media/avatar.png");
+			};
+			img.src = item.imageUrl;
+		};
+
+		this.cityListView.onItemActionClicked = (item, e) => {
+			if (!item.data.userId) return;
+			if (item.data.isFavorite) {
+				return this.directoryUI.directory.removeFavorite(item.data, (error, result) => {
+					if (!error) {
+						item.data.isFavorite = false;
+						item.action.icon = 'icon glyphicon glyphicon-star-empty';
+						item.update();
+					}
+				});
+			}
+			if (!item.data.isFavorite) {
+				return this.directoryUI.directory.addFavorite(item.data, (error, result) => {
+					if (!error) {
+						item.data.isFavorite = true;
+						item.action.icon = 'icon glyphicon glyphicon-star btn-primary';
+						item.update();
+					}
+				});
+			}
+		};
+	}
+
+	appendCityUsers () {
+		let users = this.cityUsers;
+		if (!users || !users.length || this.noMore) return;
+		let limit = this.userSkip + 10;
+		if (this.userSkip + 10 > users.length) {
+			limit = users.length;
+			this.noMore = true;
+		}
+
+		let userCount = users && users.length ? users.length : 0;
+		let count = this.directoryUI.ui('span', name, userCount, ['user-count']);
+		let userSubset = users.slice(this.userSkip, limit);
+		
+		this.cityListView.loadListViewItems(userSubset);
+		this.userSkip += 10;
 	}
 
 	reportUser(userId) {
@@ -506,7 +658,7 @@ class Widget {
 	}
 
 	markFavorites(favorites) {
-		this.listView.items.forEach((item) => {
+		this.usersView.items.forEach((item) => {
 			if (typeof item.isFavorite !== 'undefined') return;
 
 			item.isFavorite = (favorites || []).indexOf(item.data.userId) > -1;
@@ -517,8 +669,8 @@ class Widget {
 	search(index = 0) {
 		buildfire.appearance.titlebar.show();
 		if (index == 0) {
-			this.listView.container.onscroll = (e) => {
-				const { scrollTop, clientHeight, scrollHeight } = this.listView.container;
+			this.usersView.container.onscroll = (e) => {
+				const { scrollTop, clientHeight, scrollHeight } = this.usersView.container;
 
 				if (!this.inProgress && scrollTop + clientHeight > scrollHeight * 0.8) {
 					this.currentPageIndex++;
@@ -531,20 +683,20 @@ class Widget {
 		this.currentPageIndex = index;
 		buildfire.spinner.show();
 
-		this.directoryUI.search(this.searchBar.value, this.currentPageIndex, 15, (error, results) => {
+		this.directoryUI.search(this.searchBar.value, this.activeFilters, this.currentPageIndex, 15, (error, results) => {
 			buildfire.spinner.hide();
-			if (index == 0) this.listView.clear();
+			if (index == 0) this.usersView.clear();
 			if (error) return console.error(error);
 
-			this.listView.loadListViewItems(results);
+			this.usersView.loadListViewItems(results);
 
 			this.inProgress = false;
 
 			if (results.length == 0) {
-				this.listView.container.onscroll = null;
+				this.usersView.container.onscroll = null;
 			}
 
-			if (widget.listView.container.childElementCount < 1) {
+			if (widget.usersView.container.childElementCount < 1) {
 				this.emptyState.classList.add('active');
 			} else {
 				this.emptyState.classList.remove('active');
@@ -552,8 +704,254 @@ class Widget {
 		});
 	}
 
-	debounce() {
+	debounce(fnc) {
 		if (this.tmr) clearTimeout(this.tmr);
-		this.tmr = setTimeout(() => this.search(), 500);
+		this.tmr = setTimeout(() => fnc ? fnc() : this.search(), 500);
+	}
+
+	createMockUser() {
+		let tags = [
+			{
+				"2ee7035a-5381-11e9-8fc5-06e43182e96c": [
+					{
+						"tagName": "$$profile_cancer_type",
+						"appliedCount": 1,
+						"firstAssgined": "2022-02-25T13:36:22.655Z",
+						"lastAssgined": "2022-02-25T13:36:22.655Z"
+					},
+					{
+						"tagName": "$$profile_cancer_type:type1",
+						"appliedCount": 1,
+						"firstAssgined": "2022-02-25T13:36:22.655Z",
+						"lastAssgined": "2022-02-25T13:36:22.655Z"
+					},
+					{
+						"tagName": "$$profile_cancer_type:type2",
+						"appliedCount": 1,
+						"firstAssgined": "2022-02-25T13:36:22.655Z",
+						"lastAssgined": "2022-02-25T13:36:22.655Z"
+					},
+					{
+						"tagName": "$$profile_birth_year:1980",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-02T15:21:24.283Z",
+						"lastAssgined": "2022-03-02T15:21:24.283Z"
+					},
+					{
+						"tagName": "$$profile_birth_month:2",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-02T15:21:24.283Z",
+						"lastAssgined": "2022-03-02T15:21:24.283Z"
+					},
+					{
+						"tagName": "$$profile_country:lb",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-02T15:21:24.283Z",
+						"lastAssgined": "2022-03-02T15:21:24.283Z"
+					},
+					{
+						"tagName": "$$profile_state:beirut_governorate",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-02T15:21:24.283Z",
+						"lastAssgined": "2022-03-02T15:21:24.283Z"
+					},
+					{
+						"tagName": "$$profile_city:beirut",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-02T15:21:24.283Z",
+						"lastAssgined": "2022-03-02T15:21:24.283Z"
+					},
+					{
+						"tagName": "$$profile_town:beirut",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-02T15:21:24.283Z",
+						"lastAssgined": "2022-03-02T15:21:24.283Z"
+					}
+				]
+			},
+			{
+				"2ee7035a-5381-11e9-8fc5-06e43182e96c": [
+					{
+						"tagName": "$$profile_cancer_type",
+						"appliedCount": 1,
+						"firstAssgined": "2022-02-25T13:36:22.655Z",
+						"lastAssgined": "2022-02-25T13:36:22.655Z"
+					},
+					{
+						"tagName": "$$profile_cancer_type:type3",
+						"appliedCount": 1,
+						"firstAssgined": "2022-02-25T13:36:22.655Z",
+						"lastAssgined": "2022-02-25T13:36:22.655Z"
+					},
+					{
+						"tagName": "$$profile_birth_year:1999",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-02T15:21:24.283Z",
+						"lastAssgined": "2022-03-02T15:21:24.283Z"
+					},
+					{
+						"tagName": "$$profile_birth_month:7",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-02T15:21:24.283Z",
+						"lastAssgined": "2022-03-02T15:21:24.283Z"
+					},
+					{
+						"tagName": "$$profile_country:tr",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-04T17:29:39.427Z",
+						"lastAssgined": "2022-03-04T17:29:39.427Z"
+					},
+					{
+						"tagName": "$$profile_state:mersin",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-04T17:29:39.427Z",
+						"lastAssgined": "2022-03-04T17:29:39.427Z"
+					},
+					{
+						"tagName": "$$profile_city:akdeniz",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-04T17:29:39.428Z",
+						"lastAssgined": "2022-03-04T17:29:39.428Z"
+					},
+					{
+						"tagName": "$$profile_town:mersin",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-04T17:29:39.428Z",
+						"lastAssgined": "2022-03-04T17:29:39.428Z"
+					}
+				]
+			},
+
+			{
+				"2ee7035a-5381-11e9-8fc5-06e43182e96c": [
+					{
+						"tagName": "$$profile_cancer_type",
+						"appliedCount": 1,
+						"firstAssgined": "2022-02-25T13:36:22.655Z",
+						"lastAssgined": "2022-02-25T13:36:22.655Z"
+					},
+					{
+						"tagName": "$$profile_cancer_type:type1",
+						"appliedCount": 1,
+						"firstAssgined": "2022-02-25T13:36:22.655Z",
+						"lastAssgined": "2022-02-25T13:36:22.655Z"
+					},
+					{
+						"tagName": "$$profile_cancer_type:type2",
+						"appliedCount": 1,
+						"firstAssgined": "2022-02-25T13:36:22.655Z",
+						"lastAssgined": "2022-02-25T13:36:22.655Z"
+					},
+					{
+						"tagName": "$$profile_cancer_type:type3",
+						"appliedCount": 1,
+						"firstAssgined": "2022-02-25T13:36:22.655Z",
+						"lastAssgined": "2022-02-25T13:36:22.655Z"
+					},
+					{
+						"tagName": "$$profile_birth_year:2002",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-02T15:21:24.283Z",
+						"lastAssgined": "2022-03-02T15:21:24.283Z"
+					},
+					{
+						"tagName": "$$profile_birth_month:2",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-02T15:21:24.283Z",
+						"lastAssgined": "2022-03-02T15:21:24.283Z"
+					},
+					{
+						"tagName": "$$profile_country:us",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-04T17:29:39.427Z",
+						"lastAssgined": "2022-03-04T17:29:39.427Z"
+					},
+					{
+						"tagName": "$$profile_state:dc",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-04T17:29:39.427Z",
+						"lastAssgined": "2022-03-04T17:29:39.427Z"
+					},
+					{
+						"tagName": "$$profile_city:district_of_columbia",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-04T17:29:39.428Z",
+						"lastAssgined": "2022-03-04T17:29:39.428Z"
+					},
+					{
+						"tagName": "$$profile_town:washington",
+						"appliedCount": 1,
+						"firstAssgined": "2022-03-04T17:29:39.428Z",
+						"lastAssgined": "2022-03-04T17:29:39.428Z"
+					}
+				]
+			},
+		];
+		let locations = [
+			{
+				"lat": 33.8937913,
+				"lng": 35.5017767
+			},
+			{
+				"lat": 36.812730,
+				"lng": 34.642130
+			},
+			{
+				"lat": 47.751076,
+				"lng": -120.740135
+			}
+
+		];
+		let locationkeys = [
+			"beirut,lb",
+			"akdeniz,tr",
+			"district_of_columbia,us"
+		];
+		let url = "http://filltext.com/?rows=100&firstName={firstName}&lastName={lastName}&isActive=true&displayName={firstName}~{lastName}&phoneNumber={phone}&email={email}&userId={index}";
+		let userList = [];
+		fetch(url)
+			.then(response => response.json())
+			.then(data => {
+				if (data) {
+					userList = data.map((item, index) => {
+						item["tags"] = tags[index % tags.length]["2ee7035a-5381-11e9-8fc5-06e43182e96c"];
+						item["location"] = locations[index % locations.length];
+						item["locationKey"] = locationkeys[index % locationkeys.length];
+						item["joinDate"] = 1646421086535;
+						item["badgeCount"] = 0;
+						item["badges"] = [];
+						item["tagsCount"] = tags[index % tags.length]["2ee7035a-5381-11e9-8fc5-06e43182e96c"].length;
+						item["_buildfire"] = {};
+						item["_buildfire"]["index"] = {
+							"text": item["displayName"],
+							"string1": item["userId"],
+							"array1": [{ string1: item["locationKey"] }],
+						};
+						return item;
+					});
+					console.log(userList);
+					buildfire.appData.bulkInsert(
+						userList,
+						"$$userDirectory",
+						(err, result) => {
+							if (err) return console.error("Error while inserting your data", err);
+
+							console.log("Insert successfull", result);
+						}
+					);
+					// userList.forEach(item => {
+					// 	Users.add(item, (err, res) => {
+					// 	});
+					// });
+					// new DirectoryUser(user).toJson(this.settings, (error, json) => {
+					// 	if (error) return console.error(error);
+					// 	console.log("new User", json);
+					// 	Users.add(json, (err, res) => {
+					// 		console.log("new user added to dir");
+					// 	});
+					// });
+				}
+			});
+
 	}
 }

@@ -488,3 +488,138 @@ input[type="password"] {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.cluster-tooltip {
+  width: 30px;
+  background-color: white;
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  margin-left: -2.5px;
+}
+
+.cluster-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}
+
+#gridViewContainer {
+  padding-top: 3rem !important;
+  margin-top: 1rem !important;
+  display: none;
+}
+
+#gridView {
+  padding: 1rem;
+}
+
+.user-count {
+  float: right;
+}
+
+#mapList {
+  height: 100vh;
+  overflow: scroll;
+}
+
+#mapListContent {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.mapListViewItem {
+  border: 4px;
+  margin-top: 20px;
+  position: relative;
+}
+
+.mapListViewItem__image {
+  height: 43vw;
+  width: 43vw;
+}
+
+.mapListViewItem__action {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.listViewItem {
+  width: 100%;
+}
+
+.gridViewContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    flex-direction: row;
+    overflow-y: auto;
+    max-height: 100vh;
+    padding: 0;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    padding-top: 3rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    margin-top: 1rem;
+}
+
+.gridViewItem {
+  border: 4px;
+  margin-top: 20px;
+  position: relative;
+  width: 43vw;
+  white-space: nowrap; 
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.gridViewItemImg {
+  height: 43vw;
+  width: 43vw;
+}
+
+.gridViewItemTitle {
+}
+
+.gridActionHolder {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.gridViewItem .badge {
+  padding: 0px !important;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  overflow: hidden;
+  min-width: 18px;
+  margin-right: 0.125rem;
+  background-color: rgba(150,150,150,.1);
+}
+
+.gridViewItem .badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

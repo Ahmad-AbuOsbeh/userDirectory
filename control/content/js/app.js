@@ -14,7 +14,8 @@
 			ranking: 'ALPHA_ASC',
 			userSubtitleShowMode: Keys.userSubtitleShowModeKeys.SHOW_EMAIL.key,
 			navigateToCwByDefault: false,
-			allowShowProfileComponent: false
+			allowShowProfileComponent: false,
+			mapEnabled:false,
 		};
 
 		$scope.badgeListUI = badgeListUI;
@@ -103,7 +104,7 @@
 
 		Settings.get()
 			.then(data => {
-				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault, allowShowProfileComponent, updatedSearchEngine } = data;
+				const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault, allowShowProfileComponent, updatedSearchEngine, mapEnabled } = data;
 
 				$scope.data.autoEnlistAll = autoEnlistAll || false;
 				$scope.data.tagFilter = tagFilter || [];
@@ -114,6 +115,7 @@
 				$scope.data.navigateToCwByDefault = navigateToCwByDefault || false;
 				$scope.data.allowShowProfileComponent = allowShowProfileComponent || false;
 				$scope.data.updatedSearchEngine = updatedSearchEngine || null;
+				$scope.data.mapEnabled = mapEnabled || false;
 
 				if (!$scope.data.updatedSearchEngine) {
 					buildfire.dialog.alert({

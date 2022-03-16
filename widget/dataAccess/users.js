@@ -38,13 +38,13 @@ class Users {
 	 * @param {Function} callback callback for handling response
 	 */
 	static search(options, callback) {
-		const { userIds, pageIndex, pageSize, ranking } = options;
+		const { userIds, pageIndex, pageSize, ranking, filters } = options;
 
 		var searchOptions = {
 			sort: { firstName: 1, lastName: 1, displayName: 1 },
 			page: pageIndex,
 			pageSize,
-			filter: { '$json.isActive': true },
+			filter: filters ? filters : { '$json.isActive': true },
 		};
 
 		if (ranking) {

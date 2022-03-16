@@ -1,70 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<title>Title</title>
 
-		<!-- build:bundleWidgetBFMinJS  -->
-		<!-- endbuild -->
-		<script src="../../../scripts/buildfire.js"></script>
-		<script src="../../../scripts/buildfire/components/popup/popup.js"></script>
-		<script src="../../../scripts/buildfire/components/listView/listView.js"></script>
-		<script src="../../../scripts/buildfire/components/drawer/drawer.js"></script>
-		<script src="../../../scripts/buildfire/components/toast/toast.js"></script>
-		<script src="../../../scripts/buildfire/services/searchEngine/searchEngine.js"></script>
-		<script src="../../../scripts/buildfire/services/notifications/pushNotifications.js"></script>
+<head>
+	<meta charset="UTF-8" />
+	<title>Title</title>
 
-		<!-- build:bundleSharedJSFiles -->
-		<script src="js/shared/analytics.js"></script>
-    <script src="js/shared/keys.js"></script>
-    <script src="js/shared/ui.js"></script>
-		<script src="js/shared/strings.js"></script>
-		<script src="js/shared/stringsConfig.js"></script>
-		<script src="js/shared/settings.class.js"></script>
-		<!-- endbuild -->
+	<!-- build:bundleWidgetBFMinJS  -->
+	<!-- endbuild -->
+	<script src="../../../scripts/buildfire.js"></script>
+	<script src="../../../scripts/buildfire/components/popup/popup.js"></script>
+	<script src="../../../scripts/buildfire/components/listView/listView.js"></script>
+	<script src="../../../scripts/buildfire/components/drawer/drawer.js"></script>
+	<script src="../../../scripts/buildfire/components/toast/toast.js"></script>
+	<script src="../../../scripts/buildfire/services/searchEngine/searchEngine.js"></script>
+	<script src="../../../scripts/buildfire/services/notifications/pushNotifications.js"></script>
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOp1GltsWARlkHhF1H_cb6xtdR1pvNDAk&sensor=false"></script>
 
-		<!-- build:bundleDataJSFiles -->
-		<script src="dataAccess/users.js"></script>
-		<script src="dataAccess/lookup.js"></script>
-		<script src="dataAccess/favorites.js"></script>
-		<script src="dataAccess/badges.js"></script>
-		<script src="dataAccess/reports.js"></script>
-		<!-- endbuild -->
+	<!-- build:bundleSharedJSFiles -->
+	<script src="js/shared/analytics.js"></script>
+	<script src="js/shared/keys.js"></script>
+	<script src="js/shared/ui.js"></script>
+	<script src="js/shared/strings.js"></script>
+	<script src="js/shared/stringsConfig.js"></script>
+	<script src="js/shared/settings.class.js"></script>
+	<!-- endbuild -->
 
-		<!-- build:bundleJSFiles -->
-		<script src="js/dummyData.js"></script>
-		<script src="js/directoryUser.js"></script>
-		<script src="js/directory.js"></script>
-		<script src="js/directoryUI.js"></script>
-		<script src="js/searchBar.js"></script>
-		<script src="js/widget.js"></script>
-		<!-- endbuild -->
+	<!-- build:bundleDataJSFiles -->
+	<script src="dataAccess/users.js"></script>
+	<script src="dataAccess/lookup.js"></script>
+	<script src="dataAccess/favorites.js"></script>
+	<script src="dataAccess/badges.js"></script>
+	<script src="dataAccess/reports.js"></script>
+	<script src="dataAccess/locations.js"></script>
+	<!-- endbuild -->
 
-		<link rel="stylesheet" href="../../../styles/siteIcons.css" />
-		<link rel="stylesheet" href="../../../styles/components/listView.css" />
-		<!-- build:bundleCSSFiles -->
-		<link rel="stylesheet" href="css/widget.css" />
-		<!-- endbuild -->
-	</head>
-	<body>
+	<!-- build:bundleJSFiles -->
+	<script src="js/dummyData.js"></script>
+	<script src="js/directoryUser.js"></script>
+	<script src="js/directory.js"></script>
+	<script src="js/directoryUI.js"></script>
+	<script src="js/map.js"></script>
+	<script src="js/markercluster.js"></script>
+	<script src="js/searchBar.js"></script>
+	<script src="js/widget.js"></script>
+	<script src="js/gridView.js"></script>
+	<!-- endbuild -->
+
+	<link rel="stylesheet" href="../../../styles/siteIcons.css" />
+	<link rel="stylesheet" href="../../../styles/components/listView.css" />
+	<!-- build:bundleCSSFiles -->
+	<link rel="stylesheet" href="css/widget.css" />
+	<!-- endbuild -->
+</head>
+
+<body>
+	<div id="defaultView">
 		<header id="searchBar"></header>
-		<div id="listViewContainer"></div>
+		<div id="listViewContainer">
+		</div>
 		<div id="emptyState" class="empty-state-holder">
 			<img src="images/empty.png"></img>
 		</div>
-		<script>
-			buildfire.appearance.titlebar.show();
-			const widget = new Widget();
-			buildfire.deeplink.getData((deeplinkData) => {
-				if (deeplinkData){
-					Users.getByUserId(deeplinkData.userId, (error, result) => {
-						if (error) return callback(error, false);
-						let item = result;
-						let userPictureUrl = buildfire.auth.getUserPictureUrl({userId: deeplinkData.userId});
-						widget.renderUserModal(item, userPictureUrl);
-					});
-				}
-			});
-		</script>
-	</body>
+	</div>
+	<div id="mapView">
+		<div id="googleMap" style="height:100%;width:100%;position:absolute;"></div>
+		<div id="gridViewContainer">
+			<header id="mapSearchBar"></header>
+			<div id="gridView">
+				</div>
+				<div id="mapList">
+					<div id="mapListContent"></div>
+				</div>
+			</div>
+			<div id="emptyState" class="empty-state-holder">
+				<img src="images/empty.png"></img>
+			</div>
+		</div>
+	</div>
+	<script>
+		buildfire.appearance.titlebar.show();
+		const widget = new Widget();
+		buildfire.deeplink.getData((deeplinkData) => {
+			if (deeplinkData) {
+				Users.getByUserId(deeplinkData.userId, (error, result) => {
+					if (error) return callback(error, false);
+					let item = result;
+					let userPictureUrl = buildfire.auth.getUserPictureUrl({ userId: deeplinkData.userId });
+					widget.renderUserModal(item, userPictureUrl);
+				});
+			}
+		});
+		function createMockUser() {
+			widget.createMockUser();
+		}
+	</script>
+</body>
+
 </html>

@@ -23,10 +23,6 @@ class DirectoryUser {
 		if (countryTag && cityTag) {
 			const countryKey = countryTag.tagName.split(":")[1];
 			const cityKey = cityTag.tagName.split(":")[1];
-			this.location = {
-				country: countryTag.tagName.split(":")[1],
-				city: cityTag.tagName.split(":")[1]
-			};
 			this.locationKey = `${cityKey},${countryKey}`;
 			// Check if we have the key in the list of locations
 			Locations.getLocationByKey(this.locationKey, (error, location) => {
@@ -83,11 +79,13 @@ class DirectoryUser {
 			badgeCount += badge.appliedCount;
 		});
 		let tagCount = 0;
+		let tagIndex = [];
 		this.tags.forEach(tag => {
 			if (typeof tag.appliedCount !== 'number') {
 				tag.appliedCount = 1;
 			}
 			tagCount += tag.appliedCount;
+			tagIndex.push({string1: tag.tagName});
 		});
 		return {
 			isActive: this.isActive,
@@ -111,7 +109,7 @@ class DirectoryUser {
 				index: {
 					text: `${this.firstName || ''} ${this.lastName || ''} ${this.displayName || ''} ${this.email || ''}`,
 					string1: `${this.userId}`,
-					array1: [...badgeIds, { string1: `${this.locationKey}` }],
+					array1: [...badgeIds, ...tagIndex, { string1: `${this.locationKey}` }],
 				}
 			}
 		};

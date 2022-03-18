@@ -26,6 +26,9 @@
 		<!-- build:bundleDataJSFiles  -->
 		<script src="../../widget/dataAccess/users.js"></script>
 		<script src="../../widget/dataAccess/badges.js"></script>
+		<script src="../../widget/dataAccess/categories.js"></script>
+		<script src="../../widget/data/category.js"></script>
+		<script src="../../widget/data/subcategory.js"></script>
 		<!-- endbuild -->
 
 		<!-- build:bundleSharedJSFiles  -->
@@ -42,6 +45,7 @@
 	</head>
 	<body ng-app="directoryContent">
 		<div ng-controller="directoryContentCtrl">
+			<button ng-click="createMockCategory()">Create Mock Category</button>
 			<div class="input-row">
 				<p class="label-container">Auto enlist all users</p>
 				<div class="button-switch margin-left-auto">

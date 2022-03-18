@@ -39,7 +39,6 @@ class Users {
 	 */
 	static search(options, callback) {
 		const { userIds, pageIndex, pageSize, ranking, filters } = options;
-
 		var searchOptions = {
 			sort: { firstName: 1, lastName: 1, displayName: 1 },
 			page: pageIndex,
@@ -55,7 +54,7 @@ class Users {
 		if (userIds) {
 			searchOptions.filter['_buildfire.index.string1'] = { $in: userIds };
 		}
-
+		console.log("search", searchOptions);
 		buildfire.appData.search(searchOptions, this.tag, callback);
 	}
 

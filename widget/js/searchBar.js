@@ -2,7 +2,8 @@ class SearchBar {
 	constructor(containerId, options) {
 		this.container = document.getElementById(containerId);
 		if (!this.container) throw 'Cant find container';
-
+		this.filterScreen;
+		if (options && options.filterScreen) this.filterScreen = options.filterScreen;
 		this.container.classList.add('search-bar');
 		this.container.classList.add('backgroundColorTheme');
 
@@ -10,10 +11,14 @@ class SearchBar {
 		this.input.setAttribute('type', 'search');
 		this.input.setAttribute('bfString', 'other.searchUser');
 
-		this.favorites = ui.create('span', this.container, null, ['favorites', 'search-bar__icon', 'icon', 'glyphicon' , 'glyphicon-star-empty']);
+		this.filterButton = ui.create('span', this.container, null, ['filter-funnel', 'search-bar__icon', 'icon', 'glyphicon', 'glyphicon-filter', 'hidden']);
+		this.filterButton.onclick = () => this.goToFilterScreen();
+
+
+		this.favorites = ui.create('span', this.container, null, ['favorites', 'search-bar__icon', 'icon', 'glyphicon', 'glyphicon-star-empty']);
 		this.favorites.onclick = () => this.filterFavorites();
 
-		this.add = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'glyphicon' , 'glyphicon-plus', 'hidden']);
+		this.add = ui.create('span', this.container, null, ['join', 'search-bar__icon', 'icon', 'glyphicon', 'glyphicon-plus', 'hidden']);
 
 		this.options = ui.create('div', this.container, null, ['btn-group', 'hidden']);
 
@@ -78,6 +83,17 @@ class SearchBar {
 		}
 	}
 
+	shouldShowFilterButton(value) {
+		if (value) {
+			// this.add.classList.remove('hidden');
+			this.filterButton.classList.remove('hidden');
+		} else {
+			// this.add.classList.add('hidden');
+			this.filterButton.classList.add('hidden');
+		}
+	}
+
+
 	filterFavorites() {
 		if (this.favoritesFilter) {
 			this.favoritesFilter = false;
@@ -88,6 +104,17 @@ class SearchBar {
 		}
 
 		this.onFavoritesButtonClicked(this.favoritesFilter);
+	}
+
+	goToFilterScreen() {
+		if (this.filterScreen) {
+			if (this.filterScreen.state.initialized) {
+				this.filterScreen.show();
+			} else {
+				this.filterScreen.init();
+			}
+		}
+
 	}
 
 	onChange() {

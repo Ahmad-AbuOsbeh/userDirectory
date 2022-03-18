@@ -182,7 +182,6 @@ class MapView {
             "$and": [
               { "_buildfire.index.array1.string1": { $in: cityKeys } },
               { "$json.isActive": true },
-
             ]
           }, this.state.userSkip, this.state.pageSize, (err, res) => {
             this.isBusy = false;

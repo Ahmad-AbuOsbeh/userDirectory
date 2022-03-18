@@ -146,7 +146,41 @@
 				$scope.save();
 			}, true);
 		}
+
+		$scope.createMockCategory = () => {
+			// let sub1 = new Subcategory({
+			// 	name: 'Male',
+			// 	key: '$$profile_data_male',
+			// 	rank: 10,
+			// });
+			// let sub2 = new Subcategory({
+			// 	name: 'Female',
+			// 	key: '$$profile_data_female',
+			// 	rank:20
+			// });
+			// let data = {
+			// 	name: 'Gender',
+			// 	iconType: Keys.iconTypes.IMG.key,
+			// 	icon: 'https://alnnibitpo.cloudimg.io/v7/https://alnnibitpo.cloudimg.io/v7/https://images.unsplash.com/photo-1485579149621-3123dd979885?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw0NDA1fDB8MXxzZWFyY2h8OXx8c291bmR8ZW58MHx8fHwxNjQ2OTIxMzU5&ixlib=rb-1.2.1&q=80&w=1080&func=bound&width=240&height=135&func=crop&width=215&height=121',
+			// 	subcategories: [sub1, sub2],
+			// 	rank: 10,
+			// }
+			let data = {
+				name: 'Age',
+				iconType: Keys.iconTypes.ICON.key,
+				icon: 'glyphicon glyphicon-user',
+				categoryType: Keys.categoryTypes.BIRTHDATE.key,
+				rank: 20
+			}
+			Categories.add(data, (err, res) => {
+				if (res) {
+					console.log("Success", res);
+				}
+			});
+		}
 	};
+
+
 
 	app.controller('directoryContentCtrl', ['$scope', directoryContentCtrl]).filter('cropImg', function () {
 		return function (url) {

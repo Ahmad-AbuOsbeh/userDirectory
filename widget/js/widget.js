@@ -2,11 +2,11 @@ class Widget {
 	constructor() {
 		this.usersView = new buildfire.components.gridView('listViewContainer', { enableAddButton: false, Title: '' });
 		this.strings = new buildfire.services.Strings('en-us', stringsConfig);
-		this.searchBar = new SearchBar('searchBar');
 		this.emptyState = document.getElementById('emptyState');
 		this.currentScreen = Keys.screenNameKeys.LIST.key;
 		this.directoryUI = null;
 		this.activeFilters = null;
+		this.searchFilters = {};
 		this.user = null;
 		this.currentPageIndex = 0;
 		this.inProgress = false;
@@ -21,7 +21,13 @@ class Widget {
 			badgePushNotifications: false,
 			ranking: 'ALPHA_ASC',
 		};
-
+		this.filterScreen = new Filter({
+			widget: this,
+			settings: this.settings,
+		});
+		this.searchBar = new SearchBar('searchBar', {
+			filterScreen: this.filterScreen,
+		});
 		this.init();
 		// this.initMapSearchBar();
 		this.initSearchBar();
@@ -99,6 +105,19 @@ class Widget {
 					googleMap.classList.remove("hide");
 					break;
 				}
+				case Keys.screenNameKeys.FILTER.key: {
+					if (this.settings && this.settings.mapEnabled) {
+						this.currentScreen = Keys.screenNameKeys.MAP.key;
+						filterView.classList.toggle("show");
+						googleMap.style.display = 'block';
+					}
+					else {
+						this.currentScreen = Keys.screenNameKeys.LIST.key;
+						filterView.classList.toggle("show");
+						defaultView.style.display = 'block';
+					}
+					break;
+				}
 				default: {
 					buildfire.navigation.restoreBackButtonClick();
 					buildfire.navigation.goBack();
@@ -129,7 +148,7 @@ class Widget {
 			}
 			this.initListView();
 			this.isInitialized = true;
-
+			// this.showFilterScreen();
 			this.directoryUI = new DirectoryUI(this.user, this.strings, this.settings);
 			if (this.settings.mapEnabled) {
 				this.initMapView();
@@ -146,6 +165,9 @@ class Widget {
 							if (err) return console.error(err);
 							this.searchBar.shouldShowAddButton(typeof userObj !== 'object' || !userObj.data.isActive);
 							this.searchBar.shouldShowOptionsButton(typeof userObj == 'object' && userObj.data.isActive);
+							//TODO Check if filter is enabled in settings
+							// if (this.settings.filterEnabled) {
+							this.searchBar.shouldShowFilterButton(true);
 
 							if (userObj) {
 								// setTimeout(() => {
@@ -277,6 +299,14 @@ class Widget {
 		this.mapController = new MapView(this.user, this.strings, this.settings, this.directoryUI, this);
 	}
 
+	// showFilterScreen() {
+	// 	this.filterScreen = new Filter({
+	// 		widget: this,
+	// 		settings: this.settings,
+	// 	});
+	// 	this.filterScreen.init();
+	// }
+
 	initCityListView(cityName, users) {
 		mapSearchBar.innerHTML = "";
 		this.mapSearchBar = new SearchBar('mapSearchBar');
@@ -360,7 +390,7 @@ class Widget {
 		};
 	}
 
-	appendCityUsers () {
+	appendCityUsers() {
 		let users = this.cityUsers;
 		if (!users || !users.length || this.noMore) return;
 		let limit = this.userSkip + 10;
@@ -372,7 +402,7 @@ class Widget {
 		let userCount = users && users.length ? users.length : 0;
 		let count = this.directoryUI.ui('span', name, userCount, ['user-count']);
 		let userSubset = users.slice(this.userSkip, limit);
-		
+
 		this.cityListView.loadListViewItems(userSubset);
 		this.userSkip += 10;
 	}
@@ -683,7 +713,7 @@ class Widget {
 		this.currentPageIndex = index;
 		buildfire.spinner.show();
 
-		this.directoryUI.search(this.searchBar.value, this.activeFilters, this.currentPageIndex, 15, (error, results) => {
+		this.directoryUI.search(this.searchBar.value, this.searchFilters, this.currentPageIndex, 15, (error, results) => {
 			buildfire.spinner.hide();
 			if (index == 0) this.usersView.clear();
 			if (error) return console.error(error);
@@ -707,6 +737,47 @@ class Widget {
 	debounce(fnc) {
 		if (this.tmr) clearTimeout(this.tmr);
 		this.tmr = setTimeout(() => fnc ? fnc() : this.search(), 500);
+	}
+
+	filter() {
+		//construct filter object from active filters
+		let filters = this.activeFilters;
+		let orS = [];
+		let finalFilter = {};
+		if (Object.keys(filters) && Object.keys(filters).length > 0) {
+			let categories = Object.keys(filters);
+			for (let i = 0; i < categories.length; i++) {
+				let and = [];
+				if (categories[i] == Keys.categoryTypes.BIRTHDATE.key) {
+					console.log("KEY")
+					let birthdate = filters[categories[i]];
+					let bd = { "_buildfire.index.date1": { $gte: new Date(birthdate.min), $lte: new Date(birthdate.max) } };
+					and.push(bd);
+				}
+				else {
+					if (filters[categories[i]].length > 0) {
+						filters[categories[i]].forEach(function (item) {
+							and.push({ "_buildfire.index.array1.string1": item });
+						});
+					}
+				}
+				orS.push({
+					"$or": and
+				});
+			}
+		}
+		else {
+			orS = null;
+		}
+
+		if (orS) {
+			finalFilter = {
+				"$and": orS
+			}
+		}
+		this.usersView.clear();
+		this.searchFilters = finalFilter;
+		this.search();
 	}
 
 	createMockUser() {
@@ -954,4 +1025,43 @@ class Widget {
 			});
 
 	}
+
+	goBack() {
+		switch (this.currentScreen) {
+			case Keys.screenNameKeys.LIST.key: {
+				buildfire.navigation.restoreBackButtonClick();
+				buildfire.navigation.goBack();
+				break;
+			}
+			case Keys.screenNameKeys.MAP.key: {
+				buildfire.navigation.restoreBackButtonClick();
+				buildfire.navigation.goBack();
+				break;
+			}
+			case Keys.screenNameKeys.MAPLIST.key: {
+				this.currentScreen = Keys.screenNameKeys.MAP.key;
+				gridViewContainer.classList.toggle("show");
+				googleMap.classList.remove("hide");
+				break;
+			}
+			case Keys.screenNameKeys.FILTER.key: {
+				if (this.settings && this.settings.mapEnabled) {
+					this.currentScreen = Keys.screenNameKeys.MAP.key;
+					filterView.classList.toggle("show");
+					googleMap.style.display = 'block';
+				}
+				else {
+					this.currentScreen = Keys.screenNameKeys.LIST.key;
+					filterView.classList.toggle("show");
+					defaultView.style.display = 'block';
+				}
+				break;
+			}
+			default: {
+				buildfire.navigation.restoreBackButtonClick();
+				buildfire.navigation.goBack();
+				break;
+			}
+		}
+	};
 }

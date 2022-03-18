@@ -28,6 +28,10 @@ class Keys {
 			MAPLIST: {
 				key: 'MAPLIST',
 				title: 'List'
+			},
+			FILTER: {
+				key: 'FILTER',
+				title: 'Filter'
 			}
 		};
 	}

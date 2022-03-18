@@ -24,6 +24,9 @@
 	<script src="js/shared/strings.js"></script>
 	<script src="js/shared/stringsConfig.js"></script>
 	<script src="js/shared/settings.class.js"></script>
+	<script src="data/category.js"></script>
+	<script src="data/subcategory.js"></script>
+
 	<!-- endbuild -->
 
 	<!-- build:bundleDataJSFiles -->
@@ -33,6 +36,7 @@
 	<script src="dataAccess/badges.js"></script>
 	<script src="dataAccess/reports.js"></script>
 	<script src="dataAccess/locations.js"></script>
+	<script src="dataAccess/categories.js"></script>
 	<!-- endbuild -->
 
 	<!-- build:bundleJSFiles -->
@@ -45,12 +49,15 @@
 	<script src="js/searchBar.js"></script>
 	<script src="js/widget.js"></script>
 	<script src="js/gridView.js"></script>
+	<script src="js/filter.js"></script>
+	<script src="js/multithumb-slider.js"></script>
 	<!-- endbuild -->
 
 	<link rel="stylesheet" href="../../../styles/siteIcons.css" />
 	<link rel="stylesheet" href="../../../styles/components/listView.css" />
 	<!-- build:bundleCSSFiles -->
 	<link rel="stylesheet" href="css/widget.css" />
+	<link rel="stylesheet" href="css/multithumb-slider.css" />
 	<!-- endbuild -->
 </head>
 
@@ -68,15 +75,26 @@
 		<div id="gridViewContainer">
 			<header id="mapSearchBar"></header>
 			<div id="gridView">
-				</div>
-				<div id="mapList">
-					<div id="mapListContent"></div>
-				</div>
 			</div>
-			<div id="emptyState" class="empty-state-holder">
-				<img src="images/empty.png"></img>
+			<div id="mapList">
+				<div id="mapListContent"></div>
 			</div>
 		</div>
+		<div id="emptyState" class="empty-state-holder">
+			<img src="images/empty.png"></img>
+		</div>
+	</div>
+	<div id="filterView">
+			<div id="emptyContainer" class="padded hidden">
+			</div>
+			<div id="filterScreen">
+				<div id="filtersContainer">
+					<div class="filters-footer">
+						<button id="applyFilterBtn"
+							class="btn btn-primary apply-button">Apply</button>
+					</div>
+				</div>
+			</div>
 	</div>
 	<script>
 		buildfire.appearance.titlebar.show();

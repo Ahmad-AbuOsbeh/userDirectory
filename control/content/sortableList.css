@@ -33,8 +33,13 @@
     font-size: 1.25rem;
     color: #000;
 }
+.draggable-list-view .d-item .btn--icon.icon:hover{
+    color: #ED4B4B;
+
+}
 .draggable-list-view{
     border: 0 !important;
+    max-height: none !important;
 }
 .draggable-list-view .d-item{
     display: flex;
@@ -63,9 +68,9 @@
 }
 
 .draggable-list-view .copy{
-    display: flex;
+    display: flex !important;
     align-items: center;
-    top: 0;
+    top: 0 !important;
     justify-content: space-between;
     max-width: 100% !important;
     width: 100% !important;
@@ -155,7 +160,7 @@
     border-radius: .25rem;
     overflow: hidden;
     margin-right: 1rem;
-    margin-left: .25rem;
+    /* margin-left: .25rem; */
     flex-shrink: 0;
 }
 .draggable-list-view .d-item.edit .btn-cancel{

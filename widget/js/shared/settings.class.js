@@ -26,31 +26,39 @@ class Settings {
 	}
 
 	constructor(dbObj = { data: {} }) {
-		this.autoEnlistAll = dbObj.data.autoEnlistAll || false;
+		//from content tab
 		this.tagFilter = dbObj.data.tagFilter || [];
 		this.actionItem = dbObj.data.actionItem || null;
-		this.badgePushNotifications = dbObj.data.badgePushNotifications || null;
-		this.ranking = dbObj.data.ranking || 'ALPHA_ASC';
-		this.userSubtitleShowMode = dbObj.data.userSubtitleShowMode || null;
+		//not sure from which tab
 		this.navigateToCwByDefault = dbObj.data.navigateToCwByDefault || false;
-		this.allowShowProfileComponent = dbObj.data.allowShowProfileComponent || false;
 		this.updatedSearchEngine = dbObj.data.updatedSearchEngine || null;
+		//from settings tab
+		this.autoEnlistAll = dbObj.data.autoEnlistAll || false;
+		this.allowShowProfileComponent = dbObj.data.allowShowProfileComponent || false;
+		this.badgePushNotifications = dbObj.data.badgePushNotifications || null;
+		this.userSubtitleShowMode = dbObj.data.userSubtitleShowMode || null;
+		this.ranking = dbObj.data.ranking || 'ALPHA_ASC';
 		this.mapEnabled = dbObj.data.mapEnabled || false;
+		this.filtersEnabled = dbObj.data.filtersEnabled || false;
+		//from design tab
 		this.layout = dbObj.data.layout || 'list';
 	}
 
 	toRawData() {
 		return {
-			autoEnlistAll: this.autoEnlistAll,
 			tagFilter: this.tagFilter,
 			actionItem: this.actionItem,
-			badgePushNotifications: this.badgePushNotifications,
-			ranking: this.ranking,
-			userSubtitleShowMode: this.userSubtitleShowMode,
 			navigateToCwByDefault: this.navigateToCwByDefault,
-			allowShowProfileComponent: this.allowShowProfileComponent,
-			mapEnabled: this.mapEnabled,
 			updatedSearchEngine: this.updatedSearchEngine,
+
+			autoEnlistAll: this.autoEnlistAll,
+			allowShowProfileComponent: this.allowShowProfileComponent,
+			badgePushNotifications: this.badgePushNotifications,
+			userSubtitleShowMode: this.userSubtitleShowMode,
+			ranking: this.ranking,
+			mapEnabled: this.mapEnabled,
+			filtersEnabled: this.filtersEnabled,
+			
 			layout: this.layout
 		};
 	}

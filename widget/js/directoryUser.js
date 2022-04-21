@@ -12,8 +12,10 @@ class DirectoryUser {
 		this.location = user.location || null;
 		this.locationKey = user.locationKey || null;
 
-		// const { appId } = buildfire.getContext();
-		const appId = "2ee7035a-5381-11e9-8fc5-06e43182e96c";
+		const { appId } = buildfire.getContext();
+		// const appId = "2ee7035a-5381-11e9-8fc5-06e43182e96c";
+		console.log('user.tagssssss',user.tags);
+		console.log('buildfire.getContext();',buildfire.getContext());
 		this.tags = user.tags && user.tags[appId] ? user.tags[appId] : [];
 	};
 
@@ -146,6 +148,10 @@ class DirectoryUser {
 		// 	}
 		// }
 		if (settings && settings.mapEnabled) {
+			// console.log('document.querySelector(.my-location-icon)',document.querySelector('.my-location-icon'));
+			// document.querySelector('.my-location-icon').style.display='block';
+			// document.querySelector('.onMap-users-list-icon').style.display='block';
+			// document.querySelector('.onMap-filter-icon').style.display='block';
 			if (this.tags && this.tags.length) {
 				var locationTags = this.tags.filter(tag => tag.tagName.includes("$$profile_country") || (tag.tagName.includes("$$profile_city") || tag.tagName.includes("$$profile_town")));
 				if (locationTags && locationTags.length) {

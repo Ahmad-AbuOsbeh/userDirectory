@@ -1,3 +1,10 @@
+html[buildfire], html[buildfire] body{
+	overflow-x: visible !important;
+}
+.content-container{
+	position: relative;
+	top: -20px;
+}
 .title {
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	-webkit-font-smoothing: antialiased !important;
@@ -12,9 +19,8 @@
 	font-size: 1.125rem;
 	color: #000;
 	font-weight: 700;
-	margin-bottom: 0.875rem;
-	padding-top: 0.875rem;
-	margin-top: 20px;
+	margin-bottom: 16px !important;
+	margin-top: 0;
 }
 .title::before {
 	display: block;
@@ -213,7 +219,7 @@
 .btn-default.new-badge-image{
 	background-color: #EEF0F0;
 	border-color: transparent;
-	color: #17C051;
+	color: #14CB5D;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -245,8 +251,9 @@
 	min-width: auto;
 }
 .badges-input-group .btn-success{
-	margin-left: 5.5rem;
+	margin-left: 40px;
 	flex-shrink: 0;
+	width: 128px;
 }
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -258,4 +265,101 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+.actions-container{
+	display: flex;
+	gap: 8px;
+}
+.btn-danger{
+	color: #ED4B4B !important;
+	background-color: transparent !important;
+	/* N-Gray 3 */
+    /* border: 1px solid #DDDDDD; */
+    box-sizing: border-box;
+    border-radius: 50%;
+	width: 94px;
+}   
+.btn-danger:hover {
+    color: #ffffff !important;
+    background-color: #cc2934 !important;
+    border-color: none;
+}
+
+.add-category-button{
+	width: 128px;
+	float: right;
+}
+
+.dropdown-sort{
+	width: 182px;
+	float: left;
+}
+
+.categoryScreenIcon {
+	object-fit: none;
+	height: 30px !important;
+	width: 30px !important;
+}
+
+.logoicon-special{
+	width: unset !important;
+}
+
+.media-holder{
+	width: 34px !important;
+	height: 34px !important;
+	cursor: pointer;
+}
+
+.category-title{
+	font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    color: #000000;
+}
+
+.category-title-parent:hover{
+	text-decoration: none !important;
+
+}
+
+.texts-container{
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.subCat-count{
+	font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 20px;
+}
+
+.sbucat-name{
+	width: 220px;
+}
+.category-plus-icon{
+	height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #14CB5D;
+	font-weight: 800;
+}
+
+.edits-row{
+	display: flex;
+	align-items: center;
+    gap: 15px;
+}
+
+.select-sort-dropdown{
+	float: left;
+	width: 180px;
+}
+
+.sort-value{
+	font-weight: bolder;
 }

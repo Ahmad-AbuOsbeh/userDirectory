@@ -1,5 +1,6 @@
 class MapView {
   constructor(user, strings, settings, directoryUI, widget) {
+    console.log('userrrrrrrrr',user);
     this.user = user;
     this.directory = new Directory(user, strings, settings);
     this.strings = strings || new buildfire.services.Strings('en-us', stringsConfig);
@@ -19,7 +20,8 @@ class MapView {
 
     this.usa = { lat: 37.09024, lng: -95.712891 };
     this.defaultLocation = this.usa;
-    this.userLocation = this.user && this.user.location ? this.user.location : this.defaultLocation;
+    // this.userLocation = this.user && this.user.location ? this.user.location : this.defaultLocation;
+    this.userLocation = this.user && this.user.userProfile.address.geoLocation ? {lat:this.user.userProfile.address.geoLocation.lat,lng:this.user.userProfile.address.geoLocation.lng} : this.defaultLocation;
     this.originalHeight;
     this.mapViewFetchTimeout = null;
     this.locations = {};
@@ -291,6 +293,16 @@ class MapView {
       this.state.bounds = this.map.getBounds();
       this.updateMarkers();
     });
+
+    // cenetr position to my location
+    document.querySelector('.my-location-icon').onclick=()=>{
+      console.log(' from center my location');
+      window.setTimeout (()=>{
+        this.userLocation = this.user && this.user.userProfile.address.geoLocation ? {lat:this.user.userProfile.address.geoLocation.lat,lng:this.user.userProfile.address.geoLocation.lng} : this.defaultLocation;
+        this.updateMarkers();
+      },1000)
+      // this.state.bounds = this.map.getBounds();
+    }
     // this.updateUserMarker();
 
     // let filterDiv = document.getElementById('mapFilter');

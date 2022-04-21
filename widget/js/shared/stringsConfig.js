@@ -125,11 +125,21 @@ const stringsConfig = {
 				maxLength: 100,
 				defaultValue: 'Favorites'
 			},
-      viewProfile: {
+            viewProfile: {
 				title: 'View Profile',
 				placeholder: 'View Profile',
 				maxLength: 100,
 				defaultValue: 'View Profile'
+			},
+		}
+	},filter:{
+		title:'Filter',
+		labels:{
+			filterButton: {
+				title: 'Apply filter button',
+				placeholder: 'Apply filter button',
+				maxLength: 15,
+				defaultValue: 'Apply'
 			},
 		}
 	}

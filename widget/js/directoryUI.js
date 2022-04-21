@@ -7,6 +7,8 @@ class DirectoryUI {
 		this.userSkip = 0;
 		this.users = [];
 		this.favouriteUsers = [];
+
+		
 	}
 
 	search(searchText, filters, pageIndex, pageSize, callback) {

@@ -61,7 +61,7 @@ const cssTasks = [
 	{ name: 'controlContentCSS', src: 'control/content/**/*.css', dest: '/control/content' },
 	{ name: 'controlAbuseCSS', src: 'control/abuse/**/*.css', dest: '/control/abuse' },
 	{ name: 'controlDesignCSS', src: 'control/design/**/*.css', dest: '/control/design' },
-	{ name: 'controlSettingsCSS', src: 'control/settings/**/*.css', dest: '/control/settings' },
+	{ name: 'controlSettingsCSS', src: 'control/settingss/**/*.css', dest: '/control/settingss' },
 	{ name: 'controlStringsCSS', src: 'control/strings/**/*.css', dest: '/control/strings' }
 ];
 
@@ -113,7 +113,7 @@ const jsTasks = [
 	{ name: 'widgetJS', src: 'widget/js/*.js', dest: '/widget' },
 	{ name: 'controlContentJS', src: 'control/content/js/*.js', dest: '/control/content' },
 	{ name: 'controlDesignJS', src: 'control/design/js/*.js', dest: '/control/design' },
-	{ name: 'controlSettingsJS', src: 'control/settings/js/*.js', dest: '/control/settings' },
+	{ name: 'controlSettingsJS', src: 'control/settingss/js/*.js', dest: '/control/settingss' },
 	{ name: 'controlStringsJS', src: 'control/strings/js/*.js', dest: '/control/strings' },
 	//data, data access, tests and analytics
 	{ name: 'dataJS', src: ['widget/data/*.js', 'widget/dataAccess/*.js'], dest: '/widget/data' },

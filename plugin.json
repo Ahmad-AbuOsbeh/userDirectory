@@ -1,6 +1,6 @@
 {
 	"author": "BuildFire",
-	"pluginName": "User Directory [DEV Mohamad]",
+	"pluginName": "User Directory [DEV ahmad]",
 	"pluginDescription": "The User Directory feature provides an easy way to search and chat with users. Leverage our User Tagging system to customize your user experience and Gamify your app with Badges.",
 	"supportEmail": "support@buildfire.com",
 	"supportSite": "https://learn.buildfire.com/en/articles/4487634-user-directory",
@@ -16,6 +16,7 @@
 			"enabled": false
 		},
 		"customTabs": [
+			{ "title": "Settings", "url": "/settingss/index.html" },
 			{ "title": "Language", "url": "/strings/index.html" },
 			{ "title": "Abuse", "url": "/abuse/index.html" }
 		]

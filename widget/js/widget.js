@@ -16,6 +16,7 @@ class Widget {
 		this.settings = {
 			autoEnlistAll: false,
 			mapEnabled: false,
+			filtersEnabled: false,
 			tagFilter: [],
 			actionItem: null,
 			badgePushNotifications: false,
@@ -38,6 +39,13 @@ class Widget {
 		buildfire.auth.onLogin(() => location.reload());
 		buildfire.auth.onLogout(() => location.reload());
 		buildfire.datastore.onUpdate(() => location.reload());
+	
+		// list users icon on map
+		document.querySelector('.onMap-users-list-icon').onclick=()=>{
+			this.currentScreen = Keys.screenNameKeys.LIST.key;
+			mapView.style.display = 'none';
+			defaultView.style.display = 'block';
+		}
 
 		buildfire.messaging.onReceivedMessage = (msg) => {
 			switch (msg.cmd) {
@@ -88,6 +96,7 @@ class Widget {
 		};
 
 		buildfire.navigation.onBackButtonClick = () => {
+			console.log('this.currentScreen',this.currentScreen);
 			switch (this.currentScreen) {
 				case Keys.screenNameKeys.LIST.key: {
 					buildfire.navigation.restoreBackButtonClick();
@@ -109,9 +118,18 @@ class Widget {
 					if (this.settings && this.settings.mapEnabled) {
 						this.currentScreen = Keys.screenNameKeys.MAP.key;
 						filterView.classList.toggle("show");
+						console.log('googleMap',googleMap);
+						mapView.style.display = 'block';
 						googleMap.style.display = 'block';
+			// 			console.log('document.querySelector(.my-location-icon)2222222',document.querySelector('.my-location-icon'));
+			console.log('from ifffff');
+			document.querySelector('.my-location-icon').style.display='block';
+			document.querySelector('.onMap-users-list-icon').style.display='block';
+			// document.querySelector('.onMap-filter-icon').style.display='block';
 					}
 					else {
+			console.log('from elseeeeeee');
+
 						this.currentScreen = Keys.screenNameKeys.LIST.key;
 						filterView.classList.toggle("show");
 						defaultView.style.display = 'block';
@@ -125,6 +143,7 @@ class Widget {
 				}
 			}
 		};
+		
 	}
 
 	init() {
@@ -150,6 +169,10 @@ class Widget {
 			this.isInitialized = true;
 			// this.showFilterScreen();
 			this.directoryUI = new DirectoryUI(this.user, this.strings, this.settings);
+
+			// for apply filter button
+		    document.getElementById('applyFilterBtn').innerText=this.strings.get('filter.filterButton') ? this.strings.get('filter.filterButton') : 'Apply';
+
 			if (this.settings.mapEnabled) {
 				this.initMapView();
 			}
@@ -297,6 +320,10 @@ class Widget {
 		defaultView.style.display = 'none';
 		this.currentScreen = Keys.screenNameKeys.MAP.key;
 		this.mapController = new MapView(this.user, this.strings, this.settings, this.directoryUI, this);
+	    
+		//show on map icons
+		document.querySelector('.my-location-icon').style.display='block';
+		document.querySelector('.onMap-users-list-icon').style.display='block';
 	}
 
 	// showFilterScreen() {
@@ -672,6 +699,22 @@ class Widget {
 			Settings.get()
 				.then((settings) => {
 					this.settings = settings;
+					if (settings.filtersEnabled) {
+						document.querySelector('.favorites').style.display='none';
+						document.querySelector('.filter-funnel').style.display='flex';
+
+						// filter icon on map 
+						if (settings.mapEnabled) {
+							document.querySelector('.onMap-filter-icon').style.display='block';
+						}
+					}else{
+						document.querySelector('.favorites').style.display='flex';
+						document.querySelector('.filter-funnel').style.display='none';
+
+						// filter icon on map 
+						document.querySelector('.onMap-filter-icon').style.display='none';
+
+					}
 					resolve();
 				})
 				.catch(() => resolve(null));
@@ -714,6 +757,7 @@ class Widget {
 		buildfire.spinner.show();
 
 		this.directoryUI.search(this.searchBar.value, this.searchFilters, this.currentPageIndex, 15, (error, results) => {
+			console.log('search results from FILTERRR',results);
 			buildfire.spinner.hide();
 			if (index == 0) this.usersView.clear();
 			if (error) return console.error(error);
@@ -1027,6 +1071,7 @@ class Widget {
 	}
 
 	goBack() {
+		console.log('this.currentScreen',this.currentScreen);
 		switch (this.currentScreen) {
 			case Keys.screenNameKeys.LIST.key: {
 				buildfire.navigation.restoreBackButtonClick();
@@ -1048,6 +1093,7 @@ class Widget {
 				if (this.settings && this.settings.mapEnabled) {
 					this.currentScreen = Keys.screenNameKeys.MAP.key;
 					filterView.classList.toggle("show");
+					mapView.style.display = 'block';
 					googleMap.style.display = 'block';
 				}
 				else {

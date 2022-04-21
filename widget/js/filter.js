@@ -7,6 +7,7 @@ class Filter {
             searchOptions: {
                 skip: 0,
                 limit: 50,
+                
             },
             categories: [],
             activeFilters: this.widget.activeFilters,
@@ -37,7 +38,12 @@ class Filter {
         this.state.isBusy = true;
         Categories.get(this.state.searchOptions, (error, results) => {
             if (error) return console.error(error);
-            this.state.categories = this.state.categories ? this.state.categories.concat(results) : results;
+            let activeCategories =[]; 
+            results.map((cat,idx)=>{
+                if (cat.data.isActive) activeCategories.push(cat) ;
+            })
+            console.log('activeCategories',activeCategories);
+            this.state.categories = this.state.categories ? this.state.categories.concat(activeCategories) : activeCategories;
             console.log("categories", this.state.categories);
             this.state.isBusy = false;
             if (results && results.length) {
@@ -231,30 +237,31 @@ class Filter {
 
         let sliderWrapper = this.ui('div', categoryContainer, null, 'slider-wrapper');
         let sliderLeft = this.ui('div', sliderWrapper, null, ["slider-val", "left"]);
-        let sliderMin = this.ui('p', sliderLeft, "1");
+        let sliderMin = this.ui('p', sliderLeft, "40");
         sliderMin.id = "sliderMin";
         let slideContainer = this.ui('div', sliderWrapper, null, ["slider-container"]);
         let sliderTrack = this.ui('div', slideContainer, null, ["slider-track"]);
         let sliderOne = this.ui("input", slideContainer, null);
         sliderOne.type = "range";
-        sliderOne.min = 1;
+        sliderOne.min = 18;
         sliderOne.max = 100;
-        sliderOne.value = 1;
+        sliderOne.value = 40;
         sliderOne.id = "slider-1";
 
         let sliderTwo = this.ui("input", slideContainer, null);
         sliderTwo.type = "range";
-        sliderTwo.min = 1;
+        sliderTwo.min = 18;
         sliderTwo.max = 100;
-        sliderTwo.value = 100;
+        sliderTwo.value = 75;
         sliderTwo.id = "slider-2";
 
         let sliderRight = this.ui('div', sliderWrapper, null, ["slider-val", "right"]);
-        let sliderMax = this.ui('p', sliderRight, "100");
+        let sliderMax = this.ui('p', sliderRight, "75");
 
         let minGap = 1;
         let sliderMaxValue = sliderTwo.max;
-
+        fillColor();
+  
         const slideOne = () => {
             if(parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap){
                 sliderOne.value = parseInt(sliderTwo.value) - minGap;
@@ -265,7 +272,7 @@ class Filter {
             minYear.setFullYear(minYear.getFullYear() - parseInt(sliderOne.value));
             let maxYear = new Date();
             maxYear.setFullYear(maxYear.getFullYear() + parseInt(sliderTwo.value));
-            if (sliderOne.value != 1 || sliderTwo.value != 100) {
+            if (sliderOne.value != 40 || sliderTwo.value != 75) {
                 mainCheck.checked = true;
                 this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key].min = minYear;
                 if (!this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key].max) {
@@ -289,7 +296,7 @@ class Filter {
             let minYear = new Date();
             minYear.setFullYear(minYear.getFullYear() - parseInt(sliderOne.value));
             if (!this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key]) this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key] = {};
-            if (sliderOne.value != 1 || sliderTwo.value != 100) {
+            if (sliderOne.value != 40 || sliderTwo.value != 75) {
                 mainCheck.checked = true;
                 this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key].max = maxYear;
                 if (!this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key].min) {
@@ -304,8 +311,10 @@ class Filter {
             fillColor();
         }
         function fillColor(){
-            let percent1 = (sliderOne.value / sliderMaxValue) * 100;
-            let percent2 = (sliderTwo.value / sliderMaxValue) * 100;
+         
+            let percent1 = ((parseInt(sliderOne.value)-9) / sliderMaxValue) * 100;
+            let percent2 = ((parseInt(sliderTwo.value)-9) / sliderMaxValue) * 100;
+            
             sliderTrack.style.background = `linear-gradient(to right, #dadae5 ${percent1}% , var(--bf-theme-primary) ${percent1}% , var(--bf-theme-primary) ${percent2}%, #dadae5 ${percent2}%)`;
         }
 
@@ -322,8 +331,8 @@ class Filter {
             if (mainCheck.checked) {
                 mainCheck.checked = false;
                 delete this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key];
-                sliderOne.value = 1;
-                sliderTwo.value = 100;
+                sliderOne.value = 40;
+                sliderTwo.value = 75;
                 sliderMin.innerHTML = sliderOne.value;
                 sliderMax.innerHTML = sliderTwo.value;
             }
@@ -436,6 +445,7 @@ class Filter {
     }
 
     applyFilters() {
+        console.log('this.state.pickedCategories',this.state.pickedCategories);
         this.widget.activeFilters = this.state.pickedCategories;
         this.widget.filter();
         this.widget.goBack();

@@ -53,8 +53,7 @@ class Categories {
 
     static update(categoryData, callback) {
         const category = new Category(categoryData);
-
-        buildfire.appData.update(category.toJson(), this.TAG, (error, record) => {
+        buildfire.appData.update(categoryData.id,category.toJson(), this.TAG, (error, record) => {
             if (error) return callback(error);
 
             callback(null, record);

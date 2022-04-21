@@ -13,6 +13,8 @@ class SearchBar {
 
 		this.filterButton = ui.create('span', this.container, null, ['filter-funnel', 'search-bar__icon', 'icon', 'glyphicon', 'glyphicon-filter', 'hidden']);
 		this.filterButton.onclick = () => this.goToFilterScreen();
+        //filter icon on map
+		document.querySelector('.onMap-filter-icon').onclick = () => this.goToFilterScreen();
 
 
 		this.favorites = ui.create('span', this.container, null, ['favorites', 'search-bar__icon', 'icon', 'glyphicon', 'glyphicon-star-empty']);

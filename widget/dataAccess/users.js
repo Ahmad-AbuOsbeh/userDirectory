@@ -7,12 +7,12 @@ class Users {
 		return {
 			ALPHA_ASC: {
 				value: 'ALPHA_ASC',
-				label: 'Alphabetical Ascending',
+				label: 'Name A-Z',
 				sort: { dName: 1 },
 			},
 			ALPHA_DEC: {
 				value: 'ALPHA_DEC',
-				label: 'Alphabetical Descending',
+				label: 'Name Z-A',
 				sort: { dName: -1 },
 			},
 			BADGE_COUNT: {
@@ -38,7 +38,10 @@ class Users {
 	 * @param {Function} callback callback for handling response
 	 */
 	static search(options, callback) {
-		const { userIds, pageIndex, pageSize, ranking, filters } = options;
+		let { userIds, pageIndex, pageSize, ranking, filters } = options;
+		// filters ={ "tags.tagName": { $in: [ "$$profile_gender:male"] } };
+	
+		console.log('filters from search neww',filters);
 		var searchOptions = {
 			sort: { firstName: 1, lastName: 1, displayName: 1 },
 			page: pageIndex,

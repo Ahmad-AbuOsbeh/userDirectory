@@ -62,6 +62,9 @@
 </head>
 
 <body>
+	<script>
+		
+	</script>
 	<div id="defaultView">
 		<header id="searchBar"></header>
 		<div id="listViewContainer">
@@ -71,7 +74,14 @@
 		</div>
 	</div>
 	<div id="mapView">
-		<div id="googleMap" style="height:100%;width:100%;position:absolute;"></div>
+		<div id="googleMap" style="height:100%;width:100%;position:absolute;">
+		</div>
+		<section class="map-icons-container">
+			<span class="filter-funnel icon glyphicon glyphicon-filter onMap-filter-icon"></span>
+			<span class="filter-funnel icon glyphicon glyphicon-list onMap-users-list-icon"></span>
+
+		</section>
+		<img src="./images/location-icon.svg" class="my-location-icon"/>
 		<div id="gridViewContainer">
 			<header id="mapSearchBar"></header>
 			<div id="gridView">
@@ -91,12 +101,13 @@
 				<div id="filtersContainer">
 					<div class="filters-footer">
 						<button id="applyFilterBtn"
-							class="btn btn-primary apply-button">Apply</button>
+							class="btn btn-primary apply-button"></button>
 					</div>
 				</div>
 			</div>
 	</div>
 	<script>
+
 		buildfire.appearance.titlebar.show();
 		const widget = new Widget();
 		buildfire.deeplink.getData((deeplinkData) => {

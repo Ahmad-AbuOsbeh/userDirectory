@@ -42,6 +42,9 @@ class Settings {
 		this.filtersEnabled = dbObj.data.filtersEnabled || false;
 		//from design tab
 		this.layout = dbObj.data.layout || 'list';
+
+		//to indexing all users inside the directory one time
+		this.isIndexed=dbObj.data.isIndexed || false;
 	}
 
 	toRawData() {
@@ -58,8 +61,10 @@ class Settings {
 			ranking: this.ranking,
 			mapEnabled: this.mapEnabled,
 			filtersEnabled: this.filtersEnabled,
-			
-			layout: this.layout
+
+			layout: this.layout,
+
+			isIndexed: this.isIndexed
 		};
 	}
 

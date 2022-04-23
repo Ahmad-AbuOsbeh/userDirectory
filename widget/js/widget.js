@@ -38,7 +38,22 @@ class Widget {
 
 		buildfire.auth.onLogin(() => location.reload());
 		buildfire.auth.onLogout(() => location.reload());
-		buildfire.datastore.onUpdate(() => location.reload());
+		buildfire.datastore.onUpdate((event) => {
+			if (event.data.mapEnabled || event.data.filtersEnabled) {
+				this.directoryUI.directory.checkUser((err, userObj) => {
+					if (err) return console.error(err);
+			
+							this.directoryUI.directory.updateUser(userObj, () => {
+								console.log('this.directoryUI.directory.user>>userObj from datastore on update: 7:11',this.directoryUI.directory.user);
+								location.reload();
+							});
+				});
+				
+			}else{
+				location.reload();
+
+			}
+			});
 	
 		// list users icon on map
 		document.querySelector('.onMap-users-list-icon').onclick=()=>{
@@ -688,7 +703,7 @@ class Widget {
 			buildfire.auth.getCurrentUser((error, user) => {
 				if (error) console.error(error);
 				this.user = user || null;
-
+            console.log('USERRRRR FROM DB',user);
 				resolve();
 			});
 		});
@@ -814,6 +829,7 @@ class Widget {
 			orS = null;
 		}
 
+		console.log('orSorSorSorS from FILTERRRR',orS);
 		if (orS) {
 			finalFilter = {
 				"$and": orS
@@ -823,6 +839,50 @@ class Widget {
 		this.searchFilters = finalFilter;
 		this.search();
 	}
+
+
+	// filter() {
+	// 	//construct filter object from active filters
+	// 	let filters = this.activeFilters;
+	// 	let andS = [];
+	// 	let finalFilter = {};
+	// 	// console.log("CATEGORIES selected",filters);
+		
+	// 	if (Object.keys(filters) && Object.keys(filters).length > 0) {
+	// 		let categories = Object.keys(filters);
+	// 		for (let i = 0; i < categories.length; i++) {
+	// 			let selectedTagsPerOneCategory = [];
+	// 			if (categories[i] == Keys.categoryTypes.BIRTHDATE.key) {
+	// 				console.log("KEY")
+	// 				let birthdate = filters[categories[i]];
+	// 				let bd = { "_buildfire.index.date1": { $gte: new Date(birthdate.min), $lte: new Date(birthdate.max) } };
+	// 				selectedTagsPerOneCategory.push(bd);
+	// 			}
+	// 			else {
+	// 				if (filters[categories[i]].length > 0) {
+	// 					filters[categories[i]].forEach(function (item) {
+	// 						selectedTagsPerOneCategory.push(item);
+	// 					});
+	// 				}
+	// 			}
+	// 			andS.push({"tags.tagName": { $in: selectedTagsPerOneCategory }});
+	// 		}
+	// 		// finalFilter = {"$and": [{"tags.tagName": { $in: [selectedTags[0]] }},{ "tags.tagName": { $in: [selectedTags[1]]}} ] }
+	// 		// finalFilter = {wallet: { $elemMatch:{"tags" : "Tshirt", "store":"Nike"}}}
+	// 	}
+	// 	else {
+	// 		andS = null;
+	// 	}
+
+	// 	if (andS) {
+	// 		finalFilter = {
+	// 			"$and": andS
+	// 		}
+	// 	}
+	// 	this.usersView.clear();
+	// 	this.searchFilters = finalFilter;
+	// 	this.search();
+	// }
 
 	createMockUser() {
 		let tags = [

@@ -20,8 +20,8 @@ class MapView {
 
     this.usa = { lat: 37.09024, lng: -95.712891 };
     this.defaultLocation = this.usa;
-    // this.userLocation = this.user && this.user.location ? this.user.location : this.defaultLocation;
-    this.userLocation = this.user && this.user.userProfile.address.geoLocation ? {lat:this.user.userProfile.address.geoLocation.lat,lng:this.user.userProfile.address.geoLocation.lng} : this.defaultLocation;
+    this.userLocation = this.user && this.user.location ? this.user.location : this.defaultLocation;
+    // this.userLocation = this.user && this.user.userProfile.address.geoLocation ? {lat:this.user.userProfile.address.geoLocation.lat,lng:this.user.userProfile.address.geoLocation.lng} : this.defaultLocation;
     this.originalHeight;
     this.mapViewFetchTimeout = null;
     this.locations = {};
@@ -298,8 +298,8 @@ class MapView {
     document.querySelector('.my-location-icon').onclick=()=>{
       console.log(' from center my location');
       window.setTimeout (()=>{
-        this.userLocation = this.user && this.user.userProfile.address.geoLocation ? {lat:this.user.userProfile.address.geoLocation.lat,lng:this.user.userProfile.address.geoLocation.lng} : this.defaultLocation;
-        this.updateMarkers();
+        // this.user && this.user.location ? this.user.location : this.defaultLocation;
+        // this.updateMarkers();
       },1000)
       // this.state.bounds = this.map.getBounds();
     }

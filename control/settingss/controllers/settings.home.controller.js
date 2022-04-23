@@ -111,7 +111,7 @@
     
                 Settings.get()
                     .then(data => {
-                        const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault, allowShowProfileComponent, updatedSearchEngine, mapEnabled,filtersEnabled } = data;
+                        const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault, allowShowProfileComponent, updatedSearchEngine, mapEnabled,filtersEnabled ,isIndexed} = data;
         console.log('DATAAAA from settings',data);
                         $scope.data.tagFilter = tagFilter || [];
                         $scope.data.actionItem = actionItem || null;
@@ -126,6 +126,8 @@
                         $scope.data.ranking = ranking || 'ALPHA_ASC';
                         $scope.data.mapEnabled = mapEnabled || false;
                         $scope.data.filtersEnabled = filtersEnabled || false;
+
+                        $scope.data.isIndexed = isIndexed || false;
         
                         if (!$scope.data.updatedSearchEngine) {
                             buildfire.dialog.alert({

@@ -11,12 +11,18 @@ class DirectoryUser {
 		this.joinDate = user.joinDate || null;
 		this.location = user.location || null;
 		this.locationKey = user.locationKey || null;
+		this.birthday = user.birthday || null;
 
 		const { appId } = buildfire.getContext();
 		// const appId = "2ee7035a-5381-11e9-8fc5-06e43182e96c";
+		console.log('userrrrr',user);
 		console.log('user.tagssssss',user.tags);
 		console.log('buildfire.getContext();',buildfire.getContext());
 		this.tags = user.tags && user.tags[appId] ? user.tags[appId] : [];
+    //    this.toJson(settings,(err,res)=>{
+    //    if (err) return console.error("ERROR in user direectory",err);
+	//    console.log('DATAAAAAA FROM TO JSONNNNNN user directory',res);
+    //    });
 	};
 
 	handleLocationTags(locationTags, callback) {
@@ -62,13 +68,17 @@ class DirectoryUser {
 	}
 
 	handleFilterTags(type, filterTags, callback) {
+		// Keys.categoryTypes.BIRTHDATE.key
 		if (type == "birthdate") {
 			const year = filterTags.find(tag => tag.tagName.includes("$$profile_birth_year"));
 			const month = filterTags.find(tag => tag.tagName.includes("$$profile_birth_month"));
 			//note: custom reg does not return the birth "day"
 			let birthday = new Date(`${year.tagName.split(":")[1]}-${parseInt(month.tagName.split(":")[1])}-01`);
-			this._buildfire.index.date1 = birthday;
-		}
+			this.birthday=birthday;
+			// this._buildfire.index.date1 = birthday;
+			callback(null, true);
+              console.log('birthday added as indexed this:',this);		
+			}
 	}
 
 	objToJson_() {
@@ -111,6 +121,7 @@ class DirectoryUser {
 				index: {
 					text: `${this.firstName || ''} ${this.lastName || ''} ${this.displayName || ''} ${this.email || ''}`,
 					string1: `${this.userId}`,
+					date1: this.birthday,
 					array1: [...badgeIds, ...tagIndex, { string1: `${this.locationKey}` }],
 				}
 			}
@@ -118,35 +129,43 @@ class DirectoryUser {
 	}
 
 	toJson(settings, callback) {
-		// if (settings && settings.filtersEnabled) {
-		// 	if (this.tags && this.tags.length) {
-		// 		// Check if we have birthdate tag
-		// 		const birthdateTags = this.tags.filter(tag => {
-		// 			if (tag.tagName.includes("$$profile_birth_year") && tag.tagName.includes("$$profile_birth_month")) {
-		// 				return true;
-		// 			}
-		// 		});
+		if (settings && settings.filtersEnabled) {
+			if (this.tags && this.tags.length) {
+				// Check if we have birthdate tag
+				const birthdateTags = this.tags.filter(tag => {
+					if (tag.tagName.includes("$$profile_birth_year") || tag.tagName.includes("$$profile_birth_month")) {
+						return true;
+					}
+				});
+console.log('birthdateTags 11:01',birthdateTags);
+				if (birthdateTags.length == 2) {
+					this.handleFilterTags('birthdate', birthdateTags,  (err, res) => {
+						if (err) {
+							return callback(err);
+						}
+						// else {
+						// 	return callback(null, this.objToJson_());
+						// }
+					}) 
 
-		// 		if (birthdateTags.length == 2) {
+				}
 
-		// 		}
-
-		// 		var locationTags = this.tags.filter(tag => tag.tagName.includes("$$profile_country") || (tag.tagName.includes("$$profile_city") || tag.tagName.includes("$$profile_town")));
-		// 		if (locationTags && locationTags.length) {
-		// 			this.handleLocationTags(locationTags, (err, res) => {
-		// 				if (err) {
-		// 					return callback(err);
-		// 				}
-		// 				else {
-		// 					return callback(null, this.objToJson_());
-		// 				}
-		// 			});
-		// 		}
-		// 		else {
-		// 			return callback(null, this.objToJson_());
-		// 		}
-		// 	}
-		// }
+				// var locationTags = this.tags.filter(tag => tag.tagName.includes("$$profile_country") || (tag.tagName.includes("$$profile_city") || tag.tagName.includes("$$profile_town")));
+				// if (locationTags && locationTags.length) {
+				// 	this.handleLocationTags(locationTags, (err, res) => {
+				// 		if (err) {
+				// 			return callback(err);
+				// 		}
+				// 		else {
+				// 			return callback(null, this.objToJson_());
+				// 		}
+				// 	});
+				// }
+				// else {
+				// 	return callback(null, this.objToJson_());
+				// }
+			}
+		}
 		if (settings && settings.mapEnabled) {
 			// console.log('document.querySelector(.my-location-icon)',document.querySelector('.my-location-icon'));
 			// document.querySelector('.my-location-icon').style.display='block';

@@ -10,9 +10,10 @@ class Directory {
 		this.settings = settings;
 		this.badges = null;
 		this.Favorites = null;
-
+        this.userToBeIndexed = null;
 		this.favoritesList = null;
 		this.filterFavorites = false;
+		// this.stop=false;
 
 		if (!this.user) return;
 
@@ -24,6 +25,8 @@ class Directory {
 				this.favoritesList = favorites;
 			});
 		}
+
+       this.buildIndexforAllUsersDirectory();
 	}
 
 	addFavorite(userData, callback) {
@@ -208,7 +211,212 @@ class Directory {
 		});
 	}
 
+    // build index for once first time when you open old plugins for their users.
+    buildIndexforAllUsersDirectory(){
+		var old_time = new Date();
+    
+		if (this.settings.isIndexed) return;
+	if (this.settings && !this.settings.isIndexed) {
+		const { appId } = buildfire.getContext();
+		let  allUsers=[],
+		     pageIndex =0,
+			 pageSize=50;
+
+     let updateIndexedObj = (indexedObj)=>{
+		Users.update(indexedObj, (e, res) => {
+			if (e) {
+				return buildfire.components.toast.showToastMessage({ text: 'user not updated' });
+			}
+			if (res) {
+				console.log("user to be indexed updateeedddddd |*|*|* *i*n************* APP data",res);
+			}
+		
+			// if (onUpdate) onUpdate(this.user);
+		});
+		Lookup.update(indexedObj, console.log);
+	 };
+
+	 let handleLocationTagsIndexing = (locationKey,callback)=>{
+	// Check if we have the key in the list of locations
+	Locations.getLocationByKey(locationKey, (error, location) => {
+		if (error) {
+			return callback(error);
+		} else if (location && location.data) {
+			return callback(null, location.data.coordinates);
+		}
+		else {
+			// convert location into lat/long and save it
+			fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${locationKey}&key=AIzaSyBOp1GltsWARlkHhF1H_cb6xtdR1pvNDAk`)
+				.then(response => response.json())
+				.then(data => {
+					if (data && data.results && data.results.length) {
+						let address = data.results[0].geometry.location;
+						let locationName = data.results[0].formatted_address;
+						Locations.addLocation(new Location({ key: locationKey, coordinates: address, locationName: locationName }), (err, res) => {
+							if (err) {
+								return callback(err);
+							} else {
+								console.log("Location added to database");
+								callback(null, address);
+							}
+						});
+					}
+				});
+		}
+	});
+	}
+	let getAllUsers = ()=>{
+
+			// get all users in the directory
+	Users.search({pageIndex,pageSize},(err,users)=>{
+		if (err) return console.error('ERROR while getting all users',err);
+		if (users) {
+			if (users.length < 50 ) {
+				allUsers.push(...users);
+				console.log(' alllll users DOnee  10:14 ',allUsers);
+
+				// loop over each user
+				allUsers.forEach(userObj=>{
+					let indexedObj = userObj.data;
+					// since i didn't find a way to get user tags from buildfire.auth to update userDirectory users with the new tags >> will add the indexing for existing tags
+
+					// const userId = userObj.userId;
+					// Users.getByUserId(userId,(err,user)=>{
+					// 	if (err) return console.error(`Error while getting user by userID:${userId}`,err);
+                    //     if (user) {
+					// 		console.log('test user',user);
+
+		// 					this.userToBeIndexed = new DirectoryUser(userObj);
+
+		// const userTags = user.tags && user.tags[appId] ? user.tags[appId] : [];
+
+
+		// if (userTags.length !== (userObj.data.tags || []).length) {
+		// 	this.userToBeIndexed.tags = userTags;
+		// } else if (userTags.length) {
+		// 	userTags.forEach((tag) => {
+		// 		if (!userObj.data.tags.some((t) => t.tagName === tag.tagName)) {
+		// 			this.userToBeIndexed.tags = userTags;
+		// 		}
+		// 	});
+		// }
+        // add these two keys
+		indexedObj._buildfire.index.array1 = indexedObj._buildfire.index.array1 ? indexedObj._buildfire.index.array1 : [];
+		
+
+		let tagsToBeIndexed =[];
+		let birthdayIndex, year, month;
+		let countryTag, cityTag ,locationKey;
+		if (indexedObj.tags && indexedObj.tags.length) {
+			 
+			indexedObj.tags.forEach(tag=>{
+
+				// indexing all tags
+				tagsToBeIndexed.push({string1: tag.tagName});
+
+				// handle Birthdate for Age filter
+				if (tag.tagName.includes("$$profile_birth_year")) {
+					 year = tag;
+					}
+				if (tag.tagName.includes("$$profile_birth_month")) {
+					month = tag;
+					}
+
+				// handle location tags
+				if (tag.tagName.includes("$$profile_country")) {
+					countryTag = tag;
+				}
+				if (tag.tagName.includes("$$profile_city")) {
+					cityTag = tag;
+				}
+
+			})
+
+				if (year && month) {
+					birthdayIndex = new Date(`${year.tagName.split(":")[1]}-${parseInt(month.tagName.split(":")[1])}-01`);
+				}
+
+				if (countryTag && cityTag) {
+					const countryKey = countryTag.tagName.split(":")[1];
+					const cityKey = cityTag.tagName.split(":")[1];
+					locationKey = `${cityKey},${countryKey}`;
+					if (locationKey) {
+						
+						handleLocationTagsIndexing(locationKey,(err,loc)=>{
+							indexedObj.location=loc;
+							indexedObj.locationKey=locationKey;
+							indexedObj._buildfire.index.date1=birthdayIndex;
+			                indexedObj._buildfire.index.array1 = [...indexedObj._buildfire.index.array1, ...tagsToBeIndexed,{ string1: `${locationKey}`}]
+							// remove duplicates if it exists
+		let duplicatesRemoved =  indexedObj._buildfire.index.array1.filter((a, i) => indexedObj._buildfire.index.array1.findIndex((s) => a.string1 === s.string1) === i);
+		indexedObj._buildfire.index.array1 =duplicatesRemoved;
+
+							// now we have the updated object 
+							updateIndexedObj(indexedObj);
+						});
+					}
+				}else{
+					// update the user, since he has not a location tags
+					indexedObj._buildfire.index.date1=birthdayIndex;
+					indexedObj._buildfire.index.array1 = [...indexedObj._buildfire.index.array1, ...tagsToBeIndexed];
+					// remove duplicates if it exists
+		let duplicatesRemoved =  indexedObj._buildfire.index.array1.filter((a, i) => indexedObj._buildfire.index.array1.findIndex((s) => a.string1 === s.string1) === i);
+		indexedObj._buildfire.index.array1 =duplicatesRemoved;
+					updateIndexedObj(indexedObj);
+
+				}
+			
+
+			}
+
+		
+		// this.location = user.location || null;
+		// this.locationKey = user.locationKey || null;
+		// this.userToBeIndexed.toJson(this.settings, (err, userJSON) => {
+		// 	if (userJSON) {
+			
+			// }
+		// });
+						// }
+					// });
+				// this.stop=true;
+
+				});
+				// get the user from buildfire.auth
+				// update his data
+				// stop here
+				var new_time = new Date();
+				var seconds_passed = new_time - old_time;
+				console.log('new_time - old_time FINALLLLLLLLLLLLLLLLLLLLLLL TIMT TIMT ITM TIME TIMETIMT TIMT ITM TIME TIMETIMT TIMT ITM TIME TIMETIMT TIMT ITM TIME TIMETIMT TIMT ITM TIME TIMETIMT TIMT ITM TIME TIMETIMT TIMT ITM TIME TIMETIMT TIMT ITM TIME TIMETIMT TIMT ITM TIME TIMETIMT TIMT ITM TIME TIMETIMT TIMT ITM TIME TIME',seconds_passed,(seconds_passed/1000));
+				// make is indexed to TRUE
+				// this.settings.isIndexed = true;
+				// let data = this.settings;
+// console.log('settings to bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbe updated',this.settings);
+buildfire.messaging.sendMessageToControl({ cmd: 'indexingDone' });
+				// return new Settings({ data })
+                //         .save()
+                //         .then(console.warn)
+                //         .catch(console.error);
+			}else{
+				allUsers.push(...users);
+				pageSize = pageSize +50;
+				pageIndex = pageIndex +1;
+				getAllUsers();
+			}
+		}
+	})
+		};
+
+		getAllUsers();
+		//loop over each user and update the index
+		
+	}else{
+		return console.warn('all users indexed alreadyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy!')
+	}
+}
+
 	updateUser(userObj, onUpdate) {
+		console.log('this.user from first update on RELOAD:  6:32',userObj);
 		if (userObj.data.isActive === false) return console.error('avoid update');
 
 		if (!this.user) return;
@@ -291,8 +499,8 @@ class Directory {
 
 					const { appId } = buildfire.getContext();
 					const userTags = user.tags && user.tags[appId] ? user.tags[appId] : [];
-					console.log("user Tags", userTags);
-					console.log("userObj Tags", userObj.data.tags);
+					console.log(" Current user user from AUTH BUILDFIRE", user);
+					console.log("userObj from APP DATA USER DIRECTORY", userObj);
 
 					if (userTags.length !== (userObj.data.tags || []).length) {
 						this.user.tags = userTags;
@@ -305,14 +513,27 @@ class Directory {
 							}
 						});
 					}
-
+                    
+					if (this.settings && this.settings.mapEnabled) {
+						//  do some logic here to check if he has the location key as indexed if not
+						hasUpdate =true;
+					}
+                    
+					if (this.settings && this.settings.filtersEnabled) {
+							//  do some logic here to check if he has the birthdate as indexed if not
+							hasUpdate =true;
+					}
 					if (!hasUpdate) return;
 
 					this.user.toJson(this.settings, (err, userJSON) => {
+						console.log('userJSON from update user |||| directory',userJSON);
 						if (userJSON) {
 							Users.update(userJSON, (e, res) => {
 								if (e) {
 									return buildfire.components.toast.showToastMessage({ text: 'user not updated' });
+								}
+								if (res) {
+									console.log("CUrent user updateeedddddd |||| in APP data",res);
 								}
 								if (newBadges.length) {
 									const badges = newBadges.map((badge) => {

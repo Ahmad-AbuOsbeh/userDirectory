@@ -109,11 +109,19 @@
                             message: 'Congratulations! Search Engine succesfully updated.',
                         });
                     }
+                    if (msg.cmd === 'indexingDone') {
+                        $scope.data.isIndexed = true;
+                        $scope.save();
+                        buildfire.dialog.alert({
+                            title: 'Indexing for all users done',
+                            message: 'Congratulations! indexing all user succesfully updated.',
+                        });
+                    }
                 };
         
                 Settings.get()
                     .then(data => {
-                        const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault, allowShowProfileComponent, updatedSearchEngine, mapEnabled,filtersEnabled } = data;
+                        const { autoEnlistAll, tagFilter, actionItem, badgePushNotifications, ranking, userSubtitleShowMode, navigateToCwByDefault, allowShowProfileComponent, updatedSearchEngine, mapEnabled,filtersEnabled,isIndexed } = data;
         
                         $scope.data.tagFilter = tagFilter || [];
                         $scope.data.actionItem = actionItem || null;
@@ -128,6 +136,8 @@
                         $scope.data.ranking = ranking || 'ALPHA_ASC';
                         $scope.data.mapEnabled = mapEnabled || false;
                         $scope.data.filtersEnabled = filtersEnabled || false;
+
+                        $scope.data.isIndexed = isIndexed || false;
         
                         if (!$scope.data.updatedSearchEngine) {
                             buildfire.dialog.alert({
@@ -141,7 +151,7 @@
                         if (!$scope.$$phase) $scope.$apply();
         
                         startWatch();
-                        console.log('$scope.dataaaaaaa',$scope.data);
+                        console.log('$scope.dataaaaaaa ytytytytyty',$scope.data);
                     })
                     .catch(console.error);
         

@@ -523,6 +523,8 @@ buildfire.messaging.sendMessageToControl({ cmd: 'indexingDone' });
 							//  do some logic here to check if he has the birthdate as indexed if not
 							hasUpdate =true;
 					}
+					console.log('this.settings > has update',this.settings);
+					console.log('hasUpdate',hasUpdate);
 					if (!hasUpdate) return;
 
 					this.user.toJson(this.settings, (err, userJSON) => {

@@ -21,6 +21,8 @@ class MapView {
     this.usa = { lat: 37.09024, lng: -95.712891 };
     this.defaultLocation = this.usa;
     this.userLocation = this.user && this.user.location ? this.user.location : this.defaultLocation;
+    console.log('userr location map.js ',this.userLocation);
+
     // this.userLocation = this.user && this.user.userProfile.address.geoLocation ? {lat:this.user.userProfile.address.geoLocation.lat,lng:this.user.userProfile.address.geoLocation.lng} : this.defaultLocation;
     this.originalHeight;
     this.mapViewFetchTimeout = null;
@@ -83,6 +85,19 @@ class MapView {
       this.map.addListener('zoom_changed', () => {
         this.updateMarkers();
       });
+      //show on map icons
+document.querySelector('.my-location-icon').style.display='block';
+document.querySelector('.onMap-users-list-icon').style.display='block';
+// filter icon on map 
+if (this.settings.filtersEnabled) {
+  // this.filterScreen.state.initialized = false;
+  // console.log('document.querySelector(.onMap-filter-icon)',document.querySelector('.onMap-filter-icon'));
+  document.querySelector('.onMap-filter-icon').style.display='block';
+  // this.searchBar.shouldShowOnMapFilterIcon(true);
+}else{
+  document.querySelector('.onMap-filter-icon').style.display='none';
+
+}
     }, 1000); //Wait for animation to finish.
 
   };
@@ -109,6 +124,9 @@ class MapView {
     this.getCities((err, cities) => {
       if (err) return;
       else if (cities && cities.length) {
+        console.log('all citiesssssssssss',cities);
+    console.log('this.locations',this.locations);
+
         let citiesTofetch = [];
         cities.forEach(city => {
           if (this.fetchedCities.indexOf(city.data.key) === -1) {
@@ -117,6 +135,7 @@ class MapView {
           }
         });
         this.getUsersFromCities(citiesTofetch, (err, users) => {
+          console.log('citeies to fetchccccc ',citiesTofetch);
           if (users && users.length) {
             users.forEach(user => {
               if (this.fetchedUserIds.indexOf(user.id) === -1) {
@@ -137,6 +156,9 @@ class MapView {
               this.addMarkers();
             }
           }
+          // else{
+      
+          // }
         });
       }
     });
@@ -172,25 +194,68 @@ class MapView {
     });
   };
   getUsersFromCities(cities, callback) {
+    console.log('this.widget.filterScreen',this.widget.filterScreen);
+    console.log('this.widget.filterScreen.pickedCategories',this.widget.filterScreen.pickedCategories);
     if (cities && cities.length) {
       let cityUsers = [];
       let cityKeys = cities.map(city => city.data.key);
       this.state.userSkip = 0;
       if (this.mapViewFetchTimeout) clearTimeout(this.mapViewFetchTimeout);
+      let filters=this.widget.filterScreen.state.pickedCategories;
       const proceedFetch = () => {
         if (!this.isBusy) {
           this.isBusy = true;
-          this.directory.search(null, {
+          let filter ={
             "$and": [
               { "_buildfire.index.array1.string1": { $in: cityKeys } },
               { "$json.isActive": true },
             ]
-          }, this.state.userSkip, this.state.pageSize, (err, res) => {
+          };
+
+          // this part to handle filtering with map 
+		      let orS = [];
+          if (Object.keys(filters) && Object.keys(filters).length > 0) {
+            let categories = Object.keys(filters);
+            for (let i = 0; i < categories.length; i++) {
+              let and = [];
+              if (categories[i] == Keys.categoryTypes.BIRTHDATE.key) {
+                console.log("KEY")
+                let birthdate = filters[categories[i]];
+                let bd = { "_buildfire.index.date1": { $gte: new Date(birthdate.min), $lte: new Date(birthdate.max) } };
+                and.push(bd);
+              }
+              else {
+                if (filters[categories[i]].length > 0) {
+                  filters[categories[i]].forEach(function (item) {
+                    and.push({ "_buildfire.index.array1.string1": item });
+                  });
+                }
+              }
+              orS.push({
+                "$or": and
+              });
+            }
+            filter ={
+              "$and": [
+                { "_buildfire.index.array1.string1": { $in: cityKeys } }, ...orS,
+                { "$json.isActive": true },
+              ]
+            };
+          }
+        
+          this.directory.search(null,filter , this.state.userSkip, this.state.pageSize, (err, res) => {
             this.isBusy = false;
             if (err) return callback(err);
             if (res) {
-              console.log("res", res[0]);
-              cityUsers = cityUsers ? cityUsers.concat(res) : res;
+              console.log("map search res", res);
+              // handle when filter on, so only keep the filtered users
+              // if (Object.keys(filters) && Object.keys(filters).length > 0) {
+              //   cityUsers=res;
+              // }else{
+                // here we are saving all users in the map
+                cityUsers = cityUsers ? cityUsers.concat(res) : res;
+
+              // }
               if (res.length < this.state.pageSize) {
                 return callback(null, cityUsers);
               }
@@ -250,9 +315,9 @@ class MapView {
     let mapTypeId = google.maps.MapTypeId.ROADMAP,
       zoomPosition = google.maps.ControlPosition.RIGHT_TOP;
 
-    let zoomTo = (this.userLocation != this.defaultLocation) ? this.mapSettings.zoomLevel.city : this.mapSettings.zoomLevel.country,
-      centerOn = (this.userLocation != this.defaultLocation) ? this.userLocation : this.defaultLocation;
-
+    let zoomTo = ((this.userLocation.lng != this.defaultLocation.lng) && (this.userLocation.lat != this.defaultLocation.lat)) ? this.mapSettings.zoomLevel.city : this.mapSettings.zoomLevel.country,
+      centerOn = ((this.userLocation.lng != this.defaultLocation.lng) && (this.userLocation.lat != this.defaultLocation.lat)) ? this.userLocation : this.defaultLocation;
+console.log('zooom to:',zoomTo,'center on:',centerOn,'this.userLocation:',this.userLocation );
 
     let options = {
       minZoom: 3,

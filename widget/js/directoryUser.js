@@ -167,8 +167,9 @@ console.log('birthdateTags 11:01',birthdateTags);
 			}
 		}
 		if (settings && settings.mapEnabled) {
-			// console.log('document.querySelector(.my-location-icon)',document.querySelector('.my-location-icon'));
+			console.log('document.querySelector(.onMap-users-list-icon)',document.querySelector('.onMap-users-list-icon'));
 			// document.querySelector('.my-location-icon').style.display='block';
+			// console.log('document.querySelector('.onMap-users-list-icon')',);
 			// document.querySelector('.onMap-users-list-icon').style.display='block';
 			// document.querySelector('.onMap-filter-icon').style.display='block';
 			if (this.tags && this.tags.length) {

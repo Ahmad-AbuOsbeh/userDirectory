@@ -877,35 +877,57 @@ white-space: nowrap;
       display: none;
       width: 40px;
       height: 40px;
-
+      opacity: 0;
       background-color: #FFFFFF;
       border-radius: 50%;
       padding: 8.3px;
       cursor: pointer;
+      animation: icon-fade-in .3s ease-in-out forwards;
+
   }
   .onMap-users-list-icon{
      display: none;
      /* position: absolute; */
       width: 40px;
       height: 40px;
+      opacity: 0;
       /* right: 3.5%;
       top: 24%; */
       background-color: #FFFFFF;
       border-radius: 50%;
       padding: 8px;
       cursor: pointer;
-  }
+      animation: icon-fade-in .3s ease-in-out forwards;
+    }
 
   .my-location-icon{
     display: none;
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     background-color: #000000;
     position: absolute;
     right: 2.5%;
     top: 85%;
     border-radius: 50%;
-    padding: 11px;
+    padding: 11.5px;
     cursor: pointer;
-    opacity: 0.7;
+    opacity: 0;
+    animation: location-icon-fade-in .3s ease-in-out forwards;
+  }
+
+  @keyframes icon-fade-in{
+    0%{
+      opacity: 0;
+    }
+    100%{
+      opacity: 1;
+    }
+  }
+  @keyframes location-icon-fade-in{
+    0%{
+      opacity: 0;
+    }
+    100%{
+      opacity: 0.7;
+    }
   }

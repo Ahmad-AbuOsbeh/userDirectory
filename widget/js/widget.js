@@ -21,6 +21,7 @@ class Widget {
 			actionItem: null,
 			badgePushNotifications: false,
 			ranking: 'ALPHA_ASC',
+			isIndexed:false,
 		};
 		this.filterScreen = new Filter({
 			widget: this,
@@ -39,17 +40,21 @@ class Widget {
 		buildfire.auth.onLogin(() => location.reload());
 		buildfire.auth.onLogout(() => location.reload());
 		buildfire.datastore.onUpdate((event) => {
+			console.log('event event event event event',event);
 			if (event.data.mapEnabled || event.data.filtersEnabled) {
+				this.directoryUI.directory.settings=event.data;
 				this.directoryUI.directory.checkUser((err, userObj) => {
+					console.log('from if checkuser, ERROR:',err,"userObj:",userObj);
 					if (err) return console.error(err);
 			
 							this.directoryUI.directory.updateUser(userObj, () => {
-								console.log('this.directoryUI.directory.user>>userObj from datastore on update: 7:11',this.directoryUI.directory.user);
+								console.log('this.directoryUI.directory.user>>userObj from datastore on update: 6:50',this.directoryUI.directory.user);
 								location.reload();
 							});
 				});
 				
 			}else{
+				console.log('from else 6:52');
 				location.reload();
 
 			}
@@ -57,10 +62,23 @@ class Widget {
 	
 		// list users icon on map
 		document.querySelector('.onMap-users-list-icon').onclick=()=>{
+			// this.currentScreen = Keys.screenNameKeys.LIST.key;
+			// defaultView.style.display = 'block';
 			this.currentScreen = Keys.screenNameKeys.LIST.key;
-			mapView.style.display = 'none';
-			defaultView.style.display = 'block';
+			        mapView.style.display = 'none';
+					// filterView.classList.toggle("show");
+					defaultView.style.display = 'block';
+					// this.searchBar.shouldShowOptionsButton(true);
+					// this.init();
+		// this.initMapSearchBar();
+		this.initSearchBar();
 		}
+		  //filter icon on map
+		  document.querySelector('.onMap-filter-icon').onclick = () => this.searchBar.goToFilterScreen();
+		// list users icon on map
+		// document.querySelector('.onMap-filter-icon').onclick=()=>{
+		// 	this.searchBar.goToFilterScreen();
+		// }
 
 		buildfire.messaging.onReceivedMessage = (msg) => {
 			switch (msg.cmd) {
@@ -140,7 +158,7 @@ class Widget {
 			console.log('from ifffff');
 			document.querySelector('.my-location-icon').style.display='block';
 			document.querySelector('.onMap-users-list-icon').style.display='block';
-			// document.querySelector('.onMap-filter-icon').style.display='block';
+			document.querySelector('.onMap-filter-icon').style.display='block';
 					}
 					else {
 			console.log('from elseeeeeee');
@@ -205,8 +223,27 @@ class Widget {
 							this.searchBar.shouldShowOptionsButton(typeof userObj == 'object' && userObj.data.isActive);
 							//TODO Check if filter is enabled in settings
 							// if (this.settings.filterEnabled) {
-							this.searchBar.shouldShowFilterButton(true);
+							// this.searchBar.shouldShowFilterButton(true);
+							if (this.settings.filtersEnabled) {
+								// document.querySelector('.favorites').style.display='none';
+								// document.querySelector('.filter-funnel').style.display='flex';
+								this.searchBar.shouldShowFavouriteButton(false);
+								this.searchBar.shouldShowFilterButton(true);
+		
+								
+							}else{
+								// document.querySelector('.favorites').style.display='flex';
+								// document.querySelector('.filter-funnel').style.display='none';
+								this.searchBar.shouldShowFilterButton(false);
+								this.searchBar.shouldShowFavouriteButton(true);
+		
+		
+								// filter icon on map 
+								// document.querySelector('.onMap-filter-icon').style.display='none';
+								// this.searchBar.shouldShowOnMapFilterIcon(false);
 
+		
+							}
 							if (userObj) {
 								// setTimeout(() => {
 								// 	this.directoryUI.directory.updateUser(userObj, () => {
@@ -336,9 +373,7 @@ class Widget {
 		this.currentScreen = Keys.screenNameKeys.MAP.key;
 		this.mapController = new MapView(this.user, this.strings, this.settings, this.directoryUI, this);
 	    
-		//show on map icons
-		document.querySelector('.my-location-icon').style.display='block';
-		document.querySelector('.onMap-users-list-icon').style.display='block';
+		
 	}
 
 	// showFilterScreen() {
@@ -714,22 +749,7 @@ class Widget {
 			Settings.get()
 				.then((settings) => {
 					this.settings = settings;
-					if (settings.filtersEnabled) {
-						document.querySelector('.favorites').style.display='none';
-						document.querySelector('.filter-funnel').style.display='flex';
-
-						// filter icon on map 
-						if (settings.mapEnabled) {
-							document.querySelector('.onMap-filter-icon').style.display='block';
-						}
-					}else{
-						document.querySelector('.favorites').style.display='flex';
-						document.querySelector('.filter-funnel').style.display='none';
-
-						// filter icon on map 
-						document.querySelector('.onMap-filter-icon').style.display='none';
-
-					}
+					
 					resolve();
 				})
 				.catch(() => resolve(null));
@@ -798,7 +818,8 @@ class Widget {
 		this.tmr = setTimeout(() => fnc ? fnc() : this.search(), 500);
 	}
 
-	filter() {
+	filter(fromMap) {
+		if (fromMap) return;
 		//construct filter object from active filters
 		let filters = this.activeFilters;
 		let orS = [];
@@ -1155,6 +1176,24 @@ class Widget {
 					filterView.classList.toggle("show");
 					mapView.style.display = 'block';
 					googleMap.style.display = 'block';
+					console.log('this.mapController',this.mapController);
+					// this.mapController.updateMarkers();
+					// restart the map to get the new results
+					this.mapController.locations = {};
+					this.mapController.fetchedUserIds=[];
+					this.mapController.fetchedCities = [];
+					this.mapController.markerClusterer= null;
+					this.mapController.state = {
+					  isBusy: false,
+					  citySkip: 0,
+					  userSkip: 0,
+					  pageSize: 50,
+					  markers: [],
+					  cities: [],
+					  renderedMarkerIds: [],
+					};
+				
+					this.mapController.initMap();
 				}
 				else {
 					this.currentScreen = Keys.screenNameKeys.LIST.key;

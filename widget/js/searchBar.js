@@ -13,8 +13,7 @@ class SearchBar {
 
 		this.filterButton = ui.create('span', this.container, null, ['filter-funnel', 'search-bar__icon', 'icon', 'glyphicon', 'glyphicon-filter', 'hidden']);
 		this.filterButton.onclick = () => this.goToFilterScreen();
-        //filter icon on map
-		document.querySelector('.onMap-filter-icon').onclick = () => this.goToFilterScreen();
+      
 
 
 		this.favorites = ui.create('span', this.container, null, ['favorites', 'search-bar__icon', 'icon', 'glyphicon', 'glyphicon-star-empty']);
@@ -48,6 +47,9 @@ class SearchBar {
 		};
 
 		this.favoritesFilter = false;
+		this.shouldShowFavouriteButton(false);
+		this.shouldShowFilterButton(false);
+
 	}
 
 	get value() {
@@ -86,12 +88,22 @@ class SearchBar {
 	}
 
 	shouldShowFilterButton(value) {
+		console.log('Show filter BTON ??',value);
 		if (value) {
 			// this.add.classList.remove('hidden');
 			this.filterButton.classList.remove('hidden');
 		} else {
 			// this.add.classList.add('hidden');
 			this.filterButton.classList.add('hidden');
+		}
+	}
+	shouldShowFavouriteButton(value) {
+		if (value) {
+			// this.add.classList.remove('hidden');
+			this.favorites.classList.remove('hidden');
+		} else {
+			// this.add.classList.add('hidden');
+			this.favorites.classList.add('hidden');
 		}
 	}
 

@@ -10,11 +10,20 @@ class SearchBar {
 		this.input = ui.create('input', this.container, null, ['search-bar__input', 'form-control']);
 		this.input.setAttribute('type', 'search');
 		this.input.setAttribute('bfString', 'other.searchUser');
+        this.iconFilterContainer = ui.create('div', this.container, null, ['icon-filter-container']);
+		if (!document.getElementById('activeFilterIndicatorTwo')) {
+			
+			this.activeFilterIndicator = ui.create('span', this.iconFilterContainer, null, null);
+			this.activeFilterIndicator.setAttribute('id', 'activeFilterIndicatorTwo');
+		}
 
-		this.filterButton = ui.create('span', this.container, null, ['filter-funnel', 'search-bar__icon', 'icon', 'glyphicon', 'glyphicon-filter', 'hidden']);
+		this.filterButton = ui.create('i', this.iconFilterContainer, null, ['material-icons-outlined',  'mdc-text-field__icon', 'mdc-theme--text-icon-on-background', 'hidden']);
 		this.filterButton.onclick = () => this.goToFilterScreen();
       
-
+		this.filterButton.setAttribute('tabindex', '0');
+		this.filterButton.setAttribute('role', 'button');
+		this.filterButton.setAttribute('id', 'filterIconBtn');
+		this.filterButton.innerHTML='filter_alt';
 
 		this.favorites = ui.create('span', this.container, null, ['favorites', 'search-bar__icon', 'icon', 'glyphicon', 'glyphicon-star-empty']);
 		this.favorites.onclick = () => this.filterFavorites();

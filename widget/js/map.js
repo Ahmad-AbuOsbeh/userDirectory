@@ -8,6 +8,7 @@ class MapView {
     this.mapContainer = document.getElementById('googleMap');
     this.directoryUI = directoryUI;
     this.widget = widget;
+    this.allUsersOnMap = [];
     this.mapSettings = {
       markerClusterer: null,
       zoomLevel: { city: 14, country: 3 },
@@ -20,10 +21,11 @@ class MapView {
 
     this.usa = { lat: 37.09024, lng: -95.712891 };
     this.defaultLocation = this.usa;
-    this.userLocation = this.user && this.user.location ? this.user.location : this.defaultLocation;
-    console.log('userr location map.js ',this.userLocation);
+    // this.userLocation = this.user && this.user.location ? this.user.location : this.defaultLocation;
+    console.log('this.user location map.js ',this.user);
 
-    // this.userLocation = this.user && this.user.userProfile.address.geoLocation ? {lat:this.user.userProfile.address.geoLocation.lat,lng:this.user.userProfile.address.geoLocation.lng} : this.defaultLocation;
+    this.userLocation = this.user && this.user.userProfile && this.user.userProfile.address && this.user.userProfile.address.geoLocation ? {lat:this.user.userProfile.address.geoLocation.lat,lng:this.user.userProfile.address.geoLocation.lng} : this.defaultLocation;
+
     this.originalHeight;
     this.mapViewFetchTimeout = null;
     this.locations = {};
@@ -90,10 +92,7 @@ document.querySelector('.my-location-icon').style.display='block';
 document.querySelector('.onMap-users-list-icon').style.display='block';
 // filter icon on map 
 if (this.settings.filtersEnabled) {
-  // this.filterScreen.state.initialized = false;
-  // console.log('document.querySelector(.onMap-filter-icon)',document.querySelector('.onMap-filter-icon'));
   document.querySelector('.onMap-filter-icon').style.display='block';
-  // this.searchBar.shouldShowOnMapFilterIcon(true);
 }else{
   document.querySelector('.onMap-filter-icon').style.display='none';
 
@@ -135,6 +134,7 @@ if (this.settings.filtersEnabled) {
           }
         });
         this.getUsersFromCities(citiesTofetch, (err, users) => {
+          this.allUsersOnMap=users;
           console.log('citeies to fetchccccc ',citiesTofetch);
           if (users && users.length) {
             users.forEach(user => {
@@ -155,11 +155,18 @@ if (this.settings.filtersEnabled) {
             if (shouldAddMarkers) {
               this.addMarkers();
             }
+            // OPTIONAL: center the map to one of the results after filtering applied
+            if (Object.keys(this.widget.filterScreen.state.pickedCategories) && Object.keys(this.widget.filterScreen.state.pickedCategories).length > 0 && this.allUsersOnMap.length > 0 && this.widget.moveToResultsOnMap) {
+              this.map.panTo(this.allUsersOnMap[0].data.location);
+              this.widget.moveToResultsOnMap = false;
+            }
           }
           // else{
       
           // }
         });
+      }else{
+        this.allUsersOnMap=[];
       }
     });
   };
@@ -221,7 +228,7 @@ if (this.settings.filtersEnabled) {
               if (categories[i] == Keys.categoryTypes.BIRTHDATE.key) {
                 console.log("KEY")
                 let birthdate = filters[categories[i]];
-                let bd = { "_buildfire.index.date1": { $gte: new Date(birthdate.min), $lte: new Date(birthdate.max) } };
+                let bd = { "_buildfire.index.date1": { $gte: new Date(birthdate.max), $lte: new Date(birthdate.min) } };
                 and.push(bd);
               }
               else {
@@ -235,12 +242,22 @@ if (this.settings.filtersEnabled) {
                 "$or": and
               });
             }
+
+            // apply filter without location
             filter ={
               "$and": [
-                { "_buildfire.index.array1.string1": { $in: cityKeys } }, ...orS,
+                // { "$json.location": { $exists: true } },
+                 ...orS,
                 { "$json.isActive": true },
               ]
             };
+            // apply filter with location
+            // filter ={
+            //   "$and": [
+            //     { "_buildfire.index.array1.string1": { $in: cityKeys } }, ...orS,
+            //     { "$json.isActive": true },
+            //   ]
+            // };
           }
         
           this.directory.search(null,filter , this.state.userSkip, this.state.pageSize, (err, res) => {
@@ -361,12 +378,9 @@ console.log('zooom to:',zoomTo,'center on:',centerOn,'this.userLocation:',this.u
 
     // cenetr position to my location
     document.querySelector('.my-location-icon').onclick=()=>{
-      console.log(' from center my location');
-      window.setTimeout (()=>{
-        // this.user && this.user.location ? this.user.location : this.defaultLocation;
-        // this.updateMarkers();
-      },1000)
-      // this.state.bounds = this.map.getBounds();
+      this.map.panTo(this.userLocation);
+      let zoomTo = ((this.userLocation.lng != this.defaultLocation.lng) && (this.userLocation.lat != this.defaultLocation.lat)) ? this.mapSettings.zoomLevel.city : this.mapSettings.zoomLevel.country;
+      this.map.setZoom(zoomTo);
     }
     // this.updateUserMarker();
 

@@ -133,12 +133,25 @@ class Filter {
         let categoryContainer = this.ui('div', filtersContainer, null, 'category-container');
         let topRow = this.ui('div', categoryContainer, null, 'top-row');
         let imgContainer = this.ui('div', topRow, null, 'category-image-container');
-        if (category.data.iconType == Keys.iconTypes.IMG.key) {
+        if (category.data.iconType == Keys.iconTypes.IMG.key && category.data.icon) {
             this.ui('img', imgContainer, null, 'categoryScreenIcon', category.data.icon, 'xs', '1:1');
         }
         else {
-            let iconClasses = category.data.icon.split(" ");
-            this.ui('div', imgContainer, null, iconClasses);
+            if (category.data.icon) {
+                
+                let iconClasses = category.data.icon.split(" ");
+                this.ui('div', imgContainer, null, iconClasses);
+
+            }else{
+
+               let filterDefault= this.ui('i', imgContainer, null, ['material-icons-outlined',  'mdc-text-field__icon', 'mdc-theme--text-icon-on-background']);
+          
+               filterDefault.setAttribute('tabindex', '0');
+               filterDefault.setAttribute('role', 'button');
+               filterDefault.setAttribute('id', 'filterIconBtn');
+               filterDefault.innerHTML='filter_alt';
+            }
+
         }
         let categoryName = this.ui('div', topRow, category.data.name, 'category-name');
         let inputContainer = this.ui('div', topRow, null, 'input-container');
@@ -212,12 +225,24 @@ class Filter {
         let categoryContainer = this.ui('div', filtersContainer, null, 'category-container');
         let topRow = this.ui('div', categoryContainer, null, 'top-row');
         let imgContainer = this.ui('div', topRow, null, 'category-image-container');
-        if (category.data.iconType == Keys.iconTypes.IMG.key) {
+        if (category.data.iconType == Keys.iconTypes.IMG.key && category.data.icon) {
             this.ui('img', imgContainer, null, 'categoryScreenIcon', category.data.icon, 'xs', '1:1');
         }
         else {
-            let iconClasses = category.data.icon.split(" ");
-            this.ui('div', imgContainer, null, iconClasses);
+            if (category.data.icon) {
+                
+                let iconClasses = category.data.icon.split(" ");
+                this.ui('div', imgContainer, null, iconClasses);
+
+            }else{
+
+               let filterDefault= this.ui('i', imgContainer, null, ['material-icons-outlined',  'mdc-text-field__icon', 'mdc-theme--text-icon-on-background']);
+          
+               filterDefault.setAttribute('tabindex', '0');
+               filterDefault.setAttribute('role', 'button');
+               filterDefault.setAttribute('id', 'filterIconBtn');
+               filterDefault.innerHTML='filter_alt';
+            }
         }
         let categoryName = this.ui('div', topRow, category.data.name, 'category-name');
         let inputContainer = this.ui('div', topRow, null, 'input-container');
@@ -271,7 +296,7 @@ class Filter {
             let minYear = new Date();
             minYear.setFullYear(minYear.getFullYear() - parseInt(sliderOne.value));
             let maxYear = new Date();
-            maxYear.setFullYear(maxYear.getFullYear() + parseInt(sliderTwo.value));
+            maxYear.setFullYear(maxYear.getFullYear() - parseInt(sliderTwo.value));
             if (sliderOne.value != 40 || sliderTwo.value != 75) {
                 mainCheck.checked = true;
                 this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key].min = minYear;
@@ -292,9 +317,10 @@ class Filter {
             }
             sliderMax.innerHTML = sliderTwo.value;
             let maxYear = new Date();
-            maxYear.setFullYear(maxYear.getFullYear() + parseInt(sliderTwo.value));
+            maxYear.setFullYear(maxYear.getFullYear() - parseInt(sliderTwo.value));
             let minYear = new Date();
             minYear.setFullYear(minYear.getFullYear() - parseInt(sliderOne.value));
+
             if (!this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key]) this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key] = {};
             if (sliderOne.value != 40 || sliderTwo.value != 75) {
                 mainCheck.checked = true;
@@ -328,6 +354,7 @@ class Filter {
 
         mainLabel.addEventListener('click', (e) => {
             e.preventDefault();
+            console.log('mainCheck.checked',mainCheck.checked);
             if (mainCheck.checked) {
                 mainCheck.checked = false;
                 delete this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key];
@@ -335,6 +362,32 @@ class Filter {
                 sliderTwo.value = 75;
                 sliderMin.innerHTML = sliderOne.value;
                 sliderMax.innerHTML = sliderTwo.value;
+                fillColor();
+
+            }else{
+                mainCheck.checked = true;
+                sliderOne.value = 18;
+                sliderTwo.value = 100;
+                sliderMin.innerHTML = sliderOne.value;
+                sliderMax.innerHTML = sliderTwo.value;
+                slideOne();
+                slideTwo();
+                // delete this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key];
+                // fillColor();
+            }
+        });
+
+        chevron.addEventListener('click', () => {
+            if (chevron.classList) {
+                chevron.classList.toggle('bottom');
+            }
+            if (sliderWrapper) {
+                if (sliderWrapper.classList && sliderWrapper.classList.contains("expand")) {
+                    sliderWrapper.classList.remove("expand");
+                }
+                else {
+                    sliderWrapper.classList.add("expand");
+                }
             }
         });
 
@@ -445,10 +498,64 @@ class Filter {
     }
 
     applyFilters() {
+   
+      
+        // handle if all ages included (from 18 to 100)>> then don't search for age
+        if (this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key]) {
+            let maxYear = new Date();
+            maxYear.setFullYear(maxYear.getFullYear() - 100);
+            let minYear = new Date();
+            minYear.setFullYear(minYear.getFullYear() - 18);
+            const pickedYearMax = new Date(this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key].max).getFullYear();
+            const pickedYearMin = new Date(this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key].min).getFullYear();
+            const diffDaysMin = minYear.getFullYear() - pickedYearMin; 
+            const diffDaysMax =  maxYear.getFullYear() - pickedYearMax; 
+
+            // check if the min & max are equal to 18 & 100
+            // const diffTimeMax = Math.abs(maxYear - pickedDateMax);
+            // const diffDaysMax = Math.ceil(diffTimeMax / (1000 * 60 * 60 * 24)); 
+            // const diffTimeMin = Math.abs(minYear - pickedDateMin);
+            // const diffDaysMin = Math.ceil(diffTimeMin / (1000 * 60 * 60 * 24)); 
+            console.log(diffDaysMax + "diffDaysMax: days");
+            console.log(diffDaysMin + "diffDaysMin: days");
+          if (diffDaysMax ==0 && diffDaysMin==0) {
+          delete this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key];
+        }
+     
+        }else{
+
+            // handle age filter >> search between 40 & 75 by default (if the age not picked)
+            if (!this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key]) {
+              let maxYear = new Date();
+              maxYear.setFullYear(maxYear.getFullYear() - 75);
+              let minYear = new Date();
+              minYear.setFullYear(minYear.getFullYear() - 40);
+              this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key] = {};
+              this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key].max = maxYear;
+              this.state.pickedCategories[Keys.categoryTypes.BIRTHDATE.key].min = minYear;
+          }
+        }
+
         console.log('this.state.pickedCategories',this.state.pickedCategories);
+        console.log('activeFilterIndicatorOnMap',activeFilterIndicatorOnMap);
+        console.log('activeFilterIndicatorTwo',activeFilterIndicatorTwo);
+        // show active filter indicator if we have picked categories
+        if (Object.keys(this.state.pickedCategories) && Object.keys(this.state.pickedCategories).length > 0 ) {
+            if (activeFilterIndicatorOnMap) activeFilterIndicatorOnMap.style.display='block';
+            if (activeFilterIndicatorTwo)  activeFilterIndicatorTwo.style.display='block';
+        }else{
+            if (activeFilterIndicatorOnMap) activeFilterIndicatorOnMap.style.display='none';
+            if (activeFilterIndicatorTwo)  activeFilterIndicatorTwo.style.display='none';
+        }
+
+
+        // this flag to pan the map to results when we apply the filter and got a results
+        this.widget.moveToResultsOnMap = true;
+
         this.widget.activeFilters = this.state.pickedCategories;
         this.widget.filter();
         this.widget.goBack();
+
     }
 
     renderEmptyState() {

@@ -4,7 +4,9 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Title</title>
-
+	<link rel="stylesheet" href="../../../styles/materialDesign/material-components-web@4.0.0.min.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<!-- build:bundleWidgetBFMinJS  -->
 	<!-- endbuild -->
 	<script src="../../../scripts/buildfire.js"></script>
@@ -77,17 +79,29 @@
 		<div id="googleMap" style="height:100%;width:100%;position:absolute;">
 		</div>
 		<section class="map-icons-container">
-			<span class="filter-funnel icon glyphicon glyphicon-filter onMap-filter-icon"></span>
-			<span class="filter-funnel icon glyphicon glyphicon-list onMap-users-list-icon"></span>
+			<!-- <span class="filter-funnel icon glyphicon glyphicon-filter onMap-filter-icon"></span> -->
+			
+			<div class="icon-filter-container">
+			<i id="filterIconBtn" class="material-icons-outlined mdc-text-field__icon mdc-theme--text-icon-on-background onMap-filter-icon mdc-fab mdc-theme--secondary mdc-ripple-upgraded" tabindex="0" role="button">filter_alt</i>
+			<span id="activeFilterIndicatorOnMap"></span>
+			</div>
+			<span class="filter-funnel icon glyphicon glyphicon-list onMap-users-list-icon mdc-fab mdc-theme--secondary mdc-ripple-upgraded"></span>
 
 		</section>
-		<img src="./images/location-icon.svg" class="my-location-icon"/>
+		<img src="./images/center.png" class="my-location-icon"/>
 		<div id="gridViewContainer">
 			<header id="mapSearchBar"></header>
 			<div id="gridView">
 			</div>
 			<div id="mapList">
 				<div id="mapListContent"></div>
+				<button id="showMapView" class="mdc-fab mdc-theme--secondary mdc-ripple-upgraded go-to-map-icon-container" aria-label="Map"><div class="mdc-fab__ripple"></div><span class="mdc-fab__icon material-icons mdc-theme--on-secondary">map</span></button>
+				<!-- <span class="go-to-map-icon-container">
+					<img src="./images/map-icon.svg" class="go-to-map-icon"/>
+					
+
+				</span> -->
+				
 			</div>
 		</div>
 		<div id="emptyState" class="empty-state-holder">
@@ -107,6 +121,14 @@
 			</div>
 	</div>
 	<script>
+           // get app theme
+            buildfire.appearance.getAppTheme((err, appTheme) => {
+                if (err) return console.error(err);      
+                document.documentElement.style.setProperty('--icons', appTheme.colors.icons);
+                document.documentElement.style.setProperty('--dangerTheme', appTheme.colors.dangerTheme);
+
+         });
+
 
 		buildfire.appearance.titlebar.show();
 		const widget = new Widget();

@@ -11,6 +11,7 @@ class Widget {
 		this.currentPageIndex = 0;
 		this.inProgress = false;
 		this.isInitialized = false;
+		this.moveToResultsOnMap = false;
 
 		this.timer = null;
 		this.settings = {
@@ -62,16 +63,17 @@ class Widget {
 	
 		// list users icon on map
 		document.querySelector('.onMap-users-list-icon').onclick=()=>{
-			// this.currentScreen = Keys.screenNameKeys.LIST.key;
-			// defaultView.style.display = 'block';
-			this.currentScreen = Keys.screenNameKeys.LIST.key;
-			        mapView.style.display = 'none';
-					// filterView.classList.toggle("show");
-					defaultView.style.display = 'block';
-					// this.searchBar.shouldShowOptionsButton(true);
-					// this.init();
-		// this.initMapSearchBar();
-		this.initSearchBar();
+		// 	this.currentScreen = Keys.screenNameKeys.LIST.key;
+		// 	        mapView.style.display = 'none';
+		// 			defaultView.style.display = 'block';
+		// this.initSearchBar();
+		gridViewContainer.classList.toggle("show");
+		this.mapController.mapContainer.classList.add("hide");
+		this.currentScreen = Keys.screenNameKeys.MAPLIST.key;
+		
+
+		console.log('this.mapController.allUsersOnMap',this.mapController.allUsersOnMap);
+		this.initCityListView('test', this.mapController.allUsersOnMap);
 		}
 		  //filter icon on map
 		  document.querySelector('.onMap-filter-icon').onclick = () => this.searchBar.goToFilterScreen();
@@ -79,6 +81,35 @@ class Widget {
 		// document.querySelector('.onMap-filter-icon').onclick=()=>{
 		// 	this.searchBar.goToFilterScreen();
 		// }
+
+	   // show map view from list users 
+	    showMapView.onclick=()=>{
+		// 	this.currentScreen = Keys.screenNameKeys.LIST.key;
+		// 	        mapView.style.display = 'none';
+		// 			defaultView.style.display = 'block';
+		// this.initSearchBar();
+		console.log('this.filterScreen.state',this.filterScreen.state);
+		gridViewContainer.classList.toggle("show");
+		this.mapController.mapContainer.classList.remove("hide");
+		this.currentScreen = Keys.screenNameKeys.MAP.key;
+		      //show on map icons
+document.querySelector('.my-location-icon').style.display='block';
+document.querySelector('.onMap-users-list-icon').style.display='block';
+// filter icon on map 
+if (this.settings.filtersEnabled) {
+  document.querySelector('.onMap-filter-icon').style.display='block';
+}else{
+  document.querySelector('.onMap-filter-icon').style.display='none';
+}
+
+// hide show active indicator if no selected categories
+if (Object.keys(this.filterScreen.state.pickedCategories) && Object.keys(this.filterScreen.state.pickedCategories).length > 0) {
+	activeFilterIndicatorOnMap.style.display='block';
+}else{
+	activeFilterIndicatorOnMap.style.display='none';
+
+}
+		}
 
 		buildfire.messaging.onReceivedMessage = (msg) => {
 			switch (msg.cmd) {
@@ -145,6 +176,19 @@ class Widget {
 					this.currentScreen = Keys.screenNameKeys.MAP.key;
 					gridViewContainer.classList.toggle("show");
 					googleMap.classList.remove("hide");
+								// hide on map icons
+		document.querySelector('.my-location-icon').style.display='block';
+        document.querySelector('.onMap-users-list-icon').style.display='block';
+		if (this.settings && this.settings.filtersEnabled) {
+			document.querySelector('.onMap-filter-icon').style.display='block';
+		}
+		// hide show active indicator if no selected categories
+if (Object.keys(this.filterScreen.state.pickedCategories) && Object.keys(this.filterScreen.state.pickedCategories).length > 0) {
+	activeFilterIndicatorOnMap.style.display='block';
+}else{
+	activeFilterIndicatorOnMap.style.display='none';
+
+}
 					break;
 				}
 				case Keys.screenNameKeys.FILTER.key: {
@@ -207,6 +251,7 @@ class Widget {
 		    document.getElementById('applyFilterBtn').innerText=this.strings.get('filter.filterButton') ? this.strings.get('filter.filterButton') : 'Apply';
 
 			if (this.settings.mapEnabled) {
+				console.log('this.user from widget',this.user);
 				this.initMapView();
 			}
 			else {
@@ -279,7 +324,7 @@ class Widget {
 			}
 		});
 	}
-
+//  init list view from map
 	updateSearchEngine() {
 		let page = 0, pageSize = 50, updatedArr = [];
 
@@ -385,6 +430,12 @@ class Widget {
 	// }
 
 	initCityListView(cityName, users) {
+		// hide on map icons
+		document.querySelector('.my-location-icon').style.display='none';
+        document.querySelector('.onMap-users-list-icon').style.display='none';
+        document.querySelector('.onMap-filter-icon').style.display='none';
+        activeFilterIndicatorOnMap.style.display='none';
+
 		mapSearchBar.innerHTML = "";
 		this.mapSearchBar = new SearchBar('mapSearchBar');
 		// this.initCitySearchBar();
@@ -831,7 +882,7 @@ class Widget {
 				if (categories[i] == Keys.categoryTypes.BIRTHDATE.key) {
 					console.log("KEY")
 					let birthdate = filters[categories[i]];
-					let bd = { "_buildfire.index.date1": { $gte: new Date(birthdate.min), $lte: new Date(birthdate.max) } };
+					let bd = { "_buildfire.index.date1": { $gte: new Date(birthdate.max), $lte: new Date(birthdate.min) } };
 					and.push(bd);
 				}
 				else {
@@ -1168,6 +1219,13 @@ class Widget {
 				this.currentScreen = Keys.screenNameKeys.MAP.key;
 				gridViewContainer.classList.toggle("show");
 				googleMap.classList.remove("hide");
+				console.log('from maplist go back');
+				// hide on map icons
+		document.querySelector('.my-location-icon').style.display='block';
+        document.querySelector('.onMap-users-list-icon').style.display='block';
+		if (this.settings && this.settings.filtersEnabled) {
+			document.querySelector('.onMap-filter-icon').style.display='block';
+		}
 				break;
 			}
 			case Keys.screenNameKeys.FILTER.key: {

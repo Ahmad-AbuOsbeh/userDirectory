@@ -44,11 +44,11 @@
         </div>
         <div class="badge-name">
             <label for="">Badge Name</label>
-            <input name="badgeName" type="text" ng-model="badge.name" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.badgeName.$invalid}" required />
+            <input name="badgeName" type="text" placeholder="Enter Name" ng-model="badge.name" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.badgeName.$invalid}" required />
         </div>
         <div class="tag-name">
             <label for="">Tag</label>
-            <input name="badgeTag" type="text" ng-model="badge.tag" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.badgeTag.$invalid}" required />
+            <input name="badgeTag" type="text" placeholder="Enter Tag Name" ng-model="badge.tag" ng-class="{'has-error': newBadge.$hasSubmit && newBadge.badgeTag.$invalid}" required />
         </div>
         <div class="tag-count">
             <label for="">Tag Count</label>
@@ -109,7 +109,7 @@
     <div class="item clearfix">
         <div id="home-category-list"
             class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four infinite-scroll-parent">
-            <div infinite-scroll="getMore()" infinite-scroll-distance="1"
+            <div class="categories-container" infinite-scroll="getMore()" infinite-scroll-distance="1"
                 data-infinite-container="#home-category-list" infinite-scroll-disabled="noMore">
                 <div ui-sortable="itemSortableOptions" ng-model="items">
                     <div class="well text-center margin-bottom-zero border-none empty-state"

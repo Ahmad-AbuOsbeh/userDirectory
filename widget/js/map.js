@@ -11,7 +11,8 @@ class MapView {
     this.allUsersOnMap = [];
     this.mapSettings = {
       markerClusterer: null,
-      zoomLevel: { city: 14, country: 3 },
+      // zoomLevel: { city: 14, country: 3 },
+      zoomLevel: { city: 8, country: 3 },
       images: {
         currentLocation: 'google_marker_blue_icon.png',
         place: 'google_marker_red_icon.png',

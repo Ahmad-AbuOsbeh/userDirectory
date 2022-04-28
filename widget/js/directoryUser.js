@@ -1,199 +1,192 @@
 class DirectoryUser {
-	constructor(user) {
-		this.isActive = typeof user.isActive !== 'undefined' ? user.isActive : true;
-		this.displayName = user.displayName;
-		this.firstName = user.firstName;
-		this.lastName = user.lastName;
-		this.phoneNumber = user && user.userProfile && user.userProfile.tel ? user.userProfile.tel : null;
-		this.email = user.email;
-		this.userId = user._id || user.userId;
-		this.badges = user.badges || [];
-		this.joinDate = user.joinDate || null;
-		this.location = user.location || null;
-		this.locationKey = user.locationKey || null;
-		this.birthday = user.birthday || null;
+  constructor(user) {
+    this.isActive = typeof user.isActive !== 'undefined' ? user.isActive : true;
+    this.displayName = user.displayName;
+    this.firstName = user.firstName;
+    this.lastName = user.lastName;
+    this.phoneNumber = user && user.userProfile && user.userProfile.tel ? user.userProfile.tel : null;
+    this.email = user.email;
+    this.userId = user._id || user.userId;
+    this.badges = user.badges || [];
+    this.joinDate = user.joinDate || null;
+    this.location = user.location || null;
+    this.locationKey = user.locationKey || null;
+    this.birthday = user.birthday || null;
 
-		const { appId } = buildfire.getContext();
-		// const appId = "2ee7035a-5381-11e9-8fc5-06e43182e96c";
-		console.log('userrrrr',user);
-		console.log('user.tagssssss',user.tags);
-		console.log('buildfire.getContext();',buildfire.getContext());
-		this.tags = user.tags && user.tags[appId] ? user.tags[appId] : [];
+    const { appId } = buildfire.getContext();
+    // const appId = "2ee7035a-5381-11e9-8fc5-06e43182e96c";
+    console.log('userrrrr', user);
+    console.log('user.tagssssss', user.tags);
+    console.log('buildfire.getContext();', buildfire.getContext());
+    this.tags = user.tags && user.tags[appId] ? user.tags[appId] : [];
     //    this.toJson(settings,(err,res)=>{
     //    if (err) return console.error("ERROR in user direectory",err);
-	//    console.log('DATAAAAAA FROM TO JSONNNNNN user directory',res);
+    //    console.log('DATAAAAAA FROM TO JSONNNNNN user directory',res);
     //    });
-	};
+  }
 
-	handleLocationTags(locationTags, callback) {
-		const countryTag = locationTags.find(tag => tag.tagName.includes("$$profile_country"));
-		const cityTag = locationTags.find(tag => tag.tagName.includes("$$profile_city") || tag.tagName.includes("$$profile_town"));
-		if (countryTag && cityTag) {
-			const countryKey = countryTag.tagName.split(":")[1];
-			const cityKey = cityTag.tagName.split(":")[1];
-			this.locationKey = `${cityKey},${countryKey}`;
-			// Check if we have the key in the list of locations
-			Locations.getLocationByKey(this.locationKey, (error, location) => {
-				if (error) {
-					return callback(error);
-				} else if (location && location.data) {
-					this.location = location.data.coordinates;
-					return callback(null, true);
-				}
-				else {
-					// convert location into lat/long and save it
-					fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${this.locationKey}&key=AIzaSyBOp1GltsWARlkHhF1H_cb6xtdR1pvNDAk`)
-						.then(response => response.json())
-						.then(data => {
-							if (data && data.results && data.results.length) {
-								let address = data.results[0].geometry.location;
-								let locationName = data.results[0].formatted_address;
-								Locations.addLocation(new Location({ key: this.locationKey, coordinates: address, locationName: locationName }), (err, res) => {
-									if (err) {
-										return callback(err);
-									} else {
-										console.log("Location added to database");
-										this.location = address;
-										callback(null, true);
-									}
-								});
-							}
-						});
-				}
-			});
-		}
-		else {
-			callback(null, false);
-		}
-	}
+  handleLocationTags(locationTags, callback) {
+    const countryTag = locationTags.find((tag) => tag.tagName.includes('$$profile_country'));
+    const cityTag = locationTags.find((tag) => tag.tagName.includes('$$profile_city') || tag.tagName.includes('$$profile_town'));
+    if (countryTag && cityTag) {
+      const countryKey = countryTag.tagName.split(':')[1];
+      const cityKey = cityTag.tagName.split(':')[1];
+      this.locationKey = `${cityKey},${countryKey}`;
+      // Check if we have the key in the list of locations
+      Locations.getLocationByKey(this.locationKey, (error, location) => {
+        if (error) {
+          return callback(error);
+        } else if (location && location.data) {
+          this.location = location.data.coordinates;
+          return callback(null, true);
+        } else {
+          // convert location into lat/long and save it
+          fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${this.locationKey}&key=AIzaSyBOp1GltsWARlkHhF1H_cb6xtdR1pvNDAk`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data && data.results && data.results.length) {
+                let address = data.results[0].geometry.location;
+                let locationName = data.results[0].formatted_address;
+                Locations.addLocation(new Location({ key: this.locationKey, coordinates: address, locationName: locationName }), (err, res) => {
+                  if (err) {
+                    return callback(err);
+                  } else {
+                    console.log('Location added to database');
+                    this.location = address;
+                    callback(null, true);
+                  }
+                });
+              }
+            });
+        }
+      });
+    } else {
+      callback(null, false);
+    }
+  }
 
-	handleFilterTags(type, filterTags, callback) {
-		// Keys.categoryTypes.BIRTHDATE.key
-		if (type == "birthdate") {
-			const year = filterTags.find(tag => tag.tagName.includes("$$profile_birth_year"));
-			const month = filterTags.find(tag => tag.tagName.includes("$$profile_birth_month"));
-			//note: custom reg does not return the birth "day"
-			let birthday = new Date(`${year.tagName.split(":")[1]}-${parseInt(month.tagName.split(":")[1])}-01`);
-			this.birthday=birthday;
-			// this._buildfire.index.date1 = birthday;
-			callback(null, true);
-              console.log('birthday added as indexed this:',this);		
-			}
-	}
+  handleFilterTags(type, filterTags, callback) {
+    // Keys.categoryTypes.BIRTHDATE.key
+    if (type == 'birthdate') {
+      const year = filterTags.find((tag) => tag.tagName.includes('$$profile_birth_year'));
+      const month = filterTags.find((tag) => tag.tagName.includes('$$profile_birth_month'));
+      //note: custom reg does not return the birth "day"
+      let birthday = new Date(`${year.tagName.split(':')[1]}-${parseInt(month.tagName.split(':')[1])}-01`);
+      this.birthday = birthday;
+      // this._buildfire.index.date1 = birthday;
+      callback(null, true);
+      console.log('birthday added as indexed this:', this);
+    }
+  }
 
-	objToJson_() {
-		const badgeIds = this.badges.map(badge => badge.id);
-		let badgeCount = 0;
-		this.badges.forEach(badge => {
-			if (typeof badge.appliedCount !== 'number') {
-				badge.appliedCount = 1;
-			}
-			badgeCount += badge.appliedCount;
-		});
-		let tagCount = 0;
-		let tagIndex = [];
-		this.tags.forEach(tag => {
-			if (typeof tag.appliedCount !== 'number') {
-				tag.appliedCount = 1;
-			}
-			tagCount += tag.appliedCount;
-			tagIndex.push({string1: tag.tagName});
-		});
-		return {
-			isActive: this.isActive,
-			displayName: this.displayName,
-			dName: this.displayName ? this.displayName.toLowerCase() : '',
-			firstName: this.firstName,
-			fName: this.firstName ? this.firstName.toLowerCase() : '',
-			lastName: this.lastName,
-			phoneNumber: this.phoneNumber,
-			lName: this.lastName ? this.lastName.toLowerCase() : '',
-			email: this.email,
-			userId: this.userId,
-			badges: this.badges,
-			location: this.location,
-			locationKey: this.locationKey,
-			badgeCount,
-			tags: this.tags,
-			tagCount,
-			joinDate: this.joinDate,
-			_buildfire: {
-				index: {
-					text: `${this.firstName || ''} ${this.lastName || ''} ${this.displayName || ''} ${this.email || ''}`,
-					string1: `${this.userId}`,
-					date1: this.birthday,
-					array1: [...badgeIds, ...tagIndex, { string1: `${this.locationKey}` }],
-				}
-			}
-		};
-	}
+  objToJson_() {
+    const badgeIds = this.badges.map((badge) => badge.id);
+    let badgeCount = 0;
+    this.badges.forEach((badge) => {
+      if (typeof badge.appliedCount !== 'number') {
+        badge.appliedCount = 1;
+      }
+      badgeCount += badge.appliedCount;
+    });
+    let tagCount = 0;
+    let tagIndex = [];
+    this.tags.forEach((tag) => {
+      if (typeof tag.appliedCount !== 'number') {
+        tag.appliedCount = 1;
+      }
+      tagCount += tag.appliedCount;
+      tagIndex.push({ string1: tag.tagName });
+    });
+    return {
+      isActive: this.isActive,
+      displayName: this.displayName,
+      dName: this.displayName ? this.displayName.toLowerCase() : '',
+      firstName: this.firstName,
+      fName: this.firstName ? this.firstName.toLowerCase() : '',
+      lastName: this.lastName,
+      phoneNumber: this.phoneNumber,
+      lName: this.lastName ? this.lastName.toLowerCase() : '',
+      email: this.email,
+      userId: this.userId,
+      badges: this.badges,
+      location: this.location,
+      locationKey: this.locationKey,
+      badgeCount,
+      tags: this.tags,
+      tagCount,
+      joinDate: this.joinDate,
+      _buildfire: {
+        index: {
+          text: `${this.firstName || ''} ${this.lastName || ''} ${this.displayName || ''} ${this.email || ''}`,
+          string1: `${this.userId}`,
+          date1: this.birthday,
+          array1: [...badgeIds, ...tagIndex, { string1: `${this.locationKey}` }],
+        },
+      },
+    };
+  }
 
-	toJson(settings, callback) {
-		if (settings && settings.filtersEnabled) {
-			if (this.tags && this.tags.length) {
-				// Check if we have birthdate tag
-				const birthdateTags = this.tags.filter(tag => {
-					if (tag.tagName.includes("$$profile_birth_year") || tag.tagName.includes("$$profile_birth_month")) {
-						return true;
-					}
-				});
-console.log('birthdateTags 11:01',birthdateTags);
-				if (birthdateTags.length == 2) {
-					this.handleFilterTags('birthdate', birthdateTags,  (err, res) => {
-						if (err) {
-							return callback(err);
-						}
-						// else {
-						// 	return callback(null, this.objToJson_());
-						// }
-					}) 
+  toJson(settings, callback) {
+    if (settings && settings.filtersEnabled) {
+      if (this.tags && this.tags.length) {
+        // Check if we have birthdate tag
+        const birthdateTags = this.tags.filter((tag) => {
+          if (tag.tagName.includes('$$profile_birth_year') || tag.tagName.includes('$$profile_birth_month')) {
+            return true;
+          }
+        });
+        console.log('birthdateTags 11:01', birthdateTags);
+        if (birthdateTags.length == 2) {
+          this.handleFilterTags('birthdate', birthdateTags, (err, res) => {
+            if (err) {
+              return callback(err);
+            }
+            // else {
+            // 	return callback(null, this.objToJson_());
+            // }
+          });
+        }
 
-				}
-
-				// var locationTags = this.tags.filter(tag => tag.tagName.includes("$$profile_country") || (tag.tagName.includes("$$profile_city") || tag.tagName.includes("$$profile_town")));
-				// if (locationTags && locationTags.length) {
-				// 	this.handleLocationTags(locationTags, (err, res) => {
-				// 		if (err) {
-				// 			return callback(err);
-				// 		}
-				// 		else {
-				// 			return callback(null, this.objToJson_());
-				// 		}
-				// 	});
-				// }
-				// else {
-				// 	return callback(null, this.objToJson_());
-				// }
-			}
-		}
-		if (settings && settings.mapEnabled) {
-			console.log('document.querySelector(.onMap-users-list-icon)',document.querySelector('.onMap-users-list-icon'));
-			// document.querySelector('.my-location-icon').style.display='block';
-			// console.log('document.querySelector('.onMap-users-list-icon')',);
-			// document.querySelector('.onMap-users-list-icon').style.display='block';
-			// document.querySelector('.onMap-filter-icon').style.display='block';
-			if (this.tags && this.tags.length) {
-				var locationTags = this.tags.filter(tag => tag.tagName.includes("$$profile_country") || (tag.tagName.includes("$$profile_city") || tag.tagName.includes("$$profile_town")));
-				if (locationTags && locationTags.length) {
-					this.handleLocationTags(locationTags, (err, res) => {
-						if (err) {
-							return callback(err);
-						}
-						else {
-							return callback(null, this.objToJson_());
-						}
-					});
-				}
-				else {
-					return callback(null, this.objToJson_());
-				}
-			}
-			else {
-				return callback(null, this.objToJson_());
-			}
-		}
-		else {
-			return callback(null, this.objToJson_());
-		}
-	}
+        // var locationTags = this.tags.filter(tag => tag.tagName.includes("$$profile_country") || (tag.tagName.includes("$$profile_city") || tag.tagName.includes("$$profile_town")));
+        // if (locationTags && locationTags.length) {
+        // 	this.handleLocationTags(locationTags, (err, res) => {
+        // 		if (err) {
+        // 			return callback(err);
+        // 		}
+        // 		else {
+        // 			return callback(null, this.objToJson_());
+        // 		}
+        // 	});
+        // }
+        // else {
+        // 	return callback(null, this.objToJson_());
+        // }
+      }
+    }
+    if (settings && settings.mapEnabled) {
+      // console.log('document.querySelector(.onMap-users-list-icon)',document.querySelector('.onMap-users-list-icon'));
+      // document.querySelector('.my-location-icon').style.display='block';
+      // console.log('document.querySelector('.onMap-users-list-icon')',);
+      // document.querySelector('.onMap-users-list-icon').style.display='block';
+      // document.querySelector('.onMap-filter-icon').style.display='block';
+      if (this.tags && this.tags.length) {
+        var locationTags = this.tags.filter((tag) => tag.tagName.includes('$$profile_country') || tag.tagName.includes('$$profile_city') || tag.tagName.includes('$$profile_town'));
+        if (locationTags && locationTags.length) {
+          this.handleLocationTags(locationTags, (err, res) => {
+            if (err) {
+              return callback(err);
+            } else {
+              return callback(null, this.objToJson_());
+            }
+          });
+        } else {
+          return callback(null, this.objToJson_());
+        }
+      } else {
+        return callback(null, this.objToJson_());
+      }
+    } else {
+      return callback(null, this.objToJson_());
+    }
+  }
 }

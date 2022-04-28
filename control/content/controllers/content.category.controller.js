@@ -8,114 +8,107 @@
     /**
      * Inject dependency
      */
-    .controller('ContentCategoryCtrl', ['$scope',"$location",'EDITED_CATEGORY',
-      function ($scope,$location,EDITED_CATEGORY) {
+    .controller('ContentCategoryCtrl', [
+      '$scope',
+      '$location',
+      'EDITED_CATEGORY',
+      function ($scope, $location, EDITED_CATEGORY) {
         /**
          * Using Control as syntax this
          */
         // var ContentCategory = this;
-        $scope.subcategoryTitle = "";
+        $scope.subcategoryTitle = '';
         // $scope.hideSubcategorySection=false;
-        
 
-    //  console.log('this==$scope',this==$scope);
-    // function chackAllSubCatNames () {
-    //   if ($scope.item.data.subcategories.length) {
-        
-    //     $scope.item.data.subcategories.map((sub)=>{
-    //       if (sub.name) {
-    //     $scope.isSubCatNameExist=true;
-            
-    //       }else{
-    //       $scope.isSubCatNameExist=false;
-    //       return;
-    //       }
-    //     });
-    //   }
-      
-    // }
-          function init() {
-            $scope.isBusy = true;
-            $scope.isSubCatNameExist=true;
+        //  console.log('this==$scope',this==$scope);
+        // function chackAllSubCatNames () {
+        //   if ($scope.item.data.subcategories.length) {
 
-            buildfire.auth.getCurrentUser((err, user) => {
-              if (err) {
-                $scope.saving = false;
-                return;
+        //     $scope.item.data.subcategories.map((sub)=>{
+        //       if (sub.name) {
+        //     $scope.isSubCatNameExist=true;
+
+        //       }else{
+        //       $scope.isSubCatNameExist=false;
+        //       return;
+        //       }
+        //     });
+        //   }
+
+        // }
+        function init() {
+          $scope.isBusy = true;
+          $scope.isSubCatNameExist = true;
+
+          buildfire.auth.getCurrentUser((err, user) => {
+            if (err) {
+              $scope.saving = false;
+              return;
+            }
+            var data = {
+              name: '',
+              icon: '',
+              subcategories: [],
+              sortBy: 'Newest', // to sort subcategories
+              rank: 0,
+              rankOfLastSubcategory: 0,
+              lastSubcategoryId: 0,
+              isActive: true,
+              createdOn: '',
+              createdBy: '',
+              lastUpdatedOn: '',
+              lastUpdatedBy: '',
+              deletedOn: '',
+              deletedBy: '',
+              // titleIndex:"",
+            };
+
+            // $scope.sortOptions = SubcategoryOrders.options;
+            if (user) $scope.user = user;
+
+            /**
+             * if controller is for opened in edit mode, Load media data
+             * else init it with bootstrap data
+             */
+            // if (category) {
+            if (EDITED_CATEGORY.EditedCategory) {
+              console.log('EDITED_CATEGORY.EditedCategory', EDITED_CATEGORY.EditedCategory);
+              $scope.item = EDITED_CATEGORY.EditedCategory;
+              $scope.mode = 'edit';
+              $scope.title = 'Edit Category';
+              $scope.displayedSubactegories = $scope.item.data.subcategories; // used to display searched subcategories
+              // updateMasterItem($scope.item);
+              if ($scope.item.data.name == 'Age') {
+                //then hide subcategories part
+                $scope.hideSubcategorySection = true;
+              } else {
+                $scope.hideSubcategorySection = false;
               }
-              var data = {
-                name: "",
-                icon: "",
-                subcategories: [
-                ],
-                sortBy: 'Newest', // to sort subcategories
-                rank: 0,
-                rankOfLastSubcategory: 0,
-                lastSubcategoryId: 0,
-                isActive:true,
-                createdOn: "",
-                createdBy: "",
-                lastUpdatedOn: "",
-                lastUpdatedBy: "",
-                deletedOn: "",
-                deletedBy: "",
-                // titleIndex:"",
-              };
-  
-              // $scope.sortOptions = SubcategoryOrders.options;
-              if (user) $scope.user = user;
-  
-              /**
-               * if controller is for opened in edit mode, Load media data
-               * else init it with bootstrap data
-               */
-              // if (category) {
-              if (EDITED_CATEGORY.EditedCategory) {
+              // chackAllSubCatNames();
+            } else {
+              $scope.hideSubcategorySection = false;
+              $scope.item = { data: data };
+              $scope.mode = 'add';
+              $scope.title = 'Add Category';
+              $scope.displayedSubactegories = $scope.item.data.subcategories;
+              // updateMasterItem($scope.item);
+            }
+            // $scope.checkSubCategoryName();
+            // $scope.itemSortableOptions.disabled = !($scope.item.data.sortBy === SubcategoryOrders.ordersMap.Manually);
+            $scope.isBusy = false;
+            $scope.$apply();
+          });
+        }
 
+        init();
 
-                
-                console.log('EDITED_CATEGORY.EditedCategory',EDITED_CATEGORY.EditedCategory);
-                $scope.item =EDITED_CATEGORY.EditedCategory;
-                $scope.mode = 'edit';
-                $scope.title = "Edit Category";
-                $scope.displayedSubactegories = $scope.item.data.subcategories; // used to display searched subcategories
-                // updateMasterItem($scope.item);
-                if ($scope.item.data.name == 'Age') {
-                  //then hide subcategories part
-                  $scope.hideSubcategorySection=true;
-                }else{
-                  $scope.hideSubcategorySection=false;
-  
-                }
-                // chackAllSubCatNames();
+        function updateMasterItem(item) {
+          $scope.masterItem = angular.copy(item);
+        }
 
-              }
-              else {
-                $scope.hideSubcategorySection=false;
-                $scope.item = { data: data };
-                $scope.mode = 'add';
-                $scope.title = "Add Category";
-                $scope.displayedSubactegories = $scope.item.data.subcategories;
-                // updateMasterItem($scope.item);
-              }
-              // $scope.checkSubCategoryName();
-              // $scope.itemSortableOptions.disabled = !($scope.item.data.sortBy === SubcategoryOrders.ordersMap.Manually);
-              $scope.isBusy = false;
-              $scope.$apply();
-            });
-          };
-  
-          init();
-
-
-          function updateMasterItem(item) {
-            $scope.masterItem = angular.copy(item);
-          }
-
-          $scope.addIcon = function () {
+        $scope.addIcon = function () {
           var options = { showIcons: true, multiSelection: false },
             listImgCB = function (error, result) {
-
               if (error) {
                 console.error('Error:', error);
               } else {
@@ -125,28 +118,26 @@
                 } else if (result && result.selectedIcons && result.selectedIcons[0]) {
                   $scope.item.data.icon = result.selectedIcons[0];
                   $scope.item.data.iconType = Keys.iconTypes.ICON.key;
-                }else{
-                  $scope.item.data.icon =  "";
-
+                } else {
+                  $scope.item.data.icon = '';
                 }
                 // $scope.item.data.icon = result && result.selectedFiles && result.selectedFiles[0] || result && result.selectedIcons && result.selectedIcons[0] || "";
                 if (!$scope.$$phase) $scope.$digest();
               }
             };
           buildfire.imageLib.showDialog(options, listImgCB);
-          }
-
+        };
 
         $scope.removeIcon = function () {
-          $scope.item.data.icon = "";
+          $scope.item.data.icon = '';
         };
 
         // //To render icon whether it is an image or icon
         $scope.isIcon = function (icon) {
           if (icon) {
-            return icon.indexOf("http") != 0;
+            return icon.indexOf('http') != 0;
           }
-          return $scope.item.data.icon && $scope.item.data.icon.indexOf("http") != 0;
+          return $scope.item.data.icon && $scope.item.data.icon.indexOf('http') != 0;
         };
 
         $scope.updateItem = function () {
@@ -156,7 +147,7 @@
             $scope.item.data.titleIndex = $scope.item.data.name.toLowerCase();
             if ($scope.item.id) {
               //then we are editing the item
-            
+
               $scope.item.data.id = $scope.item.id;
               $scope.item.data.lastUpdatedOn = new Date();
               $scope.item.data.lastUpdatedBy = $scope.user;
@@ -166,8 +157,7 @@
                   $scope.saving = false;
                   console.error('Error saving data: ', err);
                   return;
-                }
-                else {
+                } else {
                   $scope.item = result;
                   // updateMasterItem($scope.item);
                   // buildfire.messaging.sendMessageToWidget({
@@ -178,11 +168,9 @@
                   $scope.done();
                 }
               });
-            }
-
-            else {
+            } else {
               //then we are adding the item
-              $scope.hideSubcategorySection=false;
+              $scope.hideSubcategorySection = false;
               $scope.item.data.createdOn = new Date();
               $scope.item.data.createdBy = $scope.user;
 
@@ -194,93 +182,84 @@
                   return console.log('Error saving data: ', err);
                 }
                 if (result) {
-                  console.log('first added results',result);
+                  console.log('first added results', result);
                   $scope.item = result;
                   // updateMasterItem($scope.item);
                   if ($scope.item.data.subcategories && $scope.item.data.subcategories.length) {
                     $scope.item.data.subcategories.map((subcategory, index) => {
                       subcategory.categoryId = result.id;
-                      subcategory.id = result.id + "_" + index;
+                      subcategory.id = result.id + '_' + index;
                     });
                   }
-                    $scope.item.data.id = result.id;
-                    Categories.update($scope.item.data, function (err, result) {
-                      if (err) {
-                        $scope.saving = false;
-                        console.error('Error saving data: ', err);
-                        return;
-                      }
-                      else {
-                        $scope.item = result;
-                        // updateMasterItem($scope.item);
-                        // buildfire.messaging.sendMessageToWidget({
-                        //   name: EVENTS.CATEGORIES_CHANGE,
-                        //   message: {}
-                        // });
-                        $scope.saving = false;
-                        // MediaCenterSettings.content.rankOfLastCategory = $scope.item.data.rank;
-                        // MediaCenter.save(MediaCenterSettings).then(() => {
-                        // });
-                        console.log('resultssssss final from appdata',result);
-                        $scope.done();
-                      }
-                    });
+                  $scope.item.data.id = result.id;
+                  Categories.update($scope.item.data, function (err, result) {
+                    if (err) {
+                      $scope.saving = false;
+                      console.error('Error saving data: ', err);
+                      return;
+                    } else {
+                      $scope.item = result;
+                      // updateMasterItem($scope.item);
+                      // buildfire.messaging.sendMessageToWidget({
+                      //   name: EVENTS.CATEGORIES_CHANGE,
+                      //   message: {}
+                      // });
+                      $scope.saving = false;
+                      // MediaCenterSettings.content.rankOfLastCategory = $scope.item.data.rank;
+                      // MediaCenter.save(MediaCenterSettings).then(() => {
+                      // });
+                      console.log('resultssssss final from appdata', result);
+                      $scope.done();
+                    }
+                  });
                 }
               });
               return;
             }
-
-          }
-          else {
+          } else {
             $scope.titleRequired = true;
           }
-        }
-
-
+        };
 
         $scope.addItem = function (cb) {
           Categories.add($scope.item.data, function (err, result) {
             if (err) {
               console.error('Error saving data: ', err);
-              return cb("Error saving data");
-            }
-            else {
+              return cb('Error saving data');
+            } else {
               $scope.item = result;
               // updateMasterItem($scope.item);
               cb(null, result);
             }
           });
-        }
+        };
 
         $scope.done = function () {
           setTimeout(() => {
-            window.location.href="#/home";
+            window.location.href = '#/home';
           }, 0);
         };
 
         $scope.showSubcategoryModal = function () {
-          			buildfire.auth.showTagsSearchDialog(null, (err, result) => {
-  if (err) return console.error(err);
-  if (result) {
-    console.log('resultttttt subcatt',result);
-    let addedSubcategories=[];
-    for (let i = 0; i < result.length; i++) {
-     
-      addedSubcategories.push(new Subcategory({...result[i],createdBy:$scope.user,lastUpdatedBy:$scope.user}).toJson());
-    }
-    if ($scope.item.data.subcategories.length) {
-      
-      $scope.item.data.subcategories=[...$scope.item.data.subcategories,...addedSubcategories];
-    }else{
-      $scope.item.data.subcategories=addedSubcategories;
-    }
-    $scope.displayedSubactegories=$scope.item.data.subcategories;
-    $scope.isSubCatNameExist=false;
-    // chackAllSubCatNames();
-    $scope.$apply();
-
-  }
-});
+          buildfire.auth.showTagsSearchDialog(null, (err, result) => {
+            if (err) return console.error(err);
+            if (result) {
+              console.log('resultttttt subcatt', result);
+              let addedSubcategories = [];
+              for (let i = 0; i < result.length; i++) {
+                addedSubcategories.push(new Subcategory({ ...result[i], createdBy: $scope.user, lastUpdatedBy: $scope.user }).toJson());
+              }
+              if ($scope.item.data.subcategories.length) {
+                $scope.item.data.subcategories = [...$scope.item.data.subcategories, ...addedSubcategories];
+              } else {
+                $scope.item.data.subcategories = addedSubcategories;
+              }
+              $scope.displayedSubactegories = $scope.item.data.subcategories;
+              $scope.isSubCatNameExist = false;
+              // chackAllSubCatNames();
+              $scope.$apply();
+            }
+          });
           // if (mode == "Add") {
           //   $scope.subcategoryModalMode = "Add";
           //   $scope.addSubcategoryTitle = "Add Subcategory";
@@ -294,18 +273,18 @@
           //   $scope.showSubModal = true;
           //   $scope.editedSubcategory = editedSubcategory;
           // }
-        }
+        };
 
-        $scope.checkSubCategoryName= function (subCatName) {
+        $scope.checkSubCategoryName = function (subCatName) {
           if (subCatName) {
-            $scope.isSubCatNameExist=true;
-          }else{
-            $scope.isSubCatNameExist=false;
+            $scope.isSubCatNameExist = true;
+          } else {
+            $scope.isSubCatNameExist = false;
           }
-        // if (!$scope.item.data.subcategories.length) {
-        //   $scope.isSubCatNameExist=true;
-        // }
-        }
+          // if (!$scope.item.data.subcategories.length) {
+          //   $scope.isSubCatNameExist=true;
+          // }
+        };
         // $scope.closeSubcategoryModal = function () {
         //   $scope.showSubModal = false;
         //   $scope.subcategoryTitle = "";
@@ -375,12 +354,12 @@
         $scope.removeSubcategory = function (subcategory) {
           buildfire.dialog.confirm(
             {
-              title: "Delete Sucbategory",
+              title: 'Delete Sucbategory',
               confirmButton: {
-                type: "danger",
-                text: "Delete"
+                type: 'danger',
+                text: 'Delete',
               },
-              message: "Are you sure you want to delete this subcategory? This action is not reversible.",
+              message: 'Are you sure you want to delete this subcategory? This action is not reversible.',
             },
             (err, isConfirmed) => {
               if (err) console.error(err);
@@ -396,7 +375,6 @@
             }
           );
         };
-
 
         // $scope.toggleSortOrder = function (name) {
         //   if (!name) {
@@ -415,6 +393,7 @@
         //   handle: '> .cursor-grab',
         //   disabled: $scope.isBusy || !($scope.item.data.sortBy === SubcategoryOrders.ordersMap.Manually),
         //   stop: function (e, ui) {
+        //     console.log('all good');
         //     var endIndex = ui.item.sortable.dropindex,
         //       maxRank = 0,
         //       draggedItem = $scope.displayedSubactegories[endIndex];
@@ -432,7 +411,7 @@
         //         }
         //       } else {
         //         if (prev) {
-        //           draggedItem.rank = (((prev.rank || 0) * 2) + 10) / 2;
+        //           draggedItem.rank = ((prev.rank || 0) * 2 + 10) / 2;
         //           maxRank = draggedItem.rank;
         //           isRankChanged = true;
         //         }
@@ -447,7 +426,7 @@
         //         $scope.searchSubcategories();
         //       }
         //     }
-        //   }
+        //   },
         // };
 
         // $scope.sort = function () {
@@ -484,7 +463,7 @@
 
         $scope.cancelAdd = function () {
           // $scope.done();
-          window.location.href='#/home'
+          window.location.href = '#/home';
         };
 
         // $scope.searchSubcategories = function () {
@@ -615,10 +594,12 @@
         //     //do something on cancel
         //   });
         // };
-      }]).filter('cropImg', function () {
-        return function (url) {
-            if (!url) return;
-            return buildfire.imageLib.cropImage(url, { size: 'xxs', aspect: '1:1' });
-        };
+      },
+    ])
+    .filter('cropImg', function () {
+      return function (url) {
+        if (!url) return;
+        return buildfire.imageLib.cropImage(url, { size: 'xxs', aspect: '1:1' });
+      };
     });
 })(window.angular);

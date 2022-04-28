@@ -38,7 +38,7 @@ class Users {
 	 * @param {Function} callback callback for handling response
 	 */
 	static search(options, callback) {
-		let { userIds, pageIndex, pageSize, ranking, filters ,recordCount} = options;
+		let { userIds, pageIndex, pageSize, ranking, filters} = options;
 		// filters ={ "tags.tagName": { $in: [ "$$profile_gender:male"] } };
 	
 		console.log('filters from search neww',filters);
@@ -53,16 +53,11 @@ class Users {
 			const { sort } = this.rankings[ranking];
 			searchOptions.sort = sort;
 		}
-
+        console.log('userIds from search: 1.33',userIds);
 		if (userIds) {
 			searchOptions.filter['_buildfire.index.string1'] = { $in: userIds };
 		}
-		if (recordCount) {
-			searchOptions ={
-				sort: { firstName: 1, lastName: 1, displayName: 1 },
-				recordCount:true,
-			}
-		}
+	
 		console.log("search", searchOptions);
 		buildfire.appData.search(searchOptions, this.tag, callback);
 	}

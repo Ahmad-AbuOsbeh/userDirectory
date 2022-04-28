@@ -1,33 +1,32 @@
 {
-	"author": "BuildFire",
-	"pluginName": "User Directory [DEV ahmad2]",
-	"pluginDescription": "The User Directory feature provides an easy way to search and chat with users. Leverage our User Tagging system to customize your user experience and Gamify your app with Badges.",
-	"supportEmail": "support@buildfire.com",
-	"supportSite": "https://learn.buildfire.com/en/articles/4487634-user-directory",
-	"singleton": true,
-	"control": {
-		"content": {
-			"enabled": true
-		},
-		"design": {
-			"enabled": true
-		},
-		"settings": {
-			"enabled": false
-		},
-		"customTabs": [
-			{ "title": "Settings", "url": "/settingss/index.html" },
-			{ "title": "Language", "url": "/strings/index.html" },
-			{ "title": "Abuse", "url": "/abuse/index.html" }
-		]
-	},
-	"widget": {
-		"service": "service.html"
-	},
-	"features": [],
-	"languages": ["en"],
-	"media": [
-		{ "type": "image-resource", "path": "image.png" },
-		{ "type": "image-resource", "path": "marketplacegif.gif" }
-	]
+  "author": "BuildFire",
+  "pluginName": "User Directory",
+  "pluginDescription": "The User Directory feature provides an easy way to search and chat with users. Leverage our User Tagging system to customize your user experience and Gamify your app with Badges.",
+  "supportEmail": "support@buildfire.com",
+  "supportSite": "https://learn.buildfire.com/en/articles/4487634-user-directory",
+  "singleton": true,
+  "control": {
+    "content": {
+      "enabled": true
+    },
+    "design": {
+      "enabled": true
+    },
+    "settings": {
+      "enabled": true
+    },
+    "customTabs": [
+      { "title": "Language", "url": "/strings/index.html" },
+      { "title": "Abuse", "url": "/abuse/index.html" }
+    ]
+  },
+  "widget": {
+    "service": "service.html"
+  },
+  "features": [],
+  "languages": ["en"],
+  "media": [
+    { "type": "image-resource", "path": "image.png" },
+    { "type": "image-resource", "path": "marketplacegif.gif" }
+  ]
 }
